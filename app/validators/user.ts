@@ -8,7 +8,7 @@ export const createUserValidator = vine.compile(
             const result = await db.from('users').select('id').where('email', value)
             return result.length ? false : true
         }),
-        password: vine.string().minLength(9),
+        password: vine.string().minLength(9).optional(),
     })
 )
 

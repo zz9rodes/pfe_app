@@ -1,7 +1,7 @@
 
 export  enum AccountType{
-    companies="companies",
-    personnal="personnal"
+    COMPANIES="companies",
+    PERSONNAL="personnal"
 }
 
 export interface Address{

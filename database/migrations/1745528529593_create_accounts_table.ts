@@ -13,7 +13,7 @@ export default class extends BaseSchema {
       table.timestamp('dob').nullable()  
       table.json('address')
       table.string('account_type').notNullable()
-            .defaultTo(AccountType.personnal)
+            .defaultTo(AccountType.PERSONNAL)
       table.string('country').nullable()
       table.string('city').nullable()
       table.string('avatar_url').nullable()

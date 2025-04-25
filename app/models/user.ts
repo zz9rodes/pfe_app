@@ -4,6 +4,9 @@ import { compose } from '@adonisjs/core/helpers'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import { hasOne } from "@adonisjs/lucid/orm";
+import type { HasOne } from "@adonisjs/lucid/types/relations";
+import Account from './account.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -23,6 +26,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column()
   declare isAdmin : boolean|null
+
+  @hasOne(() => Account)
+  declare account: HasOne<typeof Account>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
