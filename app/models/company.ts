@@ -1,58 +1,29 @@
 import { DateTime } from 'luxon'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column,belongsTo } from '@adonisjs/lucid/orm'
-import { Address } from './utils/index.js'
+import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column,belongsTo,hasOne } from '@adonisjs/lucid/orm'
 import Account from './account.js'
+import CompanyVersion from './company_version.js'
 
 export default class Company extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
   @column()
-  declare name :string
-
-  @column()
-  declare industry :string
-
-  @column()
-  declare description :string
-
-  @column()
-  declare email :string
-
-  @column()
-  declare phoneNumber :string
-
-  @column()
-  declare address :Address|null
-
-  @column()
-  declare firstLangage :string
-
-  @column()
-  declare contry :string
-
-  @column()
-  declare city :string
-
-  @column()
-  declare avatarUrl :string
-
-  @column()
-  declare coverUrl :string
-
-  @column()
-  declare socialStatus :string
+  declare slug:string
+ 
+  @belongsTo(()=>Account,{
+    foreignKey:'admin_id'
+  })
+  declare admin: BelongsTo<typeof Account>
 
   
-  @column()
-  declare registrationNnumber :string
+  @hasOne(()=>CompanyVersion,{
+    foreignKey:'version_id'
+  })
+  declare details: HasOne<typeof CompanyVersion>
 
   @column()
-  declare certificateOfIncorporation :string
-
-  @belongsTo(()=>Account)
-  declare admin: BelongsTo<typeof Account>
+  declare isVerify:boolean
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

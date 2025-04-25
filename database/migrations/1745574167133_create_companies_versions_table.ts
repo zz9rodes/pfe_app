@@ -1,7 +1,7 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'companies'
+  protected tableName = 'companies_versions'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
@@ -22,6 +22,11 @@ export default class extends BaseSchema {
       table.string('social_status').nullable()
       table.string('registration_nnumber').nullable()
       table.string('certificate_of_incorporation').nullable()
+
+      table.boolean('is_verify').defaultTo(false)
+
+      table.integer('admin').unsigned().references('id').inTable('accounts').onDelete('CASCADE').notNullable();
+
 
       table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
       table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())

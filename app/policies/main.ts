@@ -12,4 +12,7 @@
 |
 */
 
-export const policies = {}
+export const policies = {
+  CompanyVersionPolicy: () => import('#policies/company_version_policy'),
+  CompanyPolicy: () => import('#policies/company_policy')
+}

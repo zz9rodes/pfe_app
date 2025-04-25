@@ -1,3 +1,6 @@
 export class CompanyService {
-  // Your code here
+
+  async createCompany(data:any){
+    return data
+  }
 }

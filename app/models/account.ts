@@ -8,6 +8,8 @@ import Company from './company.js'
 export default class Account extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
+  @column()
+  declare slug:string
 
   @column()
   declare firstName:string 
@@ -55,6 +57,9 @@ export default class Account extends BaseModel {
 
   @hasOne(() => Company)
   declare account: HasOne<typeof Company>
+
+  @column()
+  declare roles:string|null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
