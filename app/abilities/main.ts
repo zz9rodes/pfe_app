@@ -23,3 +23,7 @@ import { Bouncer } from '@adonisjs/bouncer'
 export const  editUser =  Bouncer.ability((me: User, id: any) =>  {
   return (me.id === id) || (me.isAdmin==true)
 })
+
+export const  editAccount =  Bouncer.ability((me: User, id: any) =>  {
+  return (me.account.id === id) || (me.isAdmin==true)
+})
