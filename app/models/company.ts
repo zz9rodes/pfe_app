@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
-import type { BelongsTo, HasOne } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column,belongsTo,hasOne } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column,belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import Account from './account.js'
 import CompanyVersion from './company_version.js'
 
@@ -17,10 +17,10 @@ export default class Company extends BaseModel {
   declare admin: BelongsTo<typeof Account>
 
   
-  @hasOne(()=>CompanyVersion,{
+  @hasMany(()=>CompanyVersion,{
     foreignKey:'version_id'
   })
-  declare details: HasOne<typeof CompanyVersion>
+  declare details: HasMany<typeof CompanyVersion>
 
   @column()
   declare isVerify:boolean

@@ -30,7 +30,7 @@ export default class UsersController {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         response.status(422).json(error)
       } else {
-        response.status(500).json({error:'Internal Server Error'})
+        response.status(500).json({message:'Internal Server Error',error:error})
       }
     }
   }
@@ -54,7 +54,7 @@ export default class UsersController {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         response.status(422).json(error)
       } else {
-        response.status(500).json({error:'Internal Server Error'})
+        response.status(500).json({message:'Internal Server Error',error:error})
       }
     }
   }

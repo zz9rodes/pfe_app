@@ -9,7 +9,6 @@ export default class extends BaseSchema {
       table.string('slug').unique().notNullable()
       table.boolean('is_verify').defaultTo(false)
       table.integer('admin_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE').notNullable();
-      table.integer('version_id').unsigned().references('id').inTable('companies_versions').onDelete('CASCADE').notNullable();
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

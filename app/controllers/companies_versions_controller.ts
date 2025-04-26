@@ -1,13 +1,16 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { CompanyVersionService } from '#services/company_version_service'
+import CompanyVersionPolicy from '#policies/company_version_policy'
 import { inject } from '@adonisjs/core'
-import { createCompanyVersionsValidator } from '#validators/company_version'
+import { createCompanyVersionsValidator, editCompanyVerionsValidator } from '#validators/company_version'
 import { errors } from '@vinejs/vine'
+import Account from '#models/account'
+import Company from '#models/company'
 
 @inject()
 export default class CompaniesController {
   constructor(private CompanyVersionService: CompanyVersionService) { }
-  /**
+  /** 
    * Display a list of resource
    */
   async index({ }: HttpContext) { }
@@ -17,15 +20,22 @@ export default class CompaniesController {
   /**
    * Handle form submission for the create action
    */
-  async store({ request, response }: HttpContext) {
+  async store({ request, response, bouncer, params }: HttpContext) {
     try {
+
+      const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
+      if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
+
+        return response.forbidden("You don't have access to this Ressources")
+      }
+
       const data = await createCompanyVersionsValidator.validate(request.all())
-      return this.CompanyVersionService.createCompany(data)
+      response.json(await this.CompanyVersionService.createCompanyVersion(data))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         response.status(422).json(error)
       } else {
-        response.status(500).json({ error: 'Internal Server Error' })
+        response.status(500).json({ message: 'Internal Server Error', error: error })
       }
     }
   }
@@ -33,18 +43,71 @@ export default class CompaniesController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) { }
+  async show({ params, response }: HttpContext) {
+
+    try {
+      const company_version_slug = params!.company_version_slug
+
+      response.json(await this.CompanyVersionService.getCompaversion(company_version_slug))
+    } catch (error) {
+      response.json(error)
+    }
+
+  }
 
   /**
    * Edit individual record
    */
-  async edit({ params }: HttpContext) { }
+  async edit({ request, response, bouncer, params }: HttpContext) {
+    try {
+
+      const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
+      if (await bouncer.with(CompanyVersionPolicy).denies('edit', account)) {
+
+        return response.forbidden("You don't have access to this Ressources")
+      }
+
+      if (params.company_version_slug) {
+        const data = await editCompanyVerionsValidator.validate(request.all())
+        response.json(await this.CompanyVersionService.editCompanyVersion(data, params))
+      }
+
+      return
 
 
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        response.status(422).json(error)
+      } else {
+        response.status(500).json({ message: 'Internal Server Error', error: error })
+      }
+    }
 
+  }
 
   /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) { }
+  async destroy({ params, bouncer, response }: HttpContext) {
+    try {
+
+      const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
+      if (await bouncer.with(CompanyVersionPolicy).denies('delete', account)) {
+
+        return response.forbidden("You don't have access to this Ressources")
+      }
+
+      if (params.company_version_slug) {
+        response.json(await this.CompanyVersionService.destroyCompanyVersion(params.company_version_slug))
+      }
+
+      return
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        response.status(422).json(error)
+      } else {
+        response.status(500).json({ message: 'Internal Server Error', error: error })
+      }
+    }
+  }
 }

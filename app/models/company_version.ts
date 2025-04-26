@@ -54,6 +54,9 @@ export default class CompanyVersion extends BaseModel {
   @belongsTo(()=>Company)
   declare company:BelongsTo<typeof Company>
 
+  @column()
+  declare isActive: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

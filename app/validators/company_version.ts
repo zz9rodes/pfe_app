@@ -17,8 +17,7 @@ export const createCompanyVersionsValidator =vine.compile(
 
     registrationNnumber: vine.string().trim(),
     certificateOfIncorporation: vine.string().url().optional(),
-
-    adminId: vine.number().positive() 
+    isActive:vine.boolean()
 }))
 
 export const editCompanyVerionsValidator = vine.compile(
@@ -36,6 +35,8 @@ export const editCompanyVerionsValidator = vine.compile(
     coverUrl: vine.string().url().optional().optional().optional(),
     socialStatus: vine.string().trim().optional().optional(),
   
+    isActive:vine.boolean().optional(),
+
     registrationNnumber: vine.string().trim().optional(),
     certificateOfIncorporation: vine.string().url().optional().optional(),
   }))

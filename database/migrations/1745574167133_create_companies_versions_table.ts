@@ -23,9 +23,10 @@ export default class extends BaseSchema {
       table.string('registration_nnumber').nullable()
       table.string('certificate_of_incorporation').nullable()
 
-      table.boolean('is_verify').defaultTo(false)
+      table.boolean('is_active').defaultTo(false)
 
       table.integer('admin').unsigned().references('id').inTable('accounts').onDelete('CASCADE').notNullable();
+      table.integer('company').unsigned().references('id').inTable('companies').onDelete('CASCADE').notNullable()
 
 
       table.timestamp('created_at', { useTz: true }).defaultTo(this.now())

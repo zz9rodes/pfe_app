@@ -7,12 +7,8 @@ export default class CompanyPolicy extends BasePolicy {
     approve_or_desapprove(user: User): AuthorizerResponse {
         user.load('account')
 
-       const isAdmin=user.account.roles == AppRoles.ADMIN
+        const isAdmin = user.account.roles == AppRoles.ADMIN
 
-        return  isAdmin
+        return isAdmin
     }
-    
-      /**
-       * Only the post creator can edit the post
-       */
 }
