@@ -1,6 +1,5 @@
 import Account from "#models/account";
 import User from "#models/user";
-import { ok } from "assert";
 
 
 export class AccountService {
@@ -35,10 +34,21 @@ export class AccountService {
       if (account) {
         await account.delete()
       }
-      return ok
+      return 
     } catch (error) {
       return error
     }
 
+  }
+
+  async getAccount(account_slug:any|string){
+      const account: Account | null = await Account.findBy('slug', account_slug)
+        let responseData = null
+    
+        if (account) {
+          responseData = account
+        }
+    
+        return responseData
   }
 }

@@ -1,4 +1,3 @@
-import { AccountType } from '#models/utils/index'
 import { createAccountValidator, updateAccountValidator } from '#validators/account'
 import type { HttpContext } from '@adonisjs/core/http'
 import { AccountService } from '#services/account_service'
@@ -36,7 +35,15 @@ export default class AccountsController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) {}
+  async show({ params,response }: HttpContext) {
+    try {
+      const account_slug = params!.account_slug
+
+      response.json(await this.AccountService.getAccount(account_slug))
+    } catch (error) {
+      response.json(error)
+    }
+  }
 
   /**
    * Edit individual record
