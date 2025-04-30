@@ -8,14 +8,14 @@ export default class EditUserMiddleware {
     /**
      * Middleware logic goes here (before the next call)
      */
-    console.log(ctx)
+    // console.log(ctx)
 
     /**
      * Call next method in the pipeline and return its output
      */
 
     if (await ctx.bouncer.allows(editUser, ctx.params.id)) {
-      await next()
+     return  await next()
     }
     return  ctx.response.forbidden("you don't have permission")
 

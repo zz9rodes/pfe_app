@@ -6,7 +6,7 @@ export const createAccountValidator = vine.compile(
     vine.object({
         firstName: vine.string().minLength(2),
         lastName: vine.string().minLength(2),
-        phoneNumber: vine.string().minLength(10).maxLength(15).unique(
+        phoneNumber: vine.string().minLength(7).maxLength(15).unique(
             async (db: Database, value: string) => {
             const result = await db.from('accounts').select('id').where('phone_number', value)
             return result.length ? false : true
@@ -18,7 +18,7 @@ export const createAccountValidator = vine.compile(
         firstLangage: vine.string(),
         secondLangage: vine.string().optional(),
         avatarUrl: vine.string().url().optional(),
-        frontIdcard: vine.string().url().optional(), 
+        frontIdCard: vine.string().url().optional(), 
         backIdCard: vine.string().url().optional(), 
     })
 )
@@ -27,7 +27,7 @@ export const updateAccountValidator = vine.compile(
   vine.object({
       firstName: vine.string().minLength(2).optional(),
       lastName: vine.string().optional(),
-      phoneNumber: vine.string().minLength(10).maxLength(15).unique(
+      phoneNumber: vine.string().minLength(7).maxLength(15).unique(
           async (db: Database, value: string) => {
           const result = await db.from('accounts').select('id').where('phone_number', value)
           return result.length ? false : true
@@ -39,7 +39,7 @@ export const updateAccountValidator = vine.compile(
       firstLangage: vine.string().optional(),
       secondLangage: vine.string().optional(),
       avatarUrl: vine.string().url().optional(),
-      frontIdcard: vine.string().url().optional(), 
+      frontIdCard: vine.string().url().optional(), 
       backIdCard: vine.string().url().optional(), 
   })
 )

@@ -7,19 +7,38 @@ export class AccountService {
 
   async createAccount(data: any, user: User) {
     try {
-      const account: Account = await user.related('account').create({ ...data, slug: crypto.randomUUID() })
-      return account
-    } catch (error) {
-      return error
-    }
+      await user.load('account')
 
+      if (user.account) {
+        return {
+          error: 'This user already has an account',
+        }
+      }
+
+      const account = await user.related('account').create({
+        ...data,
+        slug: crypto.randomUUID(),
+      })
+
+      return account
+
+    } catch (error) {
+      console.error(error.message)
+
+      return {
+        error: 'An unexpected error occurred while creating the account',
+        details: error.message,
+      }
+    }
   }
 
-  async editAccount(data: any, id: any) {
+
+  async editAccount(data: any, slug: any) {
+
     try {
-      const account: Account | null = await Account.find(id)
+      const account: Account | null = await Account.findBy('slug', slug)
       if (account) {
-        account.fill(data).save()
+        account.merge(data).save()
       }
       return account
     } catch (error) {
@@ -34,21 +53,36 @@ export class AccountService {
       if (account) {
         await account.delete()
       }
-      return 
+      return
     } catch (error) {
       return error
     }
 
   }
 
-  async getAccount(account_slug:any|string){
-      const account: Account | null = await Account.findBy('slug', account_slug)
-        let responseData = null
+  async getAccount(user: User|undefined) {
+    await user!.load('account')
+    const account = user!.account
+
+    return {account}
+  }
+
+  async getAllAccount(){
+    const accounts= await Account.all()
+
+    return accounts;
+  }
+
+  async FindAccountByname(query:string|any){
+    let responseData=null
+    if(query){
+      responseData=   await Account.query()
+      .select("*")
+      .where('firstName', 'LIKE', `%${query}%`)
+      .orWhere('lastName', 'LIKE', `%${query}%`)
+      .preload('user',()=>{});
     
-        if (account) {
-          responseData = account
-        }
-    
-        return responseData
+    }
+    return responseData;
   }
 }

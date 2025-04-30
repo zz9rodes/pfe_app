@@ -14,10 +14,7 @@ export const createUserValidator = vine.compile(
 
 export const editUserValidator = vine.compile(
     vine.object({
-        email: vine.string().email().unique(async (db: Database, value: string) => {
-            const result = await db.from('users').select('id').where('email', value)
-            return result.length ? false : true
-        }).optional(),
+        email: vine.string().email().optional(),
         password: vine.string().minLength(9).optional(),
     })
 )
@@ -25,7 +22,7 @@ export const editUserValidator = vine.compile(
 export const loginUserValidator = vine.compile(
     vine.object({
         email: vine.string().email().exists(async (db: Database, value: string) => {
-            const result = await db.from('users').select('id').where('email', value)
+            const result = await db.from('users').select('*').where('email', value)           
             return result.length == 1 ? true : false
         }),
         password: vine.string()

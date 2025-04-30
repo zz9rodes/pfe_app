@@ -12,7 +12,9 @@ export default class AccountsController {
   /**
    * Display a list of resource
    */
-  async index({}: HttpContext) {}
+  async index({response}: HttpContext) {
+      return response.json( await this.AccountService.getAllAccount())
+  }
 
   /**
    * Handle form submission for the create action
@@ -22,12 +24,13 @@ export default class AccountsController {
       const user: User = auth.user!
 
       const data = await createAccountValidator.validate(request.all())
-      response.json(await this.AccountService.createAccount(data, user))
+      
+      return response.json(await this.AccountService.createAccount(data, user))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({message:'Internal Server Error',error:error})
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
   }
@@ -35,13 +38,13 @@ export default class AccountsController {
   /**
    * Show individual record
    */
-  async show({ params,response }: HttpContext) {
+  async show({ response,auth }: HttpContext) {
     try {
-      const account_slug = params!.account_slug
+    const  user=auth.user
 
-      response.json(await this.AccountService.getAccount(account_slug))
+      return response.json(await this.AccountService.getAccount(user!))
     } catch (error) {
-      response.json(error)
+      return response.json(error)
     }
   }
 
@@ -49,16 +52,18 @@ export default class AccountsController {
    * Edit individual record
    */
   async edit({ request,response,params }: HttpContext) {
+
+    
     try {
-      const id=params.id
+      const slug=params.slug
 
       const data = await updateAccountValidator.validate(request.all())
-      response.json(await this.AccountService.editAccount(data, id))
+      return response.json(await this.AccountService.editAccount(data, slug))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({message:'Internal Server Error',error:error})
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
   }
@@ -69,13 +74,27 @@ export default class AccountsController {
   async destroy({response, params }: HttpContext) {
     try {
       const id=params.id
-      response.json(await this.AccountService.destroyAccount(id))
+      return response.json(await this.AccountService.destroyAccount(id))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({message:'Internal Server Error',error:error})
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
+  }
+
+  async findByname({request,response,params}:HttpContext){
+     try {
+
+     const query = request.input('query')
+
+     return response.json(await this.AccountService.FindAccountByname(query))
+      
+     } catch (error) {
+      console.log(error);
+      
+       return {error}
+     }
   }
 }

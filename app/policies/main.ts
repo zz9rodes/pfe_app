@@ -13,6 +13,7 @@
 */
 
 export const policies = {
+  CvProfilePolicy: () => import('#policies/cv_profile_policy'),
   CompanyVersionPolicy: () => import('#policies/company_version_policy'),
   CompanyPolicy: () => import('#policies/company_policy')
 }

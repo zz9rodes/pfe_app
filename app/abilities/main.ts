@@ -24,6 +24,7 @@ export const  editUser =  Bouncer.ability((me: User, id: any) =>  {
   return (me.id === id) || (me.isAdmin==true)
 })
 
-export const  editAccount =  Bouncer.ability((me: User, id: any) =>  {
-  return (me.account.id === id) || (me.isAdmin==true)
+export const  editAccount =  Bouncer.ability( async(me: User, slug: string|any) =>  {
+  await me.load('account')  
+  return (me.account.slug === slug) || (me.isAdmin==true)
 })

@@ -13,7 +13,7 @@ import server from '@adonisjs/core/services/server'
 
 /**
  * The error handler is used to convert an exception
- * to a HTTP response.
+ * to a HTTP return response.
  */
 server.errorHandler(() => import('#exceptions/handler'))
 
@@ -39,7 +39,8 @@ router.use([() => import('@adonisjs/core/bodyparser_middleware'), () => import('
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  onlyAdmin: () => import('#middleware/only_admin_middleware'),
   manageAccount: () => import('#middleware/manage_account_middleware'),
   auth: () => import('#middleware/auth_middleware'),
-  editser: () => import('#middleware/edit_user_middleware')
+  editUser: () => import('#middleware/edit_user_middleware')
 })

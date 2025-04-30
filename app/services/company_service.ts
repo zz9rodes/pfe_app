@@ -10,6 +10,8 @@ export class CompanyService {
     company.related('details').create(versiondata)
     company.related('admin').associate(adminId)
 
+    await  company.save()
+
     return await company.load('details')
   }
 

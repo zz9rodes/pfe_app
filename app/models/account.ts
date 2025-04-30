@@ -4,6 +4,7 @@ import { BaseModel, column,belongsTo ,hasOne} from '@adonisjs/lucid/orm'
 import { AccountType,Address } from './utils/index.js'
 import User from './user.js'
 import Company from './company.js'
+import CvProfile from './cv_profile.js'
 
 export default class Account extends BaseModel {
   @column({ isPrimary: true })
@@ -46,17 +47,22 @@ export default class Account extends BaseModel {
   declare secondLangage: string|null
 
   @column()
-  declare frontIdcard: string|null
+  declare frontIdCard: string|null
 
   @column({})
   declare backIdCard: string|null
 
-  
+  @column()
+  declare userId: number
+
   @belongsTo(()=>User)
   declare user: BelongsTo<typeof User>
 
   @hasOne(() => Company)
-  declare account: HasOne<typeof Company>
+  declare company: HasOne<typeof Company>
+
+  @hasOne(() => CvProfile)
+  declare cvProfiles: HasOne<typeof CvProfile>
 
   @column()
   declare roles:string|null

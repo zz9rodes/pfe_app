@@ -5,17 +5,31 @@ import { middleware } from '#start/kernel'
 
 
 router.group(()=>{
-
     router.post('/create',[AccountsController,'store'])
-    router.put('/upddate/:id',[AccountsController,'edit']).where('id',router.matchers.uuid())
-    .use([
+    // router
+    router.put('/update/:slug',[AccountsController,'edit']).where('slug',router.matchers.uuid()).use([
         middleware.auth(),
         middleware.manageAccount()
     ])
+
     router.delete('/destroy/:id',[AccountsController,'destroy']).where('id',router.matchers.uuid())
     .use([
         middleware.auth(),
         middleware.manageAccount()
     ])
 
-}).prefix('/accounts')
+    router.get('/',[AccountsController,'show']).use([
+        middleware.auth()
+    ])
+
+    router.get('/all',[AccountsController,'index']).use([
+        middleware.auth(),
+        middleware.onlyAdmin()
+    ])
+
+    router.get('/find',[AccountsController,'findByname']).use([
+        middleware.auth(),
+        middleware.onlyAdmin()
+    ])
+
+}).prefix('/v1/api/accounts').use(middleware.auth())

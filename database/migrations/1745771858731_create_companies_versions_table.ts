@@ -29,8 +29,8 @@ export default class extends BaseSchema {
       table.integer('company').unsigned().references('id').inTable('companies').onDelete('CASCADE').notNullable()
 
 
-      table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
-      table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
+      table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').nullable()
     })
   }
 

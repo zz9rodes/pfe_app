@@ -8,7 +8,7 @@ import Account from '#models/account'
 import Company from '#models/company'
 
 @inject()
-export default class CompaniesController {
+export default class CompaniesVersionController {
   constructor(private CompanyVersionService: CompanyVersionService) { }
   /** 
    * Display a list of resource
@@ -26,16 +26,16 @@ export default class CompaniesController {
       const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
       if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
 
-        return response.forbidden("You don't have access to this Ressources")
+        return  response.forbidden("You don't have access to this Ressources")
       }
 
       const data = await createCompanyVersionsValidator.validate(request.all())
-      response.json(await this.CompanyVersionService.createCompanyVersion(data))
+      return response.json(await this.CompanyVersionService.createCompanyVersion(data))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({ message: 'Internal Server Error', error: error })
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
   }
@@ -48,9 +48,9 @@ export default class CompaniesController {
     try {
       const company_version_slug = params!.company_version_slug
 
-      response.json(await this.CompanyVersionService.getCompaversion(company_version_slug))
+      return response.json(await this.CompanyVersionService.getCompaversion(company_version_slug))
     } catch (error) {
-      response.json(error)
+      return response.json(error)
     }
 
   }
@@ -64,12 +64,12 @@ export default class CompaniesController {
       const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
       if (await bouncer.with(CompanyVersionPolicy).denies('edit', account)) {
 
-        return response.forbidden("You don't have access to this Ressources")
+        return  response.forbidden("You don't have access to this Ressources")
       }
 
       if (params.company_version_slug) {
         const data = await editCompanyVerionsValidator.validate(request.all())
-        response.json(await this.CompanyVersionService.editCompanyVersion(data, params))
+        return response.json(await this.CompanyVersionService.editCompanyVersion(data, params))
       }
 
       return
@@ -77,9 +77,9 @@ export default class CompaniesController {
 
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({ message: 'Internal Server Error', error: error })
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
 
@@ -94,19 +94,19 @@ export default class CompaniesController {
       const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
       if (await bouncer.with(CompanyVersionPolicy).denies('delete', account)) {
 
-        return response.forbidden("You don't have access to this Ressources")
+        return  response.forbidden("You don't have access to this Ressources")
       }
 
       if (params.company_version_slug) {
-        response.json(await this.CompanyVersionService.destroyCompanyVersion(params.company_version_slug))
+        return response.json(await this.CompanyVersionService.destroyCompanyVersion(params.company_version_slug))
       }
 
       return
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        response.status(422).json(error)
+        return response.status(422).json(error)
       } else {
-        response.status(500).json({ message: 'Internal Server Error', error: error })
+        return response.internalServerError({ message: 'Internal Server Error.', error })
       }
     }
   }
