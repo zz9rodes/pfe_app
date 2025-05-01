@@ -43,3 +43,14 @@ export interface PersonnalProject{
     desription:string|null,
     website:string
 }
+
+export interface EmailData {
+    from: number
+    to: number
+    cc?: string
+    bcc?: string
+    subject: string
+    html?: string
+    text?: string,
+    
+  }
