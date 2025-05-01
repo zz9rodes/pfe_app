@@ -1,3 +1,4 @@
+import CompanyRequest from "#models/company_request";
 export function removeEmptyFields(obj) {
     if (Array.isArray(obj)) {
       return obj
@@ -25,4 +26,23 @@ export function removeEmptyFields(obj) {
     }
     return obj;
   }
+
+
+
+  
+  type CompanyOutput = Omit<CompanyRequest, 'id' | 'slug' | 'accountId' | 'createdAt' | 'updatedAt'>
+  
+ export function cleanCompanyData(company: any): CompanyOutput {
+    const {
+      id,
+      slug,
+      accountId,
+      createdAt,
+      updatedAt,
+      ...rest
+    } = company
+  
+    return rest
+  }
+  
   

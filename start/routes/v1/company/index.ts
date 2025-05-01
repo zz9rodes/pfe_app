@@ -4,6 +4,7 @@ import AccountsController from '#controllers/accounts_controller'
 import { middleware } from '#start/kernel'
 import CompaniesController from '#controllers/companies_controller'
 import CompaniesVersionController from '#controllers/companies_versions_controller'
+import CompaniesRequestsController from '#controllers/companies_requests_controller'
 
 
 router.group(()=>{
@@ -20,7 +21,8 @@ router.group(()=>{
     ])
 
     router.group(()=>{
-        router.post('create',[CompaniesVersionController,'store'])
-    }).prefix('/:company_slug/versions')
+        router.post('create',[CompaniesRequestsController,'store'])
+        router.put('/:slug_request/update',[CompaniesRequestsController,'edit']).where('slug_request',router.matchers.uuid())
+    }).prefix('/:slug/company_request').where('slug',router.matchers.uuid())
 
 }).prefix('/v1/api/companies').use(middleware.auth())

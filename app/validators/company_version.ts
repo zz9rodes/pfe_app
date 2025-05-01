@@ -7,14 +7,12 @@ export const createCompanyVersionsValidator =vine.compile(
     description: vine.string().trim(),
     email: vine.string().email().optional(),
     phoneNumber: vine.string().trim().optional(),
-      
     firstLangage: vine.string().trim(),
-    contry: vine.string().trim(),
+    country: vine.string().trim(),
     city: vine.string().trim().optional(),
     avatarUrl: vine.string().url(),
     coverUrl: vine.string().url().optional(),
     socialStatus: vine.string().trim().optional(),
-
     registrationNnumber: vine.string().trim(),
     certificateOfIncorporation: vine.string().url().optional(),
     isActive:vine.boolean()

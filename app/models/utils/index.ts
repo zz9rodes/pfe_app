@@ -1,12 +1,12 @@
 
 export  enum AccountType{
-    COMPANIES="companies",
-    PERSONNAL="personnal"
+    COMPANIES="COMPANIES",
+    PERSONNAL="PERSONNAL"
 }
 
 export  enum AppRoles{
-    ADMIN="companies",
-    CLIENT="personnal"
+    ADMIN="ADMIN",
+    CLIENT="CLIENT"
 }
 
 export interface Address{

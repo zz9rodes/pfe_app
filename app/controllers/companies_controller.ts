@@ -7,6 +7,10 @@ import CompanyPolicy from '#policies/company_policy'
 import Account from '#models/account'
 import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
+import CompanyRequest from '#models/company_request'
+import { cleanCompanyData } from '#models/utils/helper'
+import auth from '@adonisjs/auth/services/main'
+import { Console, info } from 'console'
 
 @inject()
 export default class CompaniesController {
@@ -21,22 +25,22 @@ export default class CompaniesController {
   /**
    * Handle form submission for the create action
    */
-  async store({ request, response, bouncer, params }: HttpContext) {
+  async store({ request, response, auth, params }: HttpContext) {
     try {
 
-      if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
-
-        return  response.forbidden("You don't have access to this Ressources")
-      }
-      const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
-      if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
-
-        return  response.forbidden("You don't have access to this Ressources")
-      }
-
-      const data = await createCompanyVersionsValidator.validate(request.all())
-
-      return  response.json(this.CompanyService.createCompany(data))
+      if (!auth.user!.isAdmin) {
+        return response.forbidden("You don't have access to this Ressources")
+      }     
+      
+      const company_request = await CompanyRequest.findBy('slug', request.input('slug_request'))
+      
+      const validData = await createCompanyVersionsValidator.validate(company_request)
+      
+      const data = cleanCompanyData(validData)
+      console.log(company_request)
+      console.log("company_requestadminId \n\n")
+      console.log(company_request!.adminId)
+      return response.json( await this.CompanyService.createCompany(company_request!.adminId,data))
     } catch (error) {
       console.log(error);
       if (error instanceof errors.E_VALIDATION_ERROR) {
@@ -71,13 +75,13 @@ export default class CompaniesController {
 
       if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
 
-        return  response.forbidden("You don't have access to this Ressources")
+        return response.forbidden("You don't have access to this Ressources")
       }
 
 
       const data = await editCompanyValidator.validate(request.all())
 
-      return  response.json(this.CompanyService.updateCompany(params.slug, data))
+      return response.json(this.CompanyService.updateCompany(params.slug, data))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
@@ -93,24 +97,24 @@ export default class CompaniesController {
    * Delete record
    */
   async destroy({ params, bouncer, response }: HttpContext) {
-      try {
-  
-        if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
+    try {
 
-          return  response.forbidden("You don't have access to this Ressources")
-        }
-  
-        if (params.company_slug) {
-          return response.json(await this.CompanyService.destroyCompany(params.company_slug))
-        }
-  
-        return
-      } catch (error) {
-        if (error instanceof errors.E_VALIDATION_ERROR) {
-          return response.status(422).json(error)
-        } else {
-          return response.internalServerError({ message: 'Internal Server Error.', error })
-        }
+      if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
+
+        return response.forbidden("You don't have access to this Ressources")
       }
+
+      if (params.company_slug) {
+        return response.json(await this.CompanyService.destroyCompany(params.company_slug))
+      }
+
+      return
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return response.status(422).json(error)
+      } else {
+        return response.internalServerError({ message: 'Internal Server Error.', error })
+      }
+    }
   }
 }

@@ -8,18 +8,17 @@ import Company from '#models/company'
 export default class CompanyVersionPolicy extends BasePolicy {
 
    create(user: User, account: Account|null): AuthorizerResponse {
-
-    user.account.id
-
+    
+    
+    
     const isOwner = user.account.id === account!.id!
     const isCompanyAccount = user.account.accountType === AccountType.COMPANIES
-    const isAdmin = user.account.roles === AppRoles.ADMIN
+    const isAdmin = user.isAdmin
 
     return (isOwner && isCompanyAccount) || isAdmin
   }
 
   edit(user: User, company: Company|null): AuthorizerResponse {
-    user.load('account')
     
     const isAdmin = user.account.roles === AppRoles.ADMIN
     const isCompanyAdmin = user.account.id === company!.admin.id

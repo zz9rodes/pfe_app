@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column ,afterFind, afterFetch} from '@adonisjs/lucid/orm'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { hasOne } from "@adonisjs/lucid/orm";
@@ -25,10 +25,20 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare password: string
 
   @column()
-  declare isAdmin : boolean|null
+  declare isAdmin : boolean
 
   @hasOne(() => Account)
   declare account: HasOne<typeof Account>
+
+  @afterFind()
+  static async loadAccount(user: User) {
+    await user.load('account')
+  }
+
+  @afterFetch()
+  static async loadAccounts(users: User[]) {
+    await Promise.all(users.map((user) => user.load('account')))
+  }
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

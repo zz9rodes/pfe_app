@@ -11,16 +11,22 @@ export default class Company extends BaseModel {
   @column()
   declare slug:string
  
-  @belongsTo(()=>Account,{
-    foreignKey:'admin_id'
-  })
-  declare admin: BelongsTo<typeof Account>
-
+  @column()
+  declare accountId: number
   
-  @hasMany(()=>CompanyVersion,{
-    foreignKey:'version_id'
+  @belongsTo(() => Account)
+  declare admin: BelongsTo<typeof Account>
+  
+
+  @hasMany(() => CompanyVersion, {
+    foreignKey: 'company_id',
   })
   declare details: HasMany<typeof CompanyVersion>
+  
+  // @hasMany(()=>CompanyVersion,{
+  //   foreignKey:'id'
+  // })
+  // declare details: HasMany<typeof CompanyVersion>
 
   @column()
   declare isVerify:boolean

@@ -1,12 +1,15 @@
+
+
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'company_versions'
+  protected tableName = 'company_requests'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id') // primary key
 
+      table.string('slug').notNullable()
       table.string('name').notNullable()
       table.string('industry').notNullable()
       table.text('description').nullable()
@@ -15,7 +18,7 @@ export default class extends BaseSchema {
       table.json('address').nullable() // JSON field for Address object
 
       table.string('first_langage').notNullable()
-      table.string('contry').notNullable()
+      table.string('country').notNullable()
       table.string('city').notNullable()
       table.string('avatar_url').nullable()
       table.string('cover_url').nullable()
@@ -25,10 +28,7 @@ export default class extends BaseSchema {
 
       table.boolean('is_active').defaultTo(false)
 
-      table.integer('admin').unsigned().references('id').inTable('accounts').onDelete('CASCADE').notNullable();
-      // table.integer('company').unsigned().references('id').inTable('companies').onDelete('CASCADE').notNullable()
-      table.integer('company_id').unsigned().references('id').inTable('companies').onDelete('CASCADE').notNullable()
-
+      table.integer('admin_id').notNullable()
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

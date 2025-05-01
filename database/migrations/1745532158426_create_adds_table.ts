@@ -5,7 +5,7 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.string('is_admin').nullable()
+      table.boolean('is_admin').defaultTo(false).notNullable()
     })
   }
 
