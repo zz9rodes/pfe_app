@@ -1,63 +1,108 @@
 import Account from "#models/account";
 import Company from "#models/company"
+import CompanyVersion from "#models/company_version";
+import { Exception } from '@adonisjs/core/exceptions'
+
+
+const ERROR_ACCOUNT_NOT_FOUND = 'Account not found'
+const ERROR_DUPLICATE_COMPANY = 'An account can only have one company'
 
 export class CompanyService {
 
-  async createCompany(adminId: number, data: any) {
-
-    const { versionData } = data
-
-    const company = new Company()
-
-    
-    const companyAdmin = await Account.find(adminId)
-
-    if (!companyAdmin) {
-      
-      return "Somethiing Rong"
-    }
-
-    company.fill({ slug: crypto.randomUUID(), isVerify: false })
-
-    console.log("avant d'associer a un admin on a deja rempli");
-    
-    await company.related('admin').associate(companyAdmin)
-
-    // console.log(companyAdmin);
-    
-    await company.save()
-    await  company.related('details').create(versionData)
-
-    // return company
-    return await company.load('details')
+  async getAllCompanies() {
+    const companies = await Company.all()
+  
+    // Utiliser Promise.all avec map pour s'assurer que tout est bien chargé
+    await Promise.all(
+      companies.map((company) => company.load('activeDetails'))
+    )
+  
+    return companies
   }
+  
 
-  async updateCompany(slug: string | null, data: any) {
-    const { admin, details, isVerify } = data
 
-    const company = await Company.findBy('slug', slug)
+  async createCompany(accountId: number, versionData: Partial<CompanyVersion>) {
+    try {
 
-    let responseData = null
-    if (company) {
-      company.isVerify = isVerify
+      const existingCompany = await Company.findBy('account_id', accountId)
+      if (existingCompany) {
+        return ERROR_DUPLICATE_COMPANY
+      }
+
+      const admin = await Account.find(accountId)
+      if (!admin) {
+        return ERROR_ACCOUNT_NOT_FOUND
+      }
+
+      const company = new Company()
+      company.fill({
+        slug: crypto.randomUUID(),
+        isVerify: false,
+        accountId: admin.id,
+      })
+      await company.save()
+
       await company.related('admin').associate(admin)
 
-      await company
-        .related('details')
-        .query()
-        .where('is_active', true)
-        .update({ is_active: false })
+      await company.related('details').create(versionData)
 
-      await company.related('details').create({
-        ...details,
-        isActive: true,
-      })
+      return await company.load('details')
 
-      responseData = await company.save()
+    } catch (error) {
+      if (error.code === "ER_DUP_ENTRY") {
+        return ERROR_DUPLICATE_COMPANY
+      }
+      return "Internal error"
+    }
+  }
+
+
+  async updateCompany(slug: string | null, data: any) {
+    const { adminId, detailId, isVerify } = data
+
+    const company = await Company.findBy('slug', slug)
+    if (!company) {
+      return 'Invalid Company Info'
     }
 
-    return responseData !== null ? responseData : null
+    if (adminId) {
+      const admin = await Account.findBy('slug', adminId)
+      if (admin) {
+        await company.related('admin').associate(admin)
+      }
+    }
+
+    if (detailId) {
+
+      const version = await CompanyVersion.find(detailId)
+
+
+      if (version && version.company_id == company.id) {
+
+        await CompanyVersion
+          .query()
+          .where('company_id', company.id)
+          .where('is_active', true)
+          .update({ is_active: false })
+
+        version.isActive = true
+        await version!.save()
+
+      }
+
+    }
+
+    if (typeof isVerify === 'boolean') {
+      company.isVerify = isVerify
+    }
+
+    await company.load('activeDetails')
+    await company.save()
+
+    return company
   }
+
 
   async destroyCompany(company_slug: string) {
     const company = await Company.findBy('slug', company_slug)
@@ -68,14 +113,30 @@ export class CompanyService {
     return
   }
 
-  async getCompaversion(slug: any) {
-    const company: Company | null = await Company.findBy('slug', slug)
-    let responseData = null
+  async getCompanyDetails(accountId: number | undefined): Promise<Company | { error: string }> {
+    try {
 
-    if (company) {
-      responseData = Company
+      if (!accountId) {
+        return { error: 'Account not Found' }
+      }
+
+      const company = await Company.query()
+        .where('account_id', accountId)
+        .preload('activeDetails')
+        .firstOrFail()
+
+
+
+      if (!company) {
+        return { error: 'No company found for this account' }
+      }
+
+      return company
+    } catch (error) {
+      throw new Exception(`Failed to retrieve company details: ${error.message}`, {
+        status: 500,
+        code: 'E_COMPANY_RETRIEVAL_FAILED',
+      })
     }
-
-    return responseData
   }
 }

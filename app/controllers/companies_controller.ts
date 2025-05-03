@@ -1,31 +1,26 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import CompanyVersionPolicy from '#policies/company_version_policy'
 import { CompanyService } from '#services/company_service'
 import { createCompanyVersionsValidator } from '#validators/company_version'
 import { editCompanyValidator } from '#validators/company'
 import CompanyPolicy from '#policies/company_policy'
-import Account from '#models/account'
 import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
 import CompanyRequest from '#models/company_request'
 import { cleanCompanyData } from '#models/utils/helper'
-import auth from '@adonisjs/auth/services/main'
-import { Console, info } from 'console'
 
 @inject()
 export default class CompaniesController {
   constructor(private CompanyService: CompanyService) { }
-  /**
-   * Display a list of resource
-   */
-  async index({ }: HttpContext) { }
+
+  async index({  response}: HttpContext) {
+     const result = await this.CompanyService.getAllCompanies()
+     return response.json( result)    
+   }
 
 
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request, response, auth, params }: HttpContext) {
+
+  async store({ request, response, auth }: HttpContext) {
     try {
 
       if (!auth.user!.isAdmin) {
@@ -35,12 +30,12 @@ export default class CompaniesController {
       const company_request = await CompanyRequest.findBy('slug', request.input('slug_request'))
       
       const validData = await createCompanyVersionsValidator.validate(company_request)
-      
+      console.log({validData});
       const data = cleanCompanyData(validData)
-      console.log(company_request)
-      console.log("company_requestadminId \n\n")
-      console.log(company_request!.adminId)
-      return response.json( await this.CompanyService.createCompany(company_request!.adminId,data))
+      console.log({data});
+      
+      console.log(company_request!.accountId)
+      return response.json( await this.CompanyService.createCompany(company_request!.accountId,data))
     } catch (error) {
       console.log(error);
       if (error instanceof errors.E_VALIDATION_ERROR) {
@@ -51,38 +46,38 @@ export default class CompaniesController {
     }
   }
 
-  /**
-   * Show individual record
-   */
-  async show({ params, response }: HttpContext) {
+
+  async show({ response,auth }: HttpContext) {
 
     try {
-      const company_slug = params!.company_slug
+      const accountId=auth?.user?.account.id 
 
-      return response.json(await this.CompanyService.getCompaversion(company_slug))
+      
+      return response.json(await this.CompanyService.getCompanyDetails(accountId))
     } catch (error) {
       return response.json(error)
     }
 
   }
 
-  /**
-   * Edit individual record
-   */
-  async edit({ request, response, bouncer, params }: HttpContext) {
 
+  async edit({ request, response, params ,auth}: HttpContext) {
     try {
-
-      if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
-
+     
+      if (!auth.user!.isAdmin) {
         return response.forbidden("You don't have access to this Ressources")
-      }
-
-
+      }   
+  
       const data = await editCompanyValidator.validate(request.all())
-
-      return response.json(this.CompanyService.updateCompany(params.slug, data))
+      
+      const updatedCompany = await this.CompanyService.updateCompany(params.company_slug, data)
+  
+      
+      return response.ok(updatedCompany)
+  
     } catch (error) {
+      console.log(error);
+      
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
       } else {
@@ -90,19 +85,13 @@ export default class CompaniesController {
       }
     }
   }
-
-
-
-  /**
-   * Delete record
-   */
-  async destroy({ params, bouncer, response }: HttpContext) {
+  
+  async destroy({ params, auth, response }: HttpContext) {
     try {
 
-      if (await bouncer.with(CompanyPolicy).denies('approve_or_desapprove')) {
-
+      if (!auth.user!.isAdmin) {
         return response.forbidden("You don't have access to this Ressources")
-      }
+      }  
 
       if (params.company_slug) {
         return response.json(await this.CompanyService.destroyCompany(params.company_slug))

@@ -6,31 +6,31 @@ import { createCompanyVersionsValidator, editCompanyVerionsValidator } from '#va
 import { errors } from '@vinejs/vine'
 import Account from '#models/account'
 import Company from '#models/company'
+import auth from '@adonisjs/auth/services/main'
 
 @inject()
 export default class CompaniesVersionController {
   constructor(private CompanyVersionService: CompanyVersionService) { }
-  /** 
-   * Display a list of resource
-   */
+
   async index({ }: HttpContext) { }
 
 
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request, response, bouncer, params }: HttpContext) {
+
+  async store({ request, response, bouncer ,auth,params}: HttpContext) {
     try {
 
-      const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
+      const account: Account| null | undefined = auth.user?.account
+
       if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
 
         return  response.forbidden("You don't have access to this Ressources")
       }
 
       const data = await createCompanyVersionsValidator.validate(request.all())
-      return response.json(await this.CompanyVersionService.createCompanyVersion(data))
+      const company :Company|null= await Company.findBy('slug',params!.company_slug)
+
+      return response.json(await this.CompanyVersionService.createCompanyVersion(company,data))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
@@ -40,24 +40,20 @@ export default class CompaniesVersionController {
     }
   }
 
-  /**
-   * Show individual record
-   */
+
   async show({ params, response }: HttpContext) {
 
     try {
       const company_version_slug = params!.company_version_slug
 
-      return response.json(await this.CompanyVersionService.getCompaversion(company_version_slug))
+      return response.json(await this.CompanyVersionService.getCompanyversion(company_version_slug))
     } catch (error) {
       return response.json(error)
     }
 
   }
 
-  /**
-   * Edit individual record
-   */
+
   async edit({ request, response, bouncer, params }: HttpContext) {
     try {
 
@@ -85,9 +81,7 @@ export default class CompaniesVersionController {
 
   }
 
-  /**
-   * Delete record
-   */
+
   async destroy({ params, bouncer, response }: HttpContext) {
     try {
 

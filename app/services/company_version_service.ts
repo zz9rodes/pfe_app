@@ -1,14 +1,27 @@
+import Company from "#models/company"
 import CompanyVersion from "#models/company_version"
-import { HttpContext } from "@adonisjs/core/http"
-HttpContext
 
+
+const ERROR_INVALID_COMPANY = 'Invalid Company Id'
 export class CompanyVersionService {
-  async createCompanyVersion(data: any) {
-    const companyVersion = new CompanyVersion()
-
-    await companyVersion.fill(data).save()
-    return companyVersion
+  async createCompanyVersion(company: Company | null, companyVersionData: any) {
+    if (!company) {
+      return ERROR_INVALID_COMPANY
+    }
+  
+    const version = await company.related('details').create(companyVersionData)
+  
+    await company.save()
+  
+    if (companyVersionData.isActive) {
+      await this.ActiveCompanyversion(version.id)
+    }
+  
+    await company.load('activeDetails')
+  
+    return company
   }
+  
 
   async editCompanyVersion(data: any, params: Record<string, any>) {
     const companyVersion = await CompanyVersion.findBy('slug', params.company_version_slug)
@@ -27,7 +40,7 @@ export class CompanyVersionService {
     return 
   }
 
-  async getCompaversion(slug:any) {
+  async getCompanyversion(slug:any) {
     const companyVersion: CompanyVersion|null=await CompanyVersion.findBy('slug',slug)
     let responseData=null
    
@@ -36,5 +49,25 @@ export class CompanyVersionService {
     }
 
     return responseData
+  }
+
+  async ActiveCompanyversion(id: number) {
+    const targetVersion = await CompanyVersion.find(id)
+
+    if (!targetVersion) {
+      throw new Error('CompanyVersion not found')
+    }
+
+    const companyId = targetVersion.company_id
+
+    await CompanyVersion
+      .query()
+      .where('company_id', companyId)
+      .update({ isActive: false })
+
+    targetVersion.isActive = true
+    await targetVersion.save()
+
+    return targetVersion
   }
 }

@@ -36,7 +36,6 @@ export default class Account extends BaseModel {
   @column()
   declare avatarUrl: string|null
 
-  
   @column()
   declare address: Address|null
 

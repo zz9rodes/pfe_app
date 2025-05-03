@@ -3,8 +3,8 @@ import CompanyRequest from "#models/company_request"
 import User from "#models/user"
 
 export class CompaniesRequestService {
-  async RequestCompany(admin: User, data: any) {
-    const account= admin.account
+  async RequestCompany(user: User, data: any) {
+    const account= user.account
 
     if(!account){
         return "You Need to Complete Your Profile Before"
@@ -13,13 +13,13 @@ export class CompaniesRequestService {
     const companyRequest = new CompanyRequest()
 
     const isAlreadyRequest=await CompanyRequest.findBy('admin_id',account.id)
-    const isAlreadyCompany =await Company.findBy('admin_id',account.id)
+    const isAlreadyCompany =await Company.findBy('account_id',account.id)
 
     if(isAlreadyRequest || isAlreadyCompany){
      return "Your Already have A company"
     }
     companyRequest.fill(data)
-    companyRequest.adminId = account.id
+    companyRequest.accountId = account.id
     companyRequest.slug= crypto.randomUUID()
     await companyRequest.save()
     return companyRequest

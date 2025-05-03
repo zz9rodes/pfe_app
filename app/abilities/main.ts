@@ -28,3 +28,8 @@ export const  editAccount =  Bouncer.ability( async(me: User, slug: string|any) 
   await me.load('account')  
   return (me.account.slug === slug) || (me.isAdmin==true)
 })
+
+export const  manageCompaniesVersion =  Bouncer.ability( async(me: User, slug: string|any) =>  {
+  await  me.account.load('company')
+  return (me?.account?.company?.slug === slug) || (me.isAdmin==true)
+})

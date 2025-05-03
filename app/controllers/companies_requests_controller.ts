@@ -14,7 +14,7 @@ export default class CompaniesRequestsController {
     async store({ request, response, bouncer, params,auth }: HttpContext) {
 
         try {
-            const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
+            const account: Account | null |undefined = request.input('slug') ? await Account.findBy('slug', request.input('slug')) : null
             if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
 
                 return response.forbidden("You don't have access to this Ressources")

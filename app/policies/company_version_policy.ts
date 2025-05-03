@@ -7,8 +7,7 @@ import Company from '#models/company'
 
 export default class CompanyVersionPolicy extends BasePolicy {
 
-   create(user: User, account: Account|null): AuthorizerResponse {
-    
+   create(user: User, account: Account|undefined|null): AuthorizerResponse {
     
     
     const isOwner = user.account.id === account!.id!

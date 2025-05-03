@@ -4,8 +4,10 @@ import { AuthorizerResponse } from '@adonisjs/bouncer/types'
 
 export default class CompanyPolicy extends BasePolicy {
 
-    approve_or_desapprove(user: User): AuthorizerResponse {
-     return user.isAdmin 
-   }
+    approve_or_desapprove(user: User): boolean {
+      console.log(user.isAdmin)
+      return  user.isAdmin
+    }
+  }
+  
    
-}

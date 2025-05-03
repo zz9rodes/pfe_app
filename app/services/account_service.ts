@@ -1,12 +1,21 @@
 import Account from "#models/account";
 import User from "#models/user";
+import { AccountType } from "#models/utils/index";
 
 
 export class AccountService {
   // Your code here
 
-  async createAccount(data: any, user: User) {
+  async createAccount(data: any, userId: number) {
     try {
+      const user= await User.find(userId)
+
+      if(!user){
+        return {
+          error: 'Something When Rong',
+        }
+      }
+
       await user.load('account')
 
       if (user.account) {
@@ -64,11 +73,23 @@ export class AccountService {
     await user!.load('account')
     const account = user!.account
 
+    if(account.accountType==AccountType.COMPANIES){
+      await account.load('company')
+    }
+
     return {account}
   }
 
   async getAllAccount(){
     const accounts= await Account.all()
+
+    accounts.forEach( async (account)=>{
+      if(account.accountType==AccountType.COMPANIES){
+       await  account.load('company', async (company)=>{
+          await company.preload('activeDetails')
+        })
+      }
+    })
 
     return accounts;
   }

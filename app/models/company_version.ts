@@ -46,7 +46,7 @@
 
 
 //   @column()
-//   declare registrationNnumber :string
+//   declare registrationNumber :string
 
 //   @column()
 //   declare certificateOfIncorporation :string
@@ -65,7 +65,7 @@
 // }
 
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { afterFind, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import { Address } from './utils/index.js'
 import Company from './company.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
@@ -111,7 +111,7 @@ export default class CompanyVersion extends BaseModel {
   declare socialStatus: string
 
   @column()
-  declare registrationNnumber: string
+  declare registrationNumber: string
 
   @column()
   declare certificateOfIncorporation: string
@@ -119,13 +119,20 @@ export default class CompanyVersion extends BaseModel {
   @column()
   declare isActive: boolean
 
-  @column()
-  declare companyId: number
+
+  @column({ columnName: 'company_id' })
+  declare company_id: number
 
   @belongsTo(() => Company, {
-    foreignKey: 'companyId',
+    foreignKey: 'company_id',
   })
   declare company: BelongsTo<typeof Company>
+
+
+    @afterFind()
+    static async loadAccount(companyVersion: CompanyVersion) {
+        await  companyVersion.load('company')
+    }
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

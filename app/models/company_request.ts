@@ -47,13 +47,13 @@ export default class CompanyRequest extends BaseModel {
 
   
   @column()
-  declare registrationNnumber :string
+  declare registrationNumber :string
 
   @column()
   declare certificateOfIncorporation :string
 
   @column()
-  declare adminId:number
+  declare accountId:number
 
   @column()
   declare isActive: boolean

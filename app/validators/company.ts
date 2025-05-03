@@ -3,7 +3,7 @@ import vine from '@vinejs/vine'
 
 export const editCompanyValidator =vine.compile(
     vine.object({
-    admin: vine.number().positive().optional() ,
+    adminId: vine.string().optional() , //account slug
     isVerify: vine.boolean().optional() ,
-    details:vine.number().positive().optional()
+    detailId:vine.number().positive().optional() //company version Id
 }))

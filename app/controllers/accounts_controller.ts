@@ -9,23 +9,19 @@ import User from '#models/user'
 export default class AccountsController {
   constructor(private AccountService: AccountService) {}
 
-  /**
-   * Display a list of resource
-   */
+
   async index({response}: HttpContext) {
       return response.json( await this.AccountService.getAllAccount())
   }
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request, response, auth }: HttpContext) {
+
+  async store({ request, response }: HttpContext) {
     try {
-      const user: User = auth.user!
+      const userId: number = request.input('userId')
 
       const data = await createAccountValidator.validate(request.all())
       
-      return response.json(await this.AccountService.createAccount(data, user))
+      return response.json(await this.AccountService.createAccount(data, userId))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
@@ -35,9 +31,7 @@ export default class AccountsController {
     }
   }
 
-  /**
-   * Show individual record
-   */
+
   async show({ response,auth }: HttpContext) {
     try {
     const  user=auth.user
@@ -48,9 +42,7 @@ export default class AccountsController {
     }
   }
 
-  /**
-   * Edit individual record
-   */
+
   async edit({ request,response,params }: HttpContext) {
 
     
@@ -68,9 +60,7 @@ export default class AccountsController {
     }
   }
 
-  /**
-   * Delete record
-   */
+
   async destroy({response, params }: HttpContext) {
     try {
       const id=params.id
@@ -84,7 +74,7 @@ export default class AccountsController {
     }
   }
 
-  async findByname({request,response,params}:HttpContext){
+  async findByname({request,response}:HttpContext){
      try {
 
      const query = request.input('query')

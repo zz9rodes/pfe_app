@@ -5,8 +5,7 @@ import { middleware } from '#start/kernel'
 
 
 router.group(()=>{
-    router.post('/create',[AccountsController,'store'])
-    // router
+    router.post('/create/',[AccountsController,'store'])
     router.put('/update/:slug',[AccountsController,'edit']).where('slug',router.matchers.uuid()).use([
         middleware.auth(),
         middleware.manageAccount()
@@ -32,4 +31,4 @@ router.group(()=>{
         middleware.onlyAdmin()
     ])
 
-}).prefix('/v1/api/accounts').use(middleware.auth())
+}).prefix('/v1/api/accounts')

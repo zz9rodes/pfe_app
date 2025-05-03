@@ -9,6 +9,7 @@ export const createUserValidator = vine.compile(
             return result.length ? false : true
         }),
         password: vine.string().minLength(9).optional(),
+        isAdmin:vine.boolean().optional()
     })
 )
 

@@ -5,14 +5,6 @@ import { editAccount } from '#abilities/main'
 export default class ManageAccountMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
 
-    /**
-     * Middleware logic goes here (before the next call)
-     */
-
-    /**
-     * Call next method in the pipeline and return its output
-     */
-
      if (await ctx.bouncer.allows(editAccount, ctx.params.slug)) {        
         return await next()
       }

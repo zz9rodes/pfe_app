@@ -39,6 +39,8 @@ router.use([() => import('@adonisjs/core/bodyparser_middleware'), () => import('
  * the routes or the routes group.
  */
 export const middleware = router.named({
+  manageCompanies: () => import('#middleware/manage_companies_middleware'),
+  getCompaniesDetails: () => import('#middleware/get_companies_details_middleware'),
   onlyAdmin: () => import('#middleware/only_admin_middleware'),
   manageAccount: () => import('#middleware/manage_account_middleware'),
   auth: () => import('#middleware/auth_middleware'),

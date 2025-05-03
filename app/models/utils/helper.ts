@@ -30,9 +30,8 @@ export function removeEmptyFields(obj) {
 
 
   
-  type CompanyOutput = Omit<CompanyRequest, 'id' | 'slug' | 'accountId' | 'createdAt' | 'updatedAt'>
   
- export function cleanCompanyData(company: any): CompanyOutput {
+ export function cleanCompanyData(company: any) {
     const {
       id,
       slug,

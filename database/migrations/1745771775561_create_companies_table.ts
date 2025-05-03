@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('slug').unique().notNullable()
       table.boolean('is_verify').defaultTo(false)
-      table.integer('account_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE').notNullable();
+      table.integer('account_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE').unique();
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
