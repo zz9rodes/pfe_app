@@ -1,5 +1,7 @@
 import Company from "#models/company"
 import CompanyVersion from "#models/company_version"
+import { messages } from "@vinejs/vine/defaults"
+import { ok } from "assert"
 
 
 const ERROR_INVALID_COMPANY = 'Invalid Company Id'
@@ -23,21 +25,21 @@ export class CompanyVersionService {
   }
   
 
-  async editCompanyVersion(data: any, params: Record<string, any>) {
-    const companyVersion = await CompanyVersion.findBy('slug', params.company_version_slug)
+  async editCompanyVersion(data: any, versionId:number) {
+    const companyVersion = await CompanyVersion.find(versionId)
 
-
-    return params.company_version_slug ? await companyVersion?.fill(data).save() : null
+    return versionId ? await companyVersion?.merge(data).save() : null
   }
 
-  async destroyCompanyVersion(company_version_slug:string){
-    const companyVersion = await CompanyVersion.findBy('slug', company_version_slug)
+  async destroyCompanyVersion(version_id:string){
+    const companyVersion = await CompanyVersion.find(version_id)
 
     if(companyVersion){
       await companyVersion.delete()
     }
-
-    return 
+    return  {
+      messages:"ok"
+    }
   }
 
   async getCompanyversion(slug:any) {

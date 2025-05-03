@@ -6,15 +6,15 @@ import { middleware } from '#start/kernel'
 
 router.group(()=>{
     router.post('/create/',[AccountsController,'store'])
-    router.put('/update/:slug',[AccountsController,'edit']).where('slug',router.matchers.uuid()).use([
+    router.put('/:slug/update',[AccountsController,'edit']).where('slug',router.matchers.uuid()).use([
         middleware.auth(),
         middleware.manageAccount()
     ])
 
-    router.delete('/destroy/:id',[AccountsController,'destroy']).where('id',router.matchers.uuid())
+    router.delete('/:id/destroy',[AccountsController,'destroy']).where('id',router.matchers.number())
     .use([
         middleware.auth(),
-        middleware.manageAccount()
+        middleware.onlyAdmin()
     ])
 
     router.get('/',[AccountsController,'show']).use([

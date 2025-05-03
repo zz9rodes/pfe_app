@@ -7,6 +7,7 @@ import { errors } from '@vinejs/vine'
 import Account from '#models/account'
 import Company from '#models/company'
 import auth from '@adonisjs/auth/services/main'
+import CompanyVersion from '#models/company_version'
 
 @inject()
 export default class CompaniesVersionController {
@@ -57,21 +58,27 @@ export default class CompaniesVersionController {
   async edit({ request, response, bouncer, params }: HttpContext) {
     try {
 
-      const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
-      if (await bouncer.with(CompanyVersionPolicy).denies('edit', account)) {
+      const company: Company|undefined|null= await Company.findBy('slug',params.company_slug)
+
+      if (await bouncer.with(CompanyVersionPolicy).denies('edit', company)) {
 
         return  response.forbidden("You don't have access to this Ressources")
       }
 
-      if (params.company_version_slug) {
+      const vesion: CompanyVersion | null = params.version_id ? await CompanyVersion.findBy('id', params.version_id) : null
+
+
+      if (vesion?.id) {
         const data = await editCompanyVerionsValidator.validate(request.all())
-        return response.json(await this.CompanyVersionService.editCompanyVersion(data, params))
+        return response.json(await this.CompanyVersionService.editCompanyVersion(data, vesion?.id))
       }
 
       return
 
 
     } catch (error) {
+      console.log(error);
+      
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
       } else {
@@ -85,14 +92,14 @@ export default class CompaniesVersionController {
   async destroy({ params, bouncer, response }: HttpContext) {
     try {
 
-      const account: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
-      if (await bouncer.with(CompanyVersionPolicy).denies('delete', account)) {
+      const company: Company | null = params.company_slug ? await Company.findBy('slug', params.company_slug) : null
+      if (await bouncer.with(CompanyVersionPolicy).denies('delete', company)) {
 
         return  response.forbidden("You don't have access to this Ressources")
       }
 
-      if (params.company_version_slug) {
-        return response.json(await this.CompanyVersionService.destroyCompanyVersion(params.company_version_slug))
+      if (params.version_id) {
+        return response.json(await this.CompanyVersionService.destroyCompanyVersion(params.version_id))
       }
 
       return

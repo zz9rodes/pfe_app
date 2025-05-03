@@ -1,6 +1,7 @@
 import Account from "#models/account";
 import User from "#models/user";
 import { AccountType } from "#models/utils/index";
+import { messages } from "@vinejs/vine/defaults";
 
 
 export class AccountService {
@@ -56,13 +57,20 @@ export class AccountService {
 
   }
 
-  async destroyAccount(id: any) {
+  async destroyAccount(accounId: any) {
+    console.log("dans le service account")
+    console.log(accounId);
+    
     try {
-      const account: Account | null = await Account.find(id)
+      const account: Account | null = await Account.find(accounId)
+      console.log(account);
+      
       if (account) {
         await account.delete()
       }
-      return
+      return {
+        message:"ok"
+      }
     } catch (error) {
       return error
     }

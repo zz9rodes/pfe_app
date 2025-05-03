@@ -19,13 +19,22 @@ router.group(()=>{
         middleware.manageCompanies()
     ])
 
-    router.delete('/destroy/:id',[CompaniesController,'destroy']).where('id',router.matchers.uuid())
+    router.delete('/:company_slug/destroy',[CompaniesController,'destroy']).where('company_slug',router.matchers.uuid())
     .use([
         middleware.manageAccount()
     ])
 
     router.group(()=>{
             router.post('/create',[CompaniesVersionController,'store'])
+
+            router.group(()=>{
+
+                router.put('/update',[CompaniesVersionController,'edit'])
+
+                router.delete('/destroy',[CompaniesVersionController,'destroy'])
+
+            }).prefix('/:version_id').where('version_id',router.matchers.number())
+
     }).prefix('/:company_slug/companies_versions').where('company_slug',router.matchers.uuid()).use([
         middleware.manageCompanies()
     ])

@@ -58,6 +58,11 @@ export default class Company extends BaseModel {
     foreignKey: 'accountId', 
   })
   declare admin: BelongsTo<typeof Account>
+
+  @afterFind()
+      static async loadAdmin(company: Company) {
+      await  company.load('admin')
+  }
   
 
   @hasMany(() => CompanyVersion, {
@@ -76,7 +81,7 @@ export default class Company extends BaseModel {
 
 
   @afterFind()
-  static async loadAccount(company: Company) {
+  static async loadactiveDetails(company: Company) {
       await  company.load('activeDetails')
   }
 
