@@ -5,7 +5,7 @@ import Link from './link.js'
 import Education from './education.js'
 import WorkExperience from './work_experience.js'
 import Account from './account.js'
-import PersonalProject from './personnal_project.js'
+import PersonalProject from './personal_project.js'
 
 export default class CvProfile extends BaseModel {
   @column({ isPrimary: true })

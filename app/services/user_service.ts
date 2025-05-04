@@ -38,7 +38,6 @@ export default class UserService {
       const user = await User.find(id);
 
       if (!user) {
-        console.error(`Aucun utilisateur trouvé avec l'ID : ${id}`);
         return null;
       }
 
@@ -51,7 +50,6 @@ export default class UserService {
 
       return user;
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
       throw error;
     }
   }

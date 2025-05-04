@@ -5,7 +5,6 @@ import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
 import User from '#models/user'
 import { editUser } from '#abilities/main'
-import auth from '@adonisjs/auth/services/main'
 
 @inject()
 export default class UsersController {

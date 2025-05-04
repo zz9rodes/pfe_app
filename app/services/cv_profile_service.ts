@@ -11,7 +11,6 @@ export class CvProfileService {
       ...cv_info
     } = data;
 
-    console.log("dans le service");
     
 
     const existingCvProfile = await account.related('cvProfiles').query().first();

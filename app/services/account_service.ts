@@ -33,7 +33,6 @@ export class AccountService {
       return account
 
     } catch (error) {
-      console.error(error.message)
 
       return {
         error: 'An unexpected error occurred while creating the account',

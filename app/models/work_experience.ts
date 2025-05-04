@@ -37,7 +37,7 @@ export default class WorkExperience extends BaseModel {
 
   @belongsTo(() => CvProfile)
   declare cvProfile: BelongsTo<typeof CvProfile>
-
+  
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
