@@ -19,9 +19,7 @@ export default class CompanyVersionPolicy extends BasePolicy {
 
   edit(user: User, company: Company|undefined|null): AuthorizerResponse {
     
-    console.log(user.account.id);
-    console.log(company?.accountId);
-    console.log(company?.admin);
+
     
     
     const isAdmin = user.account.roles === AppRoles.ADMIN

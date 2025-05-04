@@ -45,7 +45,6 @@ export default class UserService {
       const userEmail = await User.findBy('email', data.email)
 
       if (!userEmail) {
-        console.log("ici on est arriver")
         user.merge(data);
         await user.save();
       }
@@ -66,7 +65,6 @@ export default class UserService {
 
       return { token, user }
     } catch (error) {
-      console.log(error)
       return { error }
     }
   }
@@ -76,7 +74,6 @@ export default class UserService {
 
     await user?.load('account')
     // await user?.load('profile')
-    console.log(user)
     return user
 
   }

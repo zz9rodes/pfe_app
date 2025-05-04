@@ -29,14 +29,10 @@ export default class CompaniesController {
       const company_request = await CompanyRequest.findBy('slug', request.input('slug_request'))
       
       const validData = await createCompanyVersionsValidator.validate(company_request)
-      console.log({validData});
       const data = cleanCompanyData(validData)
-      console.log({data});
       
-      console.log(company_request!.accountId)
       return response.json( await this.CompanyService.createCompany(company_request!.accountId,data))
     } catch (error) {
-      console.log(error);
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
       } else {
@@ -75,7 +71,6 @@ export default class CompaniesController {
       return response.ok(updatedCompany)
   
     } catch (error) {
-      console.log(error);
       
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)

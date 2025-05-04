@@ -24,7 +24,7 @@ export default class extends BaseSchema {
       table.string('back_id_card').notNullable()
       table.timestamp('created_at').nullable()
       table.timestamp('updated_at').nullable()
-      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').notNullable();
+      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').unique().notNullable();
     })
   }
 

@@ -12,6 +12,7 @@ import router from '@adonisjs/core/services/router'
 import  './routes/v1/auth/index.js'
 import './routes/v1/account/index.js'
 import './routes/v1/company/index.js'
+import './routes/v1/cv_profile/index.js'
 
 router.get('/', async () => {
   return {

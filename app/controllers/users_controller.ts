@@ -71,7 +71,6 @@ export default class UsersController {
       await user.delete()
       return response.noContent()
     } catch (error) {
-      console.log(error);
       return response.status(500).json(error)
     }
   }
@@ -82,7 +81,6 @@ export default class UsersController {
       await User.accessTokens.delete(user, user.currentAccessToken.identifier)
       return response.noContent()
     } catch (error) {
-      console.log(error);
       return response.status(500).json(error)
     }
   }

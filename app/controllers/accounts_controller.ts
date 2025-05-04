@@ -64,7 +64,6 @@ export default class AccountsController {
   async destroy({response, params }: HttpContext) {
     try {
       const accounId=params.id
-      console.log(accounId);
       return response.json(await this.AccountService.destroyAccount(accounId))
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
@@ -83,7 +82,6 @@ export default class AccountsController {
      return response.json(await this.AccountService.FindAccountByname(query))
       
      } catch (error) {
-      console.log(error);
       
        return {error}
      }

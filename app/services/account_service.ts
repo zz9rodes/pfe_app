@@ -58,12 +58,9 @@ export class AccountService {
   }
 
   async destroyAccount(accounId: any) {
-    console.log("dans le service account")
-    console.log(accounId);
     
     try {
       const account: Account | null = await Account.find(accounId)
-      console.log(account);
       
       if (account) {
         await account.delete()

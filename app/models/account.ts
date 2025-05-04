@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import type {BelongsTo,HasOne} from '@adonisjs/lucid/types/relations'
-import { BaseModel, column,belongsTo ,hasOne} from '@adonisjs/lucid/orm'
+import { BaseModel, column,belongsTo ,hasOne, afterFind} from '@adonisjs/lucid/orm'
 import { AccountType,Address } from './utils/index.js'
 import User from './user.js'
 import Company from './company.js'
@@ -65,6 +65,11 @@ export default class Account extends BaseModel {
 
   @column()
   declare roles:string|null
+
+    @afterFind()
+      static async loadaDetails(account: Account) {
+        await account.load('cvProfiles')
+    }
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

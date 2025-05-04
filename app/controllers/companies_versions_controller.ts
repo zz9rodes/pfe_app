@@ -77,7 +77,6 @@ export default class CompaniesVersionController {
 
 
     } catch (error) {
-      console.log(error);
       
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)

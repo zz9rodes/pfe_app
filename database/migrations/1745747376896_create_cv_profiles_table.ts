@@ -18,6 +18,7 @@ export default class CvProfiles extends BaseSchema {
         .references('id')
         .inTable('accounts')
         .onDelete('CASCADE')
+        .unique()
         .notNullable()
 
     })

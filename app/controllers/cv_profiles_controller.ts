@@ -1,133 +1,104 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { CvProfileService } from '#services/cv_profile_service'
-import { createCvProfileValidator,updateCvProfileValidator } from '#validators/cv_profile'
+import { createCvProfileValidator, updateCvProfileValidator } from '#validators/cv_profile'
 import { errors } from '@vinejs/vine'
 import CvProfilePolicy from '#policies/cv_profile_policy'
 import CvProfile from '#models/cv_profile'
-import Account from '#models/account'
 
 
 
 @inject()
 export default class CvProfilesController {
-  constructor(private CvProfileService:CvProfileService){}
-  /**
-   * Display a list of resource
-   */
-  async index({}: HttpContext) {}
+  constructor(private CvProfileService: CvProfileService) { }
 
-  /**
-   * handle the form to create a new record
-   */
+  async index({ }: HttpContext) { }
+
+  
+
   async store({ request, response, auth }: HttpContext) {
     try {
       const user = auth.user
-  
+
       if (!user) {
-        return  response.unauthorized()
+        return response.unauthorized()
       }
-  
+
       const data = await createCvProfileValidator.validate(request.all())
-  
+
       await user.load('account')
-  
+
       const account = user.account
-  
+
       if (!account) {
-        return  response.badRequest({ message: 'Aucun compte associé trouvé pour cet utilisateur.' })
+        return response.badRequest({ message: 'You Need to Complete Your Profile' })
       }
-  
+
       const cvProfile = await this.CvProfileService.create(account, data)
-  
-      return  response.json(cvProfile)
+
+      return response.json(cvProfile)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(error)
       } else {
         return response.internalServerError({ message: 'Internal Server Error.', error })
-      }      
+      }
     }
   }
-  
 
-  /**
-   * Show individual record
-   */
-  async show({ params }: HttpContext) {}
 
-  /**
-   * Edit individual record
-   */
-  // async edit({ request, response, auth }: HttpContext) {
-  //   try {
-  //     const user = auth.user
-  
-  //     if (!user) {
-  //       return  response.unauthorized()
-  //     }
-  
-  //     const data = await updateCvProfileValidator.validate(request.all())
-  
-  //     await user.load('account')
-  
-  //     const account = user.account
-  
-  //     if (!account) {
-  //       return  response.badRequest({ message: 'Aucun compte associé trouvé pour cet utilisateur.' })
-  //     }
-  
-  //     const cvProfile = await this.CvProfileService.update(data)
-  
-  //     return  response.json(cvProfile)
-  //   } catch (error) {
-  //     if (error instanceof errors.E_VALIDATION_ERROR) {
-  //       return response.status(422).json(error)
-  //     } else {
-  //       return response.internalServerError({ message: 'Internal Server Error.', error })
-  //     }      
-  //   }
-  // }
 
-  async edit({ request, response, auth, bouncer }: HttpContext) {
+  async show({ params,response }: HttpContext) {
+
+    const slug=params.cvProfileId
+
+    const result= await this.CvProfileService.getCvprofileDetails(slug)
+
+    return response.json(result)
+
+   }
+
+  async edit({ request, response, auth, bouncer,params }: HttpContext) {
     try {
+
       const user = auth.user
 
       if (!user) {
-        return  response.unauthorized()
+        return response.unauthorized()
       }
+
+
 
       const data = await updateCvProfileValidator.validate(request.all())
 
-      const slug_cv_profile = request.param('slug')
+      const cvProfileId = params.cvProfileId
 
-      const cvProfile = await CvProfile.findBy('slug',slug_cv_profile)
 
-      if(cvProfile){
+      const cvProfile = await CvProfile.findBy('slug', cvProfileId)
+
+      if (cvProfile) {
         await cvProfile.load('account')
 
-          await bouncer.with(CvProfilePolicy).authorize('edit',cvProfile?.accountId)
-  
-        const updatedCvProfile = await this.CvProfileService.update(slug_cv_profile, data)
-        return  response.json(updatedCvProfile)
+        await bouncer.with(CvProfilePolicy).authorize('edit', cvProfile?.accountId)
+
+        const updatedCvProfile = await this.CvProfileService.update(cvProfileId, data)
+        return response.json(updatedCvProfile)
 
       }
 
-      return  response.badRequest()
+      return response.badRequest()
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return  response.status(422).json(error.messages)
+        return response.status(422).json(error.messages)
       } else if (error.status === 403) {
-        return  response.forbidden('Vous n\'êtes pas autorisé à modifier ce profil.')
+        return response.forbidden('Vous n\'êtes pas autorisé à modifier ce profil.')
       } else {
-        return  response.internalServerError({ message: 'Erreur interne du serveur.', error })
+        return response.internalServerError({ message: 'Erreur interne du serveur.', error })
       }
     }
   }
 
 
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {}
+
+async destroy({ params }: HttpContext) { }
 }

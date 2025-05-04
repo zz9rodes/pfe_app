@@ -12,6 +12,7 @@
 |
 */
 
+import CvProfile from '#models/cv_profile'
 import User from '#models/user'
 import { Bouncer } from '@adonisjs/bouncer'
 
@@ -20,16 +21,26 @@ import { Bouncer } from '@adonisjs/bouncer'
  * Delete the following ability to start from
  * scratch
  */
-export const  editUser =  Bouncer.ability((me: User, id: any) =>  {
-  return (me.id === id) || (me.isAdmin==true)
+export const editUser = Bouncer.ability((me: User, id: any) => {
+  return (me.id === id) || (me.isAdmin == true)
 })
 
-export const  editAccount =  Bouncer.ability( async(me: User, slug: string|any) =>  {
-  await me.load('account')  
-  return (me.account.slug === slug) || (me.isAdmin==true)
+export const editAccount = Bouncer.ability(async (me: User, slug: string | any) => {
+  return (me.account && (me.account.slug === slug)) || (me.isAdmin == true)
 })
 
-export const  manageCompaniesVersion =  Bouncer.ability( async(me: User, slug: string|any) =>  {
-  await  me.account.load('company')
-  return (me?.account?.company?.slug === slug) || (me.isAdmin==true)
+export const editCvprofile = Bouncer.ability(async (me: User, slug: string | any) => {
+
+  await me.account?.load('cvProfiles')
+
+  const cvProfile = me?.account?.cvProfiles
+
+  return ((cvProfile?.slug === slug)) || (me.isAdmin == true)
+})
+
+
+
+export const manageCompaniesVersion = Bouncer.ability(async (me: User, slug: string | any) => {
+  await me?.account?.load('company')
+  return (me?.account?.company?.slug === slug) || (me.isAdmin == true)
 })

@@ -11,7 +11,6 @@ import { removeEmptyFields } from '#models/utils/helper'
 export default class EmailEmiterService {
 
   public async sendEmail(data: EmailData): Promise<Email> {
-    console.log("nous somme enter dans le emiter")
     const email = await Email.create({
       ...data,
       status: 'pending',
@@ -33,15 +32,12 @@ export default class EmailEmiterService {
 
     try {
       try {
-        console.log(mailOptions);
 
         const info = await transporter.sendMail(removeEmptyFields(mailOptions));
-        console.log(info);
 
         email.status = 'sent';
         email.sent_at = DateTime.now();
       } catch (error) {
-        console.log(error);
         email.status = 'failed';
         email.error_message = error.message;
       }

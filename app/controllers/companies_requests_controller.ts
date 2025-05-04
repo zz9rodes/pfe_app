@@ -22,7 +22,6 @@ export default class CompaniesRequestsController {
             const data = await createCompanyVersionsValidator.validate(request.all())
             return response.json(await this.CompaniesRequestService.RequestCompany(auth!.user!,data))
         } catch (error) {
-            console.log(error);
             
             if (error instanceof errors.E_VALIDATION_ERROR) {
                 return response.status(422).json(error)
