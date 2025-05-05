@@ -6,7 +6,7 @@ export default class ManageCompaniesMiddleware {
    async handle(ctx: HttpContext, next: NextFn) {
   
     
-       if (await ctx.bouncer.allows(manageCompaniesVersion, ctx.params?.company_slug)) {        
+       if (await ctx.bouncer.allows(manageCompaniesVersion, ctx.params?.companyId)) {        
           return await next()
         }
           return  ctx.response.forbidden("you don't have permission")

@@ -42,5 +42,6 @@ export const editCvprofile = Bouncer.ability(async (me: User, slug: string | any
 
 export const manageCompaniesVersion = Bouncer.ability(async (me: User, slug: string | any) => {
   await me?.account?.load('company')
+  
   return (me?.account?.company?.slug === slug) || (me.isAdmin == true)
 })

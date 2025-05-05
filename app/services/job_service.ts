@@ -1,61 +1,80 @@
-
-
 import Job from '#models/job'
-import CvProfile from '#models/cv_profile' // Si nécessaire
+import Company from '#models/company'
+import { serializeFields, deserializeFields } from '#models/utils/helper'
+
+const jsonFields = ['details', 'recruitment_steps', 'price']
 
 export class JobService {
-  
-  async createNewJob(cvProfileId: string | any, data: any) {
-    try {
-      const cvProfile = await CvProfile.findBy('slug', cvProfileId)
 
-      if (!cvProfile) {
-        return { message: "Invalid Profile Id" }
-      }
+  async createNewJob(companyId: string, data: any) {
+    try {
+      const company = await Company.findBy('slug', companyId)
+      if (!company) return { message: 'Invalid company Id' }
+
+      data.slug = crypto.randomUUID()
+      serializeFields(data, jsonFields)
 
       const job = await Job.create(data)
-      // job.related('cvProfile').associate(cvProfile)
+      await job.related('company').associate(company)
+
+      deserializeFields(job, jsonFields)
       return job
     } catch (error) {
       return { error }
     }
   }
 
-  async updateJob(jobId: number | any, data: any) {
+  async updateJob(jobId: number, data: any) {
     try {
-      const job = await Job.find(jobId)
+      const job = await Job.findBy('slug',jobId)
+      if (!job) return { message: 'Invalid Job Id' }
 
-      if (!job) {
-        return { message: "Invalid Job Id" }
-      }
-
+      serializeFields(data, jsonFields)
       await job.merge(data).save()
+
+      deserializeFields(job, jsonFields)
       return job
     } catch (error) {
       return { error }
     }
   }
+
 
   async deleteJob(jobId: number) {
     try {
-      const job = await Job.find(jobId)
+      const job = await Job.findBy('slug',jobId)
+      if (!job) return { message: 'Job not found' }
 
-      if (job) {
-        await job.delete()
-      }
-
-      return { message: "ok" }
+      await job.delete()
+      return { message: 'ok' }
     } catch (error) {
       return { error }
     }
   }
 
-  async getAllJobs(account: any) {
-    if (!account) {
-      return { message: "User Don't Have an Account" }
+
+  async getAllCompayJobs(company: Company) {
+    if (!company) {
+      return { message: "User doesn't have a company account" }
     }
 
-    const jobs = await account.related('jobs').query()
+    const jobs = await Job.query().where('company_id', company.id)
+    deserializeFields(jobs, jsonFields)
     return jobs
+  }
+
+  async getAllJobs() {
+    const jobs = await Job.all()
+    deserializeFields(jobs, jsonFields)
+    return jobs
+  }
+
+
+  async getJobByJobId(jobId: string) {
+    const job = await Job.findBy('slug', jobId)
+    if (!job) return { message: 'Job not found' }
+
+    deserializeFields(job, jsonFields)
+    return job
   }
 }

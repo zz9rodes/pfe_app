@@ -14,14 +14,14 @@ router.group(()=>{
     router.get('/',[CompaniesController,'show']).use(middleware.getCompaniesDetails())
 
 
-    router.put('/:company_slug/update',[CompaniesController,'edit']).where('company_slug',router.matchers.uuid())
+    router.put('/:companyId/update',[CompaniesController,'edit']).where('companyId',router.matchers.uuid())
     .use([
         middleware.manageCompanies()
     ])
 
-    router.delete('/:company_slug/destroy',[CompaniesController,'destroy']).where('company_slug',router.matchers.uuid())
+    router.delete('/:companyId/destroy',[CompaniesController,'destroy']).where('companyId',router.matchers.uuid())
     .use([
-        middleware.manageAccount()
+        middleware.manageCompanies()
     ])
 
     router.group(()=>{
@@ -33,9 +33,9 @@ router.group(()=>{
 
                 router.delete('/destroy',[CompaniesVersionController,'destroy'])
 
-            }).prefix('/:version_id').where('version_id',router.matchers.number())
+            }).prefix('/:versionId').where('versionId',router.matchers.number())
 
-    }).prefix('/:company_slug/companies_versions').where('company_slug',router.matchers.uuid()).use([
+    }).prefix('/:companyId/companies_versions').where('companyId',router.matchers.uuid()).use([
         middleware.manageCompanies()
     ])
 

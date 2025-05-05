@@ -12,7 +12,6 @@ export class CompanyService {
   async getAllCompanies() {
     const companies = await Company.all()
   
-    // Utiliser Promise.all avec map pour s'assurer que tout est bien chargé
     await Promise.all(
       companies.map((company) => company.load('activeDetails'))
     )
@@ -50,6 +49,7 @@ export class CompanyService {
       return await company.load('details')
 
     } catch (error) {
+      
       if (error.code === "ER_DUP_ENTRY") {
         return ERROR_DUPLICATE_COMPANY
       }
@@ -58,10 +58,10 @@ export class CompanyService {
   }
 
 
-  async updateCompany(slug: string | null, data: any) {
+  async updateCompany(companyId: string | null, data: any) {
     const { adminId, detailId, isVerify } = data
 
-    const company = await Company.findBy('slug', slug)
+    const company = await Company.findBy('slug', companyId)
     if (!company) {
       return 'Invalid Company Info'
     }
@@ -104,8 +104,8 @@ export class CompanyService {
   }
 
 
-  async destroyCompany(company_slug: string) {
-    const company = await Company.findBy('slug', company_slug)
+  async destroyCompany(companyId: string) {
+    const company = await Company.findBy('slug', companyId)
 
     if (company) {
       await company.delete()

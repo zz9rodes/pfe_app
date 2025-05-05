@@ -65,7 +65,7 @@ export default class CompaniesController {
   
       const data = await editCompanyValidator.validate(request.all())
       
-      const updatedCompany = await this.CompanyService.updateCompany(params.company_slug, data)
+      const updatedCompany = await this.CompanyService.updateCompany(params.companyId, data)
   
       
       return response.ok(updatedCompany)
@@ -87,8 +87,8 @@ export default class CompaniesController {
         return response.forbidden("You don't have access to this Ressources")
       }  
 
-      if (params.company_slug) {
-        return response.json(await this.CompanyService.destroyCompany(params.company_slug))
+      if (params.companyId) {
+        return response.json(await this.CompanyService.destroyCompany(params.companyId))
       }
 
       return

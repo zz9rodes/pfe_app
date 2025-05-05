@@ -16,7 +16,14 @@ export default class JobsController {
       return response.unauthorized()
     }
 
-    const result = await this.jobService.getAllJobs(user?.account)
+    const account=user.account
+
+    if (!account) {
+      return response.forbidden({message:"You Need To Complete you Company Profile"})
+    }
+
+
+    const result = await this.jobService.getAllCompayJobs(account?.company)
     return response.json(result)
   }
 
@@ -27,9 +34,9 @@ export default class JobsController {
         return response.unauthorized()
       }
 
-      const cvProfileId = params.cvProfileId
+      const companyId = params.companyId
       const data = await createJobValidator.validate(request.all())
-      const result = await this.jobService.createNewJob(cvProfileId, data)
+      const result = await this.jobService.createNewJob(companyId, data)
 
       return response.json(result)
 
@@ -52,6 +59,37 @@ export default class JobsController {
       const jobId = params.jobId
       const data = await updateJobValidator.validate(request.all())
       const result = await this.jobService.updateJob(jobId, data)
+
+      return response.json(result)
+
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return response.status(422).json(error)
+      } else {
+        return response.internalServerError({ message: 'Internal Server Error.', error })
+      }
+    }
+  }
+
+  async show({response, params }: HttpContext) {
+    try {
+      const jobId = params.jobId
+      const result = await this.jobService.getJobByJobId(jobId)
+      return response.json(result)
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return response.status(422).json(error)
+      } else {
+        return response.internalServerError({ message: 'Internal Server Error.', error })
+      }
+    }
+  }
+
+  async all({ response }: HttpContext) {
+    try {
+    
+
+      const result = await this.jobService.getAllJobs()
 
       return response.json(result)
 

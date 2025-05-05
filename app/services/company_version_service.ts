@@ -31,8 +31,8 @@ export class CompanyVersionService {
     return versionId ? await companyVersion?.merge(data).save() : null
   }
 
-  async destroyCompanyVersion(version_id:string){
-    const companyVersion = await CompanyVersion.find(version_id)
+  async destroyCompanyVersion(versionId:string){
+    const companyVersion = await CompanyVersion.find(versionId)
 
     if(companyVersion){
       await companyVersion.delete()

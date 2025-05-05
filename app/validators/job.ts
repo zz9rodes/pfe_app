@@ -1,16 +1,24 @@
 import vine from '@vinejs/vine'
+import { CurrencyType, Gender, JobType,JobStatus } from '#models/utils/index'
 
 export const createJobValidator = vine.compile(
   vine.object({
     title: vine.string().trim().minLength(2),
 
+    country: vine.string().trim().minLength(2).optional(),
+
+    city: vine.string().trim().minLength(2).optional(),
+
     description: vine.string().trim().minLength(10),
 
     industries: vine.string().trim(),
 
-    job_type: vine.enum(['CDI', 'INTERNSHIP', 'FREELANCE'] as const),
+    job_type: vine.enum(JobType),
 
-    total_price: vine.number().min(0), 
+    price: vine.object({
+      value:vine.number(),
+      currency:vine.enum(CurrencyType)
+    }).optional(), 
 
     details: vine
       .array(
@@ -21,15 +29,15 @@ export const createJobValidator = vine.compile(
         ).minLength(1), 
         })
       )
-      .minLength(1),
+      .minLength(1).optional(),
 
     years_experience: vine.number().min(0).optional(), 
 
     skill_required: vine.string().trim().optional(),
 
-    last_date: vine.date().after('today'),
+    last_date: vine.date().after('today').optional(),
 
-    gender: vine.enum(['MALE', 'FEMALE', 'OTHER', 'NOT_SPECIFIED'] as const).optional(),
+    gender: vine.enum(Gender),
 
     recruitment_steps: vine
       .array(
@@ -38,53 +46,60 @@ export const createJobValidator = vine.compile(
           description: vine.string().trim().optional(),
         })
       )
-      .minLength(1),
+      .minLength(1).optional(),
 
-    company_id: vine.number().min(1),
+      status:vine.enum(JobStatus)
   })
 )
 
 
 export const updateJobValidator = vine.compile(
-    vine.object({
-      title: vine.string().trim().minLength(1).optional(),
-  
-      description: vine.string().trim().optional(),
-  
-      industries: vine.string().trim().optional(),
-  
-      job_type: vine.enum(['CDI', 'INTERNSHIP', 'FREELANCE'] as const).optional(),
-  
-      total_price: vine.number().min(0).optional(),
-  
-      details: vine
-        .array(
-          vine.object({
-            title: vine.string().trim().minLength(1).optional(),
-            items: vine.array(vine.string().trim().minLength(1)).minLength(1).optional(),
-          })
-        )
-        .minLength(1)
-        .optional(),
-  
-      years_experience: vine.number().min(0).optional(),
-  
-      skill_required: vine.string().trim().optional(),
-  
-      last_date: vine.date().optional(),
-  
-      gender: vine.enum(['MALE', 'FEMALE', 'OTHER', 'NOT_SPECIFIED'] as const).optional(),
-  
-      recruitment_steps: vine
-        .array(
-          vine.object({
-            title: vine.string().trim().minLength(1).optional(),
-            description: vine.string().trim().optional(),
-          })
-        )
-        .minLength(1)
-        .optional(),
-  
-      company_id: vine.number().min(1).optional(),
-    })
+  vine.object({
+    title: vine.string().trim().minLength(2).optional(),
+
+    county: vine.string().trim().minLength(2).optional(),
+
+    city: vine.string().trim().minLength(2).optional(),
+
+    description: vine.string().trim().minLength(10).optional(),
+
+    industries: vine.string().trim().optional(),
+
+    job_type: vine.enum(JobType).optional(),
+
+    price: vine.object({
+      value:vine.number(),
+      currency:vine.enum(CurrencyType)
+    }).optional(), 
+
+    details: vine
+      .array(
+        vine.object({
+          title: vine.string().trim().minLength(1),
+          items: vine.array(
+            vine.string().trim().minLength(1)
+        ).minLength(1), 
+        })
+      )
+      .minLength(1).optional(),
+
+    years_experience: vine.number().min(0).optional(), 
+
+    skill_required: vine.string().trim().optional(),
+
+    last_date: vine.date().after('today').optional(),
+
+    gender: vine.enum(Gender).optional(),
+
+    recruitment_steps: vine
+      .array(
+        vine.object({
+          title: vine.string().trim().minLength(1),
+          description: vine.string().trim().optional(),
+        })
+      )
+      .minLength(1).optional(),
+
+      status:vine.enum(JobStatus).optional()
+  })
   )
