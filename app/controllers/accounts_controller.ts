@@ -3,15 +3,16 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { AccountService } from '#services/account_service'
 import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
-import User from '#models/user'
-
+import ApiResponse from '#models/utils/ApiResponse'
 @inject()
 export default class AccountsController {
-  constructor(private AccountService: AccountService) {}
+  constructor(private AccountService: AccountService) { }
 
 
-  async index({response}: HttpContext) {
-      return response.json( await this.AccountService.getAllAccount())
+  async index({ response }: HttpContext) {
+     const result= await this.AccountService.getAllAccount()
+
+     return response.status(result.statusCode).json(result)
   }
 
 
@@ -20,70 +21,103 @@ export default class AccountsController {
       const userId: number = request.input('userId')
 
       const data = await createAccountValidator.validate(request.all())
-      
-      return response.json(await this.AccountService.createAccount(data, userId))
+
+      const result = await this.AccountService.createAccount(data, userId)
+
+      return response
+            .status(result.statusCode)
+            .json(result)
+
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
+
+      return response
+            .status(500)
+            .json(
+              ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
     }
   }
 
 
-  async show({ response,auth }: HttpContext) {
+  async show({ response, auth }: HttpContext) {
     try {
-    const  user=auth.user
+      const user = auth.user
 
-      return response.json(await this.AccountService.getAccount(user!))
+      const result=await this.AccountService.getAccount(user!)
+      return response
+            .status(result.statusCode)
+            .json(result)
     } catch (error) {
-      return response.json(error)
+      return response.status(500).json( ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
   }
 
 
-  async edit({ request,response,params }: HttpContext) {
+  async edit({ request, response, params }: HttpContext) {
 
-    
     try {
-      const slug=params.slug
+      const slug = params.slug
 
       const data = await updateAccountValidator.validate(request.all())
-      return response.json(await this.AccountService.editAccount(data, slug))
+      const result=await this.AccountService.editAccount(data, slug)
+      return response
+            .status(200)
+            .json(result)
+
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
+
+      return response
+            .status(500)
+            .json(
+              ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
     }
   }
 
 
-  async destroy({response, params }: HttpContext) {
+  async destroy({ response, params }: HttpContext) {
     try {
-      const accounId=params.id
-      return response.json(await this.AccountService.destroyAccount(accounId))
+      const accounId = params.id
+
+      const result=await this.AccountService.destroyAccount(accounId)
+      return response
+            .status(result.statusCode)
+            .json(result)
+
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+       return  response
+        .status(500)
+        .json(
+          ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+        )     
     }
   }
 
-  async findByname({request,response}:HttpContext){
-     try {
+  async findByname({ request, response }: HttpContext) {
+    try {
 
-     const query = request.input('query')
+      const query = request.input('query')
 
-     return response.json(await this.AccountService.FindAccountByname(query))
-      
-     } catch (error) {
-      
-       return {error}
-     }
+      const result=await this.AccountService.findAccountByName(query)
+
+      return response.status(result.statusCode).json(result)
+
+    } catch (error) {
+
+      return  response
+      .status(500)
+      .json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )        }
   }
 }

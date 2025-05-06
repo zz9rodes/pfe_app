@@ -1,14 +1,12 @@
 import Company from "#models/company"
 import CompanyVersion from "#models/company_version"
-import { messages } from "@vinejs/vine/defaults"
-import { ok } from "assert"
+import ApiResponse from "#models/utils/ApiResponse"
 
 
-const ERROR_INVALID_COMPANY = 'Invalid Company Id'
 export class CompanyVersionService {
   async createCompanyVersion(company: Company | null, companyVersionData: any) {
     if (!company) {
-      return ERROR_INVALID_COMPANY
+      return ApiResponse.notFound("Invalid Company Id")
     }
   
     const version = await company.related('details').create(companyVersionData)
@@ -19,16 +17,17 @@ export class CompanyVersionService {
       await this.ActiveCompanyversion(version.id)
     }
   
-    await company.load('activeDetails')
+    
+    const responseData=await company.load('activeDetails')
   
-    return company
+    return ApiResponse.success("New Company Version Has Been Created",responseData )
   }
   
 
   async editCompanyVersion(data: any, versionId:number) {
     const companyVersion = await CompanyVersion.find(versionId)
 
-    return versionId ? await companyVersion?.merge(data).save() : null
+    return ApiResponse.success(" Company Version Has Been Update", versionId ? await companyVersion?.merge(data).save() : null)
   }
 
   async destroyCompanyVersion(versionId:string){
@@ -37,9 +36,8 @@ export class CompanyVersionService {
     if(companyVersion){
       await companyVersion.delete()
     }
-    return  {
-      messages:"ok"
-    }
+
+    return  ApiResponse.success("The Company Version has Been delete")
   }
 
   async getCompanyversion(slug:any) {
@@ -50,7 +48,7 @@ export class CompanyVersionService {
       responseData=CompanyVersion
     }
 
-    return responseData
+    return ApiResponse.success("success",responseData)
   }
 
   async ActiveCompanyversion(id: number) {

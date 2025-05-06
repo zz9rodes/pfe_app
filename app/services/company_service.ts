@@ -1,6 +1,7 @@
 import Account from "#models/account";
 import Company from "#models/company"
 import CompanyVersion from "#models/company_version";
+import ApiResponse from "#models/utils/ApiResponse";
 import { Exception } from '@adonisjs/core/exceptions'
 
 
@@ -16,7 +17,7 @@ export class CompanyService {
       companies.map((company) => company.load('activeDetails'))
     )
   
-    return companies
+    return ApiResponse.success("success",companies)
   }
   
 
@@ -26,12 +27,14 @@ export class CompanyService {
 
       const existingCompany = await Company.findBy('account_id', accountId)
       if (existingCompany) {
-        return ERROR_DUPLICATE_COMPANY
+
+        return ApiResponse.error("An account can only have one company")
       }
 
       const admin = await Account.find(accountId)
       if (!admin) {
-        return ERROR_ACCOUNT_NOT_FOUND
+
+        return ApiResponse.error("Account not found")
       }
 
       const company = new Company()
@@ -40,20 +43,22 @@ export class CompanyService {
         isVerify: false,
         accountId: admin.id,
       })
+
       await company.save()
 
       await company.related('admin').associate(admin)
 
       await company.related('details').create(versionData)
 
-      return await company.load('details')
+      return ApiResponse.success("success",await company.load('details'))
 
     } catch (error) {
       
       if (error.code === "ER_DUP_ENTRY") {
-        return ERROR_DUPLICATE_COMPANY
+        return ApiResponse.error("An account can only have one company")
       }
-      return "Internal error"
+
+      return ApiResponse.error("Internal error")
     }
   }
 
@@ -63,7 +68,7 @@ export class CompanyService {
 
     const company = await Company.findBy('slug', companyId)
     if (!company) {
-      return 'Invalid Company Info'
+      return ApiResponse.error("Invalid Company Info")
     }
 
     if (adminId) {
@@ -100,7 +105,7 @@ export class CompanyService {
     await company.load('activeDetails')
     await company.save()
 
-    return company
+    return ApiResponse.success("success",company)
   }
 
 
@@ -110,14 +115,14 @@ export class CompanyService {
     if (company) {
       await company.delete()
     }
-    return
+    return ApiResponse.success("success")
   }
 
-  async getCompanyDetails(accountId: number | undefined): Promise<Company | { error: string }> {
+  async getCompanyDetails(accountId: number | undefined): Promise<Company | {error:string,statusCode:number}> {
     try {
 
       if (!accountId) {
-        return { error: 'Account not Found' }
+        return ApiResponse.error("Account not found")
       }
 
       const company = await Company.query()
@@ -128,10 +133,10 @@ export class CompanyService {
 
 
       if (!company) {
-        return { error: 'No company found for this account' }
+        return ApiResponse.error("No company found for this account")
       }
 
-      return company
+        return      {error:"",statusCode:200}
     } catch (error) {
       throw new Exception(`Failed to retrieve company details: ${error.message}`, {
         status: 500,

@@ -1,28 +1,19 @@
-import Account from "#models/account";
-import User from "#models/user";
-import { AccountType } from "#models/utils/index";
-import { messages } from "@vinejs/vine/defaults";
-
-
+import Account from "#models/account"
+import User from "#models/user"
+import { AccountType } from "#models/utils/index"
+import ApiResponse from "#models/utils/ApiResponse"
 export class AccountService {
-  // Your code here
 
   async createAccount(data: any, userId: number) {
     try {
-      const user= await User.find(userId)
-
-      if(!user){
-        return {
-          error: 'Something When Rong',
-        }
+      const user = await User.find(userId)
+      if (!user) {
+        return ApiResponse.error('User not found', 'E_USER_NOT_FOUND')
       }
 
       await user.load('account')
-
       if (user.account) {
-        return {
-          error: 'This user already has an account',
-        }
+        return ApiResponse.error('This user already has an account', 'E_ACCOUNT_EXISTS')
       }
 
       const account = await user.related('account').create({
@@ -30,84 +21,83 @@ export class AccountService {
         slug: crypto.randomUUID(),
       })
 
-      return account
-
+      return ApiResponse.success('Account created successfully', account)
     } catch (error) {
-
-      return {
-        error: 'An unexpected error occurred while creating the account',
-        details: error.message,
-      }
+      return ApiResponse.error(
+        'An unexpected error occurred while creating the account',
+        'E_CREATE_ACCOUNT_ERROR',
+        error
+      )
     }
   }
 
-
-  async editAccount(data: any, slug: any) {
-
+  async editAccount(data: any, slug: string) {
     try {
-      const account: Account | null = await Account.findBy('slug', slug)
-      if (account) {
-        account.merge(data).save()
+      const account = await Account.findBy('slug', slug)
+      if (!account) {
+        return ApiResponse.error('Account not found', 'E_ACCOUNT_NOT_FOUND')
       }
-      return account
-    } catch (error) {
-      return error
-    }
 
+      await account.merge(data).save()
+      return ApiResponse.success('Account updated successfully', account)
+    } catch (error) {
+      return ApiResponse.error('Error updating account', 'E_UPDATE_ACCOUNT_ERROR', error)
+    }
   }
 
-  async destroyAccount(accounId: any) {
-    
+  async destroyAccount(accountId: number) {
     try {
-      const account: Account | null = await Account.find(accounId)
-      
-      if (account) {
-        await account.delete()
+      const account = await Account.find(accountId)
+      if (!account) {
+        return ApiResponse.error('Account not found', 'E_ACCOUNT_NOT_FOUND')
       }
-      return {
-        message:"ok"
-      }
-    } catch (error) {
-      return error
-    }
 
+      await account.delete()
+      return ApiResponse.success('Account deleted successfully')
+    } catch (error) {
+      return ApiResponse.error('Error deleting account', 'E_DELETE_ACCOUNT_ERROR', error)
+    }
   }
 
-  async getAccount(user: User|undefined) {
-    await user!.load('account')
-    const account = user!.account
+  async getAccount(user: User | undefined) {
+    if (!user) {
+      return ApiResponse.error('User not provided', 'E_NO_USER')
+    }
 
-    if(account.accountType==AccountType.COMPANIES){
+    await user.load('account')
+    const account = user.account
+
+    if (account.accountType === AccountType.COMPANIES) {
       await account.load('company')
     }
 
-    return {account}
+    return ApiResponse.success('Account retrieved successfully', account)
   }
 
-  async getAllAccount(){
-    const accounts= await Account.all()
+  async getAllAccount() {
+    const accounts = await Account.all()
 
-    accounts.forEach( async (account)=>{
-      if(account.accountType==AccountType.COMPANIES){
-       await  account.load('company', async (company)=>{
+    for (const account of accounts) {
+      if (account.accountType === AccountType.COMPANIES) {
+        await account.load('company', async (company) => {
           await company.preload('activeDetails')
         })
       }
-    })
+    }
 
-    return accounts;
+    return ApiResponse.success('All accounts retrieved', accounts,200)
   }
 
-  async FindAccountByname(query:string|any){
-    let responseData=null
-    if(query){
-      responseData=   await Account.query()
-      .select("*")
+  async findAccountByName(query: string) {
+    if (!query || query.trim() === '') {
+      return ApiResponse.error('Query is empty', 'E_EMPTY_QUERY')
+    }
+
+    const results = await Account.query()
       .where('firstName', 'LIKE', `%${query}%`)
       .orWhere('lastName', 'LIKE', `%${query}%`)
-      .preload('user',()=>{});
-    
-    }
-    return responseData;
+      .preload('user')
+
+    return ApiResponse.success('Search results', results)
   }
 }

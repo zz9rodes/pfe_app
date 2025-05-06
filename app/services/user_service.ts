@@ -2,6 +2,7 @@ import User from "#models/user";
 import EmailEmiterService from "./email_emiter_service.js";
 import { inject } from "@adonisjs/core";
 import { EmailData } from "#models/utils/index";
+import ApiResponse from "#models/utils/ApiResponse";
 
 @inject()
 export default class UserService {
@@ -24,9 +25,12 @@ export default class UserService {
         };
         await this.EmailEmiterService.sendEmail(data)
       }
-      return user
+
+      return ApiResponse.success('User registered successfully', user,200)
+
     } catch (error) {
-      return error
+      console.error('Register error:', error)
+      return ApiResponse.error('Failed to register user', 'E_USER_REGISTRATION_FAILED', error,500)
     }
 
   }
@@ -38,7 +42,7 @@ export default class UserService {
       const user = await User.find(id);
 
       if (!user) {
-        return null;
+        return ApiResponse.error('Failed to Update user', "E_USER_NOF_FOUND")
       }
 
       const userEmail = await User.findBy('email', data.email)
@@ -48,9 +52,9 @@ export default class UserService {
         await user.save();
       }
 
-      return user;
+      return ApiResponse.success('User Updated successfully', user)
     } catch (error) {
-      throw error;
+      return ApiResponse.error('Failed to Update user', 'E_USER_UPDATE_FAILED', error)
     }
   }
 
@@ -61,18 +65,26 @@ export default class UserService {
 
       const token = await User.accessTokens.create(user, ['*'], { expiresIn: '1 days' })
 
-      return { token, user }
+      return ApiResponse.success('User registered successfully', {user,token})
+
     } catch (error) {
-      return { error }
+      return ApiResponse.error('Failed to Login user', 'E_USER_LOGIN_FAILED', error)
     }
   }
 
   async getUserDetails(id: any) {
-    const user = await User.find(id)
 
-    await user?.load('account')
-    // await user?.load('profile')
-    return user
+    try {
+      const user = await User.find(id)
+
+      await user?.load('account')
+  
+      return ApiResponse.success('User registered successfully', user,200)
+    } catch (error) {
+      ApiResponse.error('Failed Get User Details',"E_USER_DETAILS",error,500)
+    }
+
+
 
   }
 

@@ -7,6 +7,7 @@ import { errors } from '@vinejs/vine'
 import Account from '#models/account'
 import Company from '#models/company'
 import CompanyVersion from '#models/company_version'
+import ApiResponse from '#models/utils/ApiResponse'
 
 @inject()
 export default class CompaniesVersionController {
@@ -24,19 +25,26 @@ export default class CompaniesVersionController {
 
       if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
 
-        return  response.forbidden("You don't have access to this Ressources")
+         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
 
       const data = await createCompanyVersionsValidator.validate(request.all())
       const company :Company|null= await Company.findBy('slug',params!.companyId)
 
-      return response.json(await this.CompanyVersionService.createCompanyVersion(company,data))
+      const result=await this.CompanyVersionService.createCompanyVersion(company,data)
+      return response.status(result.statusCode).json(result)
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+       if (error instanceof errors.E_VALIDATION_ERROR) {
+              return response.status(422).json(
+                ApiResponse.validation('Invalid input', error.messages)
+              )
+            }
+      
+            return response
+                  .status(500)
+                  .json(
+                    ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
     }
   }
 
@@ -46,9 +54,11 @@ export default class CompaniesVersionController {
     try {
       const version = params!.versionId
 
-      return response.json(await this.CompanyVersionService.getCompanyversion(version))
+      const result=await this.CompanyVersionService.getCompanyversion(version)
+
+      return response.status(result.statusCode).json(result)
     } catch (error) {
-      return response.json(error)
+      return response.status(500).json( ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
 
   }
@@ -61,7 +71,7 @@ export default class CompaniesVersionController {
 
       if (await bouncer.with(CompanyVersionPolicy).denies('edit', company)) {
 
-        return  response.forbidden("You don't have access to this Ressources")
+       return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
 
       const vesion: CompanyVersion | null = params.versionId ? await CompanyVersion.findBy('id', params.versionId) : null
@@ -69,19 +79,25 @@ export default class CompaniesVersionController {
 
       if (vesion?.id) {
         const data = await editCompanyVerionsValidator.validate(request.all())
-        return response.json(await this.CompanyVersionService.editCompanyVersion(data, vesion?.id))
+        const result=await this.CompanyVersionService.editCompanyVersion(data, vesion?.id)
+        return response.status(result.statusCode).json( result)
       }
 
-      return
-
+      return response.ok
 
     } catch (error) {
       
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+              return response.status(422).json(
+                ApiResponse.validation('Invalid input', error.messages)
+              )
+            }
+      
+            return response
+                  .status(500)
+                  .json(
+                    ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
     }
 
   }
@@ -93,20 +109,21 @@ export default class CompaniesVersionController {
       const company: Company | null = params.companyId ? await Company.findBy('slug', params.companyId) : null
       if (await bouncer.with(CompanyVersionPolicy).denies('delete', company)) {
 
-        return  response.forbidden("You don't have access to this Ressources")
+        return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
 
       if (params.versionId) {
-        return response.json(await this.CompanyVersionService.destroyCompanyVersion(params.versionId))
+        const result=await this.CompanyVersionService.destroyCompanyVersion(params.versionId)
+        return response.status(result.statusCode).json(result)
       }
 
-      return
+      return response.ok
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+      return response
+                  .status(500)
+                  .json(
+                    ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
     }
   }
 }

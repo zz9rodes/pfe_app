@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { editAccount } from '#abilities/main'
+import ApiResponse from '#models/utils/ApiResponse'
+
 
 export default class ManageAccountMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
@@ -8,6 +10,11 @@ export default class ManageAccountMiddleware {
      if (await ctx.bouncer.allows(editAccount, ctx.params.slug)) {        
         return await next()
       }
-        return  ctx.response.forbidden("you don't have permission")
+
+         return ctx.response
+                  .status(403)
+                  .json(
+                    ApiResponse.forbidden("Level Permission required")
+                  )
     }
 }

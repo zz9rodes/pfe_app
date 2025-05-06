@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { AccountType } from '#models/utils/index'
+import ApiResponse from '#models/utils/ApiResponse'
 
 export default class GetCompaniesDetailsMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
@@ -17,6 +18,11 @@ export default class GetCompaniesDetailsMiddleware {
       return next()
     }
 
-    return  ctx.response.forbidden("you don't have permission")
+    
+  return ctx.response
+               .status(403)
+               .json(
+                 ApiResponse.forbidden("Level Permission required")
+               )
   }
 }

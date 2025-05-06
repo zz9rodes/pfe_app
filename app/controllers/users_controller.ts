@@ -5,6 +5,7 @@ import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
 import User from '#models/user'
 import { editUser } from '#abilities/main'
+import ApiResponse from '#models/utils/ApiResponse'
 
 @inject()
 export default class UsersController {
@@ -15,52 +16,69 @@ export default class UsersController {
     return User.all()
   }
 
-
   async create({ request, response }: HttpContext) {
     try {
       const data = await createUserValidator.validate(request.all())
+      const result = await this.UserService.Register(data)
 
-      return response.json(await this.UserService.Register(data))
-    }
-    catch (error) {
+      return response.status(result.statusCode).json(result)
 
+    } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
+
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
     }
   }
 
 
-  async show({ params, bouncer, response, auth }: HttpContext) {
-    if (await bouncer.allows(editUser, params.id)) {
 
-      return response.forbidden()
+  async show({ params, bouncer, response, auth }: HttpContext) {
+    if (await bouncer.denies(editUser, params.id)) {
+      return response
+        .status(403)
+        .json(
+          ApiResponse.error('You are not authorized Show edit this user', 'E_FORBIDDEN')
+        )
     }
 
-    return response.json(await this.UserService.getUserDetails(auth.user!.id))
+    const result = await this.UserService.getUserDetails(auth.user!.id)
+    return response
+      .status(result?.statusCode ?? 200)
+      .json(result)
   }
 
 
   async edit({ request, response, params, bouncer }: HttpContext) {
     try {
 
-      if (await bouncer.allows(editUser, params.id)) {
-
-        return response.forbidden()
+      if (await bouncer.denies(editUser, params.id)) {
+        return response.forbidden(
+          ApiResponse.error('You are not authorized to edit this user', 'E_FORBIDDEN')
+        )
       }
 
       const data = await editUserValidator.validate(request.all())
-      return response.json(await this.UserService.edit(params.id, data))
+
+      const result = await this.UserService.edit(params.id, data)
+
+      return response.status(result.statusCode).json(result)
     }
     catch (error) {
-
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
+
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
     }
   }
 
@@ -68,9 +86,11 @@ export default class UsersController {
     try {
       const user = auth!.user!
       await user.delete()
-      return response.noContent()
+      return response.status(200).json(ApiResponse.success('User are Lougout successfully', response.noContent()))
     } catch (error) {
-      return response.status(500).json(error)
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
     }
   }
 
@@ -78,9 +98,12 @@ export default class UsersController {
     try {
       const user = auth!.user!
       await User.accessTokens.delete(user, user.currentAccessToken.identifier)
-      return response.noContent()
+
+      return response.status(200).json(ApiResponse.success('User are Lougout successfully', response.noContent()))
     } catch (error) {
-      return response.status(500).json(error)
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
     }
   }
 
@@ -88,14 +111,18 @@ export default class UsersController {
     try {
 
       const data = await loginUserValidator.validate(request.body())
-      return response.json(await this.UserService.login(data))
+      const result = await this.UserService.login(data)
+      return response.status(200).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error.messages)
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
-      else {
-        return response.status(500).json(error)
-      }
+
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
     }
   }
 }

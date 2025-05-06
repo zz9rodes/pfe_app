@@ -1,5 +1,6 @@
 import Account from '#models/account'
 import CvProfile from '#models/cv_profile'
+import ApiResponse from '#models/utils/ApiResponse';
 
 export class CvProfileService {
   async create(account: Account, data: any) {
@@ -11,15 +12,10 @@ export class CvProfileService {
       ...cv_info
     } = data;
 
-    
-
     const existingCvProfile = await account.related('cvProfiles').query().first();
 
     if (existingCvProfile) {
-      return {
-        error: 'You Already have a CvProfile',
-        cvProfile: existingCvProfile,
-      };
+      return ApiResponse.error("You Already have a CvProfile",)
     }
 
     const cvProfile: CvProfile = await account.related('cvProfiles').create(
@@ -45,7 +41,7 @@ export class CvProfileService {
     }
 
     
-    return cvProfile;
+    return ApiResponse.success("ok",cvProfile);
   }
 
   async update(slug: string | any, data: any) {
@@ -95,6 +91,6 @@ export class CvProfileService {
   async getCvprofileDetails(slug :string|any){
     const cvProfile= await CvProfile.findBy('slug',slug)
 
-    return cvProfile
+    return ApiResponse.success("ok",cvProfile)
   }
 }
