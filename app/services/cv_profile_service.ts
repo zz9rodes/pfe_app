@@ -56,9 +56,7 @@ export class CvProfileService {
     const cvProfile: CvProfile | null = await CvProfile.findBy('slug', slug);
   
     if (!cvProfile) {
-      return {
-        error: 'CV non trouvé.',
-      };
+      return ApiResponse.error('CV non trouvé.');
     }
   
     cvProfile.merge(cv_info);
@@ -85,7 +83,7 @@ export class CvProfileService {
     await cvProfile.load('personalProjects')
     await cvProfile.load('workExperiences')
 
-    return cvProfile;
+    return ApiResponse.success("ok",cvProfile)
   }
 
   async getCvprofileDetails(slug :string|any){

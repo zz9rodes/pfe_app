@@ -4,6 +4,7 @@ import { errors } from '@vinejs/vine'
 import { createJobValidator, updateJobValidator } from '#validators/job'
 import { inject } from '@adonisjs/core'
 import { JobService } from '#services/job_service'
+import ApiResponse from '#models/utils/ApiResponse'
 
 @inject()
 export default class JobsController {
@@ -13,39 +14,42 @@ export default class JobsController {
   async index({ auth, response }: HttpContext) {
     const user = auth.user
     if (!user) {
-      return response.unauthorized()
+      return response.unauthorized(ApiResponse.error('unauthorized'))
     }
 
     const account=user.account
 
     if (!account) {
-      return response.forbidden({message:"You Need To Complete you Company Profile"})
+      return ApiResponse.error("You Need To Complete you profile")
     }
 
 
     const result = await this.jobService.getAllCompayJobs(account?.company)
-    return response.json(result)
+    return response.status(result.statusCode).json(result)
   }
 
   async store({ request, response, auth, params }: HttpContext) {
     try {
       const user = auth.user
       if (!user) {
-        return response.unauthorized()
+        return response.unauthorized(ApiResponse.error('unauthorized'))
       }
 
       const companyId = params.companyId
       const data = await createJobValidator.validate(request.all())
       const result = await this.jobService.createNewJob(companyId, data)
 
-      return response.json(result)
+      return response.status(result.statusCode).json(result)
 
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+              return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+            }
+      
+            return response
+              .status(500)
+              .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+      
     }
   }
 
@@ -53,7 +57,7 @@ export default class JobsController {
     try {
       const user = auth.user
       if (!user) {
-        return response.unauthorized()
+        return response.unauthorized(ApiResponse.error('unauthorized'))
       }
 
       const jobId = params.jobId
@@ -64,10 +68,13 @@ export default class JobsController {
 
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
       }
+
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+
     }
   }
 
@@ -75,20 +82,17 @@ export default class JobsController {
     try {
       const jobId = params.jobId
       const result = await this.jobService.getJobByJobId(jobId)
-      return response.json(result)
+      return response.status(result.statusCode).json(result)
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+      return response
+      .status(500)
+      .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
   }
 
   async all({ response }: HttpContext) {
     try {
     
-
       const result = await this.jobService.getAllJobs()
 
       return response.json(result)

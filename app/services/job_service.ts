@@ -1,6 +1,7 @@
 import Job from '#models/job'
 import Company from '#models/company'
 import { serializeFields, deserializeFields } from '#models/utils/helper'
+import ApiResponse from '#models/utils/ApiResponse'
 
 const jsonFields = ['details', 'recruitment_steps', 'price']
 
@@ -9,7 +10,9 @@ export class JobService {
   async createNewJob(companyId: string, data: any) {
     try {
       const company = await Company.findBy('slug', companyId)
-      if (!company) return { message: 'Invalid company Id' }
+      if (!company)  { 
+        return  ApiResponse.notFound("message: 'Invalid company Id'")
+       }
 
       data.slug = crypto.randomUUID()
       serializeFields(data, jsonFields)
@@ -18,24 +21,27 @@ export class JobService {
       await job.related('company').associate(company)
 
       deserializeFields(job, jsonFields)
-      return job
+      return ApiResponse.success("success",job)
     } catch (error) {
-      return { error }
+
+      return ApiResponse.error(error)
     }
   }
 
   async updateJob(jobId: number, data: any) {
     try {
       const job = await Job.findBy('slug',jobId)
-      if (!job) return { message: 'Invalid Job Id' }
+      if (!job)  {
+        return ApiResponse.notFound("Ressources Not Found")
+      }
 
       serializeFields(data, jsonFields)
       await job.merge(data).save()
 
       deserializeFields(job, jsonFields)
-      return job
+      return ApiResponse.success("success",job)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -55,12 +61,14 @@ export class JobService {
 
   async getAllCompayJobs(company: Company) {
     if (!company) {
-      return { message: "User doesn't have a company account" }
+      return ApiResponse.error("Make sure Your Company is Approved")
     }
 
     const jobs = await Job.query().where('company_id', company.id)
     deserializeFields(jobs, jsonFields)
-    return jobs
+
+    
+    return ApiResponse.success("success",jobs)
   }
 
   async getAllJobs() {
@@ -72,9 +80,10 @@ export class JobService {
 
   async getJobByJobId(jobId: string) {
     const job = await Job.findBy('slug', jobId)
-    if (!job) return { message: 'Job not found' }
-
+    if (!job)  {
+      return ApiResponse.notFound("Ressources Not Found")
+    }
     deserializeFields(job, jsonFields)
-    return job
+    return ApiResponse.success("success",job)
   }
 }

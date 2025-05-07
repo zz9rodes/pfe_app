@@ -1,6 +1,7 @@
 import Account from "#models/account"
 import CvProfile from "#models/cv_profile"
 import Link from "#models/link"
+import ApiResponse from "#models/utils/ApiResponse"
 import { log } from "util"
 
 export class LinkService {
@@ -10,14 +11,14 @@ export class LinkService {
       const cvProfile = await CvProfile.findBy('slug', cvProfileId)
 
       if (!cvProfile) {
-        return { message: "Invalid Profile Id" }
+        return ApiResponse.badRequest("You need To Complete Your Profle")
       }
 
       const link = await Link.create(data)
       link.related('cvProfile').associate(cvProfile)
-      return link
+      return ApiResponse.success("success",link)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -26,14 +27,16 @@ export class LinkService {
       const link = await Link.find(linkId)
 
       if (!link) {
-        return { message: "Invalid Link Id" }
+
+        return ApiResponse.notFound("Ressource Not Found")
       }
 
      await link.merge(data).save()
 
-     return link
+     return ApiResponse.success("success",link)
     } catch (error) {
-      return { error }
+
+      return ApiResponse.error(error)
     }
   }
 
@@ -56,13 +59,14 @@ export class LinkService {
 
     
       if(!account){
-        return {message:"User Don't Have an Account"}
+        return ApiResponse.error("Need to Complete Your Profile")
       }
 
       const cvProfil=account.cvProfiles
 
       if(!cvProfil){
-        return {message:"User Don't Have a Profil Links"}
+
+        return ApiResponse.success("Ok",[])
       }
 
 
@@ -72,6 +76,6 @@ export class LinkService {
       
       const links=cvProfil.links
 
-      return links
+      return ApiResponse.success("",links)
   }
 }

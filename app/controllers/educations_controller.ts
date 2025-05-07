@@ -3,33 +3,36 @@ import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import { EducationService } from '#services/education_service'
 import { errors } from '@vinejs/vine'
+import ApiResponse from '#models/utils/ApiResponse'
 
 
 
 @inject()
 export default class EducationsController {
 
+    constructor(private EducationService: EducationService) { }
+
+
     async index({ auth, response }: HttpContext) {
 
 
         const user = auth.user
         if (!user) {
-            response.unauthorized()
+           return response.unauthorized(ApiResponse.error("unauthorized"))
         }
 
         const result = await this.EducationService.getAllCvProfileEducation(user?.account)
 
-        return response.json(result)
+        return response.status(result.statusCode).json(result)
 
     }
 
-    constructor(private EducationService: EducationService) { }
     async store({ request, response, auth, params }: HttpContext) {
         try {
 
             const user = auth.user
             if (!user) {
-                response.unauthorized()
+                return response.unauthorized(ApiResponse.error("unauthorized"))
             }
 
             const cvProfileId = params.cvProfileId
@@ -42,10 +45,13 @@ export default class EducationsController {
 
         } catch (error) {
             if (error instanceof errors.E_VALIDATION_ERROR) {
-                return response.status(422).json(error)
-            } else {
-                return response.internalServerError({ message: 'Internal Server Error.', error })
-            }
+                   return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+                }
+            
+                return response
+                   .status(500)
+                   .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+               
         }
     }
 
@@ -55,7 +61,7 @@ export default class EducationsController {
 
             const user = auth.user
             if (!user) {
-                response.unauthorized()
+                return response.unauthorized(ApiResponse.error("unauthorized"))
             }
 
             const educationId = params.educationId
@@ -66,14 +72,17 @@ export default class EducationsController {
 
             const result = await this.EducationService.UpdateEducation(educationId, data)
 
-            return response.json(result)
+            return response.status(result.statusCode).json(result)
 
         } catch (error) {
             if (error instanceof errors.E_VALIDATION_ERROR) {
-                return response.status(422).json(error)
-            } else {
-                return response.internalServerError({ message: 'Internal Server Error.', error })
-            }
+                return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+             }
+         
+             return response
+                .status(500)
+                .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+            
         }
     }
 
@@ -82,21 +91,21 @@ export default class EducationsController {
 
             const user = auth.user
             if (!user) {
-                response.unauthorized()
+                return response.unauthorized(ApiResponse.error("unauthorized"))
             }
 
             const educationId = params.educationId
 
-            await this.EducationService.DeleteEducation(educationId)
+             const result=await this.EducationService.DeleteEducation(educationId)
 
-            return response.noContent()
+            return response.status(result.statusCode).json(result)
 
         } catch (error) {
-            if (error instanceof errors.E_VALIDATION_ERROR) {
-                return response.status(422).json(error)
-            } else {
-                return response.internalServerError({ message: 'Internal Server Error.', error })
-            }
+         
+             return response
+                .status(500)
+                .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+            
         }
     }
 }

@@ -3,100 +3,90 @@ import { errors } from '@vinejs/vine'
 import { createLinkValidator, updateLinkValidator } from '#validators/link'
 import { inject } from '@adonisjs/core'
 import { LinkService } from '#services/link_service'
-
-
+import ApiResponse from '#models/utils/ApiResponse'
 
 @inject()
 export default class LinksController {
+  constructor(private LinkService: LinkService) {}
 
-  constructor(private LinkService:LinkService){}
+  async index({ auth, response }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized(ApiResponse.error('unauthorized'))
+    }
 
-  async  index({auth,response}:HttpContext) {
- 
+    const result = await this.LinkService.getAllCvProfileLink(user?.account)
 
-        const user=auth.user
-        if(!user){
-            response.unauthorized()
-        }
-
-        const result= await this.LinkService.getAllCvProfileLink(user?.account)
-
-        return   response.json(result)
-    
+    return response.status(result.statusCode).json(result)
   }
 
-  async store({ request, response, auth ,params}: HttpContext) {
+  async store({ request, response, auth, params }: HttpContext) {
     try {
-        
-        const user=auth.user
-        if(!user){
-            response.unauthorized()
-        }
+      const user = auth.user
+      if (!user) {
+        return response.unauthorized(ApiResponse.error('unauthorized'))
+      }
 
-        const cvProfileId=params.cvProfileId
+      const cvProfileId = params.cvProfileId
 
-        const data= await createLinkValidator.validate(request.all())
+      const data = await createLinkValidator.validate(request.all())
 
-        const result= await this.LinkService.CreateNewLink(cvProfileId,data)
+      const result = await this.LinkService.CreateNewLink(cvProfileId, data)
 
-        return response.json(result)
-
+      return response.status(result.statusCode).json(result)
     } catch (error) {
-        if (error instanceof errors.E_VALIDATION_ERROR) {
-            return response.status(422).json(error)
-          } else {
-            return response.internalServerError({ message: 'Internal Server Error.', error })
-          }
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+        return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+      }
+
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
   }
 
-  async edit({ request, response, auth ,params}: HttpContext) {
+  async edit({ request, response, auth, params }: HttpContext) {
     try {
-        
-        const user=auth.user
-        if(!user){
-            response.unauthorized()
-        }
+      const user = auth.user
+      if (!user) {
+        return response.unauthorized(ApiResponse.error('unauthorized'))
+      }
 
-        const linkId=params.linkId
+      const linkId = params.linkId
 
-        const data= await updateLinkValidator.validate(request.all())
+      const data = await updateLinkValidator.validate(request.all())
 
-        
+      const result = await this.LinkService.UpdateLink(linkId, data)
 
-        const result= await this.LinkService.UpdateLink(linkId,data)
-
-        return response.json(result)
-
+      return response.status(result.statusCode).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+        return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
       }
+
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+   
     }
   }
 
-  async destroy({response, auth ,params}: HttpContext) {
+  async destroy({ response, auth, params }: HttpContext) {
     try {
-        
-        const user=auth.user
-        if(!user){
-            response.unauthorized()
-        }
-
-        const linkId=params.linkId
-
-        await this.LinkService.DeleteLink(linkId)
-
-        return response.noContent()
-
-    } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
+      const user = auth.user
+      if (!user) {
+        return response.unauthorized(ApiResponse.error('unauthorized'))
       }
+
+      const linkId = params.linkId
+
+      await this.LinkService.DeleteLink(linkId)
+
+      return response.noContent()
+    } catch (error) {
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
   }
 }

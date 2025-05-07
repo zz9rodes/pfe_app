@@ -1,6 +1,7 @@
 
 import Account from "#models/account"
 import CvProfile from "#models/cv_profile"
+import ApiResponse from "#models/utils/ApiResponse"
 import WorkExperience from "#models/work_experience"
 
 export class WorkExperienceService {
@@ -12,14 +13,14 @@ export class WorkExperienceService {
       const cvProfile = await CvProfile.findBy('slug', cvProfileId)
 
       if (!cvProfile) {
-        return { message: "Invalid Profile Id" }
+        return ApiResponse.notFound("Ressource Not found")
       }
 
       const work_experience = await WorkExperience.create(data)
       work_experience.related('cvProfile').associate(cvProfile)
-      return work_experience
+      return ApiResponse.success("success",work_experience)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -29,13 +30,13 @@ export class WorkExperienceService {
       const experience = await WorkExperience.find(experienceId)
 
       if (!experience) {
-        return { message: "Invalid Experience Id" }
+        return ApiResponse.notFound("Ressource Not Found")
       }
 
       await experience.merge(data).save()
-      return experience
+      return ApiResponse.success("success",experience)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -55,18 +56,19 @@ export class WorkExperienceService {
 
   async getAllWorkExperiences(account: Account | undefined) {
     if (!account) {
-      return { message: "User Don't Have an Account" }
+
+      return ApiResponse.error("You Need to Complete Your Account Configuration")
     }
 
     const cvProfiles = account.cvProfiles
 
     if (!cvProfiles) {
-      return { message: "User Don't Have Work Experiences" }
+      return ApiResponse.success("success",[])
     }
 
     await cvProfiles.load('workExperiences')
     const experiences = cvProfiles.workExperiences
 
-    return experiences
+    return ApiResponse.success("sucsess",experiences)
   }
 }

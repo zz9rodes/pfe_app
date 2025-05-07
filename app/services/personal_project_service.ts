@@ -3,7 +3,8 @@
 import Account from "#models/account"
 import CvProfile from "#models/cv_profile"
 import PersonalProject from "#models/personal_project"
-
+import ApiResponse from "#models/utils/ApiResponse"
+ApiResponse
 
 export class PersonalProjectService {
 
@@ -13,14 +14,14 @@ export class PersonalProjectService {
       const cvProfile = await CvProfile.findBy('slug', cvProfileId)
 
       if (!cvProfile) {
-        return { message: "Invalid Profile Id" }
+        return ApiResponse.error("You Need To Complete Your Profile")        
       }
 
       const projet = await PersonalProject.create(data)
       projet.related('cvProfile').associate(cvProfile)
-      return projet
+      return  ApiResponse.success("success",projet)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -29,14 +30,14 @@ export class PersonalProjectService {
       const project = await PersonalProject.find(projectId)
 
       if (!project) {
-        return { message: "Invalid project Id" }
+        return ApiResponse.notFound("Ressources Not Found");
       }
 
       await project.merge(data).save()
 
-      return project
+      return ApiResponse.success("success",project)
     } catch (error) {
-      return { error }
+      return ApiResponse.error(error)
     }
   }
 
@@ -56,18 +57,18 @@ export class PersonalProjectService {
 
   async getAllProjects(account: Account | undefined) {
     if (!account) {
-      return { message: "User Don't Have an Account" }
+      return ApiResponse.error("You Need To Complete Your Profile");
     }
 
     const cvProfiles = account.cvProfiles
 
     if (!cvProfiles) {
-      return { message: "User Don't Have Projects" }
+      return ApiResponse.error("You Need To Complete Your Profile");
     }
 
     await cvProfiles.load('personalProjects')
     const projects = cvProfiles.personalProjects
 
-    return projects
+    return ApiResponse.success("success",projects)
   }
 }
