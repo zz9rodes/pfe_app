@@ -1,7 +1,7 @@
 
 import type { HttpContext } from '@adonisjs/core/http'
 import { errors } from '@vinejs/vine'
-import { createJobValidator, updateJobValidator } from '#validators/job'
+import { createJobValidator,createManyJobValidator, updateJobValidator } from '#validators/job'
 import { inject } from '@adonisjs/core'
 import { JobService } from '#services/job_service'
 import ApiResponse from '#models/utils/ApiResponse'
@@ -38,6 +38,34 @@ export default class JobsController {
       const companyId = params.companyId
       const data = await createJobValidator.validate(request.all())
       const result = await this.jobService.createNewJob(companyId, data)
+
+      return response.status(result.statusCode).json(result)
+
+    } catch (error) {
+      if (error instanceof errors.E_VALIDATION_ERROR) {
+              return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+            }
+      
+            return response
+              .status(500)
+              .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+      
+    }
+  }
+
+  async storeMany({ request, response, auth, params }: HttpContext) {
+    try {
+      const user = auth.user
+      if (!user) {
+        return response.unauthorized(ApiResponse.error('unauthorized'))
+      }
+      
+      const companyId = params.companyId
+      const data = await createManyJobValidator.validate(request.all())
+      
+      const result = await this.jobService.createManyNewJob(companyId, data['data'])
+
+      
 
       return response.status(result.statusCode).json(result)
 
@@ -90,10 +118,11 @@ export default class JobsController {
     }
   }
 
-  async all({ response }: HttpContext) {
+  async all({ request,response }: HttpContext) {
     try {
-    
-      const result = await this.jobService.getAllJobs()
+      const page = request.input('page', 1); 
+
+      const result = await this.jobService.getAllJobs(page)
 
       return response.json(result)
 

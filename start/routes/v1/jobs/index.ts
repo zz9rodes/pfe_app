@@ -8,6 +8,7 @@ router.group(()=>{
     router.group(()=>{
 
         router.post('/create',[JobsController,'store'])
+        router.post('/create_many',[JobsController,'storeMany'])
         router.put('/:jobId/update',[JobsController,'edit'])
         router.delete('/:jobId/destroy',[JobsController,'destroy'])
         router.get('/all',[JobsController,'index'])

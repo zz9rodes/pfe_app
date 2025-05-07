@@ -28,6 +28,34 @@ export class JobService {
     }
   }
 
+  async createManyNewJob(companyId: string, data: any) {
+    try {
+      const company = await Company.findBy('slug', companyId);
+      if (!company) {
+        return ApiResponse.notFound("message: 'Invalid company Id'");
+      }
+  
+      const jobsData = data.map((job:Job) => {
+        job.slug = crypto.randomUUID();
+        serializeFields(job, jsonFields);
+        return job;
+      });
+      
+      const jobs = await Job.createMany(jobsData);
+  
+      await Promise.all(jobs.map(async (job) => {
+        await job.related('company').associate(company);
+      }));
+  
+      deserializeFields(jobs, jsonFields);
+      return ApiResponse.success("success", jobs);
+    } catch (error) {
+      console.log(error);
+      
+      return ApiResponse.error(error);
+    }
+  }
+
   async updateJob(jobId: number, data: any) {
     try {
       const job = await Job.findBy('slug',jobId)
@@ -71,11 +99,13 @@ export class JobService {
     return ApiResponse.success("success",jobs)
   }
 
-  async getAllJobs() {
-    const jobs = await Job.all()
+  async getAllJobs(page:number=1) {
+
+    const jobs = await Job.query().select("*").paginate(page,20)
     deserializeFields(jobs, jsonFields)
     return jobs
   }
+
 
 
   async getJobByJobId(jobId: string) {
