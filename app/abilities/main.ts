@@ -12,6 +12,7 @@
 |
 */
 
+import Company from '#models/company'
 import CvProfile from '#models/cv_profile'
 import User from '#models/user'
 import { Bouncer } from '@adonisjs/bouncer'
@@ -36,6 +37,13 @@ export const editCvprofile = Bouncer.ability(async (me: User, slug: string | any
   const cvProfile = me?.account?.cvProfiles
 
   return ((cvProfile?.slug === slug)) || (me.isAdmin == true)
+})
+
+export const manageCompany=Bouncer.ability( async (user:User,company:Company)=>{
+
+  const account= user.account
+
+ return  company.accountId==account.id
 })
 
 

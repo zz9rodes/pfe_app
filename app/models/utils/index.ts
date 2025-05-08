@@ -15,6 +15,13 @@ export enum JobType {
     FREELANCE = "FREELANCE"
 }
 
+export enum JobPriority {
+    HIGH = 'HIGH',
+    MEDIUM = 'MEDIUM',
+    LOW = 'LOW',
+  }
+  
+
 export enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE",

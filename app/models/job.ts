@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import Company from './company.js'
 import type { Price } from './utils/index.js'
+import JobStepsValidation from './job_steps_validation.js'
 
 export default class Job extends BaseModel {
   @column({ isPrimary: true })
@@ -52,7 +53,7 @@ export default class Job extends BaseModel {
 
   @column()
   declare status:string
-
+  
   @column()
   declare companyId: number 
 
@@ -60,6 +61,9 @@ export default class Job extends BaseModel {
   declare company: BelongsTo<typeof Company>
   
 
+  @hasMany(() => JobStepsValidation)
+  declare stepsValidation: HasMany<typeof JobStepsValidation>
+  
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

@@ -48,7 +48,17 @@ export const createJobValidator = vine.compile(
       )
       .minLength(1).optional(),
 
-    status: vine.enum(JobStatus)
+    status: vine.enum(JobStatus),
+
+    steps: vine.array(
+      vine.object({
+        name: vine.string(),
+        description: vine.string(),
+        renumeration: vine.object({
+          value: vine.number(),
+          currency: vine.enum(CurrencyType)
+        }).optional()
+      })).optional()
   })
 )
 
@@ -107,9 +117,6 @@ export const createManyJobValidator = vine.compile(
   })
 
 )
-
-
-
 
 export const updateJobValidator = vine.compile(
   vine.object({

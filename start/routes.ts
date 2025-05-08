@@ -16,6 +16,8 @@ import './routes/v1/cv_profiles/index.js'
 
 import './routes/v1/jobs/index.js'
 
+import './routes/v1/jobs_step/index.js'
+
 router.get('/', async () => {
   return {
     hello: 'world demo ici ! ',

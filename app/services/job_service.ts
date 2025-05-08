@@ -2,6 +2,7 @@ import Job from '#models/job'
 import Company from '#models/company'
 import { serializeFields, deserializeFields } from '#models/utils/helper'
 import ApiResponse from '#models/utils/ApiResponse'
+import { createManyJobStepValidationSchema } from '#validators/job_steps_validation'
 
 const jsonFields = ['details', 'recruitment_steps', 'price']
 
@@ -9,15 +10,27 @@ export class JobService {
 
   async createNewJob(companyId: string, data: any) {
     try {
+
+      console.log("create new jon")
+
+      const {steps,...companyData}=data
       const company = await Company.findBy('slug', companyId)
       if (!company)  { 
         return  ApiResponse.notFound("message: 'Invalid company Id'")
-       }
+      }
 
-      data.slug = crypto.randomUUID()
-      serializeFields(data, jsonFields)
+      companyData.slug = crypto.randomUUID()
+      serializeFields(companyData, jsonFields)
 
-      const job = await Job.create(data)
+      const job = await Job.create(companyData)
+      
+      if(steps){
+
+        console.log(steps)
+        await job.related('stepsValidation').createMany(steps)
+        await job.load('stepsValidation')
+      }
+
       await job.related('company').associate(company)
 
       deserializeFields(job, jsonFields)
