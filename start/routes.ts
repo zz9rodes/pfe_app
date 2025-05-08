@@ -18,6 +18,8 @@ import './routes/v1/jobs/index.js'
 
 import './routes/v1/jobs_step/index.js'
 
+import './routes/v1/applies/index.js'
+
 router.get('/', async () => {
   return {
     hello: 'world demo ici ! ',

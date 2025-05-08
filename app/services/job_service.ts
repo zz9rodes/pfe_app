@@ -116,7 +116,7 @@ export class JobService {
 
     const jobs = await Job.query().select("*").paginate(page,20)
     deserializeFields(jobs, jsonFields)
-    return jobs
+    return ApiResponse.success("success",jobs)
   }
 
 

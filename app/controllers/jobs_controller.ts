@@ -124,14 +124,13 @@ export default class JobsController {
 
       const result = await this.jobService.getAllJobs(page)
 
-      return response.json(result)
+      return response.status(result.statusCode).json(result)
 
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+      return response
+      .status(500)
+      .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+       
     }
   }
 
@@ -148,11 +147,10 @@ export default class JobsController {
       return response.noContent()
 
     } catch (error) {
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(error)
-      } else {
-        return response.internalServerError({ message: 'Internal Server Error.', error })
-      }
+       return response
+      .status(500)
+      .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+  
     }
   }
 }
