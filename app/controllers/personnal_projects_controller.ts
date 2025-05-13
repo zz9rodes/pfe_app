@@ -33,7 +33,9 @@ export default class PersonalProjectsController {
       return response.status(result.statusCode).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
 
       return response
@@ -56,7 +58,9 @@ export default class PersonalProjectsController {
       return response.status(result.statusCode).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
-        return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
       }
 
       return response

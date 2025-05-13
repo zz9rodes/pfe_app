@@ -30,11 +30,21 @@ export default class Job extends BaseModel {
   @column()
   declare job_type: string
 
-  @column()
+  // @column()
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
   declare price: Price
 
-  @column()
-  declare details: string | null
+  // @column()
+  // declare details: string | null
+
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare details: any[]
 
   @column()
   declare years_experience: number | null
@@ -48,8 +58,14 @@ export default class Job extends BaseModel {
   @column()
   declare gender: string 
 
-  @column()
-  declare recruitment_steps: string | null
+  // @column()
+  // declare recruitment_steps: string | null
+
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare recruitment_steps: string
 
   @column()
   declare status:string

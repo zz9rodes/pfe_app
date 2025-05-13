@@ -10,8 +10,11 @@
 import router from '@adonisjs/core/services/router'
 
 import  './routes/v1/auth/index.js'
+
 import './routes/v1/accounts/index.js'
+
 import './routes/v1/companies/index.js'
+
 import './routes/v1/cv_profiles/index.js'
 
 import './routes/v1/jobs/index.js'
@@ -19,6 +22,16 @@ import './routes/v1/jobs/index.js'
 import './routes/v1/jobs_step/index.js'
 
 import './routes/v1/applies/index.js'
+
+import './routes/v1/contracts/index.js'
+
+import './routes/v1/companies/index.js'
+
+import './routes/v1/agreements/index.js'
+
+import './routes/v1/files/index.js'
+
+import './routes/v1/posts/index.js'
 
 router.get('/', async () => {
   return {

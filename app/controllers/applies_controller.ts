@@ -77,7 +77,9 @@ export default class AppliesController {
             console.log((error));
             
             if (error instanceof errors.E_VALIDATION_ERROR) {
-                return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+                return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
             }
 
             return response

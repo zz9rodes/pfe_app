@@ -38,14 +38,9 @@ export default class UsersController {
 
 
 
-  async show({ params, bouncer, response, auth }: HttpContext) {
-    if (await bouncer.denies(editUser, params.id)) {
-      return response
-        .status(403)
-        .json(
-          ApiResponse.error('You are not authorized Show edit this user', 'E_FORBIDDEN')
-        )
-    }
+  async show({ response, auth }: HttpContext) {
+
+   
 
     const result = await this.UserService.getUserDetails(auth.user!.id)
     return response

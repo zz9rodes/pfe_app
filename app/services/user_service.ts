@@ -79,7 +79,7 @@ export default class UserService {
 
       await user?.load('account')
   
-      return ApiResponse.success('User registered successfully', user,200)
+      return ApiResponse.success('success', user,200)
     } catch (error) {
       ApiResponse.error('Failed Get User Details',"E_USER_DETAILS",error,500)
     }

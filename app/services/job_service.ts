@@ -1,10 +1,7 @@
 import Job from '#models/job'
 import Company from '#models/company'
-import { serializeFields, deserializeFields } from '#models/utils/helper'
 import ApiResponse from '#models/utils/ApiResponse'
-import { createManyJobStepValidationSchema } from '#validators/job_steps_validation'
 
-const jsonFields = ['details', 'recruitment_steps', 'price']
 
 export class JobService {
 
@@ -13,16 +10,15 @@ export class JobService {
 
       console.log("create new jon")
 
-      const {steps,...companyData}=data
+      const {steps,...jobData}=data
       const company = await Company.findBy('slug', companyId)
       if (!company)  { 
         return  ApiResponse.notFound("message: 'Invalid company Id'")
       }
 
-      companyData.slug = crypto.randomUUID()
-      serializeFields(companyData, jsonFields)
+      jobData.slug = crypto.randomUUID()
 
-      const job = await Job.create(companyData)
+      const job = await Job.create(jobData)
       
       if(steps){
 
@@ -33,7 +29,6 @@ export class JobService {
 
       await job.related('company').associate(company)
 
-      deserializeFields(job, jsonFields)
       return ApiResponse.success("success",job)
     } catch (error) {
 
@@ -50,7 +45,6 @@ export class JobService {
   
       const jobsData = data.map((job:Job) => {
         job.slug = crypto.randomUUID();
-        serializeFields(job, jsonFields);
         return job;
       });
       
@@ -60,7 +54,6 @@ export class JobService {
         await job.related('company').associate(company);
       }));
   
-      deserializeFields(jobs, jsonFields);
       return ApiResponse.success("success", jobs);
     } catch (error) {
       console.log(error);
@@ -76,10 +69,8 @@ export class JobService {
         return ApiResponse.notFound("Ressources Not Found")
       }
 
-      serializeFields(data, jsonFields)
       await job.merge(data).save()
 
-      deserializeFields(job, jsonFields)
       return ApiResponse.success("success",job)
     } catch (error) {
       return ApiResponse.error(error)
@@ -106,7 +97,6 @@ export class JobService {
     }
 
     const jobs = await Job.query().where('company_id', company.id)
-    deserializeFields(jobs, jsonFields)
 
     
     return ApiResponse.success("success",jobs)
@@ -115,7 +105,6 @@ export class JobService {
   async getAllJobs(page:number=1) {
 
     const jobs = await Job.query().select("*").paginate(page,20)
-    deserializeFields(jobs, jsonFields)
     return ApiResponse.success("success",jobs)
   }
 
@@ -126,7 +115,6 @@ export class JobService {
     if (!job)  {
       return ApiResponse.notFound("Ressources Not Found")
     }
-    deserializeFields(job, jsonFields)
     return ApiResponse.success("success",job)
   }
 }

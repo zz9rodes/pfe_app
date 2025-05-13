@@ -15,8 +15,13 @@ export default class JobStepsValidation extends BaseModel {
    @column()
   declare description: string 
 
-  @column()
-  declare renumeration?: Price
+
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare renumeration: Price
+
 
   @column()
   declare priority: JobPriority

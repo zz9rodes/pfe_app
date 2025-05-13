@@ -19,9 +19,8 @@ export enum JobPriority {
     HIGH = 'HIGH',
     MEDIUM = 'MEDIUM',
     LOW = 'LOW',
-  }
+}
   
-
 export enum Gender {
     MALE = "MALE",
     FEMALE = "FEMALE",
@@ -32,10 +31,7 @@ export enum JobStatus{
     OPEN="OPEN",
     CLOSE="CLOSE",
     DRAFT="DRAFT"
-
-
 }
-
 export interface Price{
     value:number|null,
     currency:CurrencyType
@@ -67,7 +63,6 @@ export enum CurrencyType {
     MXN = 'MXN', // Peso mexicain
   }
   
-
 export interface Address {
     title: String | null,
     long?: number | null,
@@ -82,5 +77,23 @@ export interface EmailData {
     subject: string
     html?: string
     text?: string,
+}
 
+export enum requiredField{
+    UserEmail,
+    AccountFirstName,
+    AccountLastName,
+    AccountPhoneNumber,
+    AccountAvatarUrl,
+    AccountCountry,
+    AccountCity,
+    AccountFirstLangage,
+    AccountSecondLangage
+}
+
+export enum File_Type{
+    IMAGE='image',
+    VIDEO='video',
+    PDF='pdf',
+    DOCX='docx'
 }

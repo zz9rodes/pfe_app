@@ -4,6 +4,7 @@ import { BaseModel, column, belongsTo,hasOne, hasMany, afterFind } from '@adonis
 import Account from './account.js'
 import CompanyVersion from './company_version.js'
 import Job from './job.js'
+import Post from './post.js'
 
 export default class Company extends BaseModel {
   @column({ isPrimary: true })
@@ -40,6 +41,11 @@ export default class Company extends BaseModel {
   
   @hasMany(() => Job)
   declare jobs: HasMany<typeof Job>
+
+  @hasMany(() => Post, {
+    foreignKey: 'company_id',
+  })
+  declare posts: HasMany<typeof Post>
 
   @column()
   declare isVerify: boolean

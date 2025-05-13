@@ -43,7 +43,9 @@ export const manageCompany=Bouncer.ability( async (user:User,company:Company)=>{
 
   const account= user.account
 
- return  company.accountId==account.id
+
+
+ return  company.accountId==account?.id
 })
 
 
