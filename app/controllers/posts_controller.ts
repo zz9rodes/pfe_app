@@ -1,9 +1,10 @@
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import { PostService } from '#services/post_service'
-import { createPostsValidator,unPublishPostvalidation, editPostsValidator } from '#validators/post'
+import { createPostsValidator, unPublishPostvalidation, editPostsValidator } from '#validators/post'
 import ApiResponse from '#models/utils/ApiResponse'
 import { errors } from '@vinejs/vine'
+import { likeOrCommentPost } from '#validators/like_or_comment_post'
 
 
 @inject()
@@ -11,17 +12,17 @@ export default class PostsController {
 
     constructor(private PostService: PostService) { }
 
-    async store({ response, request,params }: HttpContext) {
+    async store({ response, request, params }: HttpContext) {
         try {
 
-            
+
             const data = await createPostsValidator.validate(request.all())
-            const companyId=params.companyId
-            
-            const result = await this.PostService.create(companyId,data)
+            const companyId = params.companyId
+
+            const result = await this.PostService.create(companyId, data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
-            console.log( error)
+            console.log(error)
             if (error instanceof errors.E_VALIDATION_ERROR) {
                 return response.status(422).json(
                     ApiResponse.validation('Invalid input', error.messages)
@@ -63,41 +64,122 @@ export default class PostsController {
             const result = await this.PostService.delete(params?.postId)
             return response.status(result.statusCode).json(result)
         } catch (error) {
-          
+
             return response
                 .status(500)
                 .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
         }
     }
 
-    async unPublishPost({request, params, response }: HttpContext) {
+    async unPublishPost({ request, params, response }: HttpContext) {
 
         try {
-            const isPublish= await unPublishPostvalidation.validate(request.all())
+            const isPublish = await unPublishPostvalidation.validate(request.all())
 
-            const result = await this.PostService.editPost(params.postId, isPublish )
+            const result = await this.PostService.editPost(params.postId, isPublish)
 
             return response.status(result.statusCode).json(result)
         } catch (error) {
- 
+
             return response
                 .status(500)
                 .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
         }
     }
 
-    async showPost({params,response}:HttpContext){
+    async showPost({ params, response }: HttpContext) {
 
-        const result= await this.PostService.getPostDetails(params.postId)
+        const result = await this.PostService.getPostDetails(params.postId)
 
         return response.status(result.statusCode).json(result)
     }
-    
-    async showCompanypost({params,response}:HttpContext){
 
-        const result= await this.PostService.getAllCompaniesPost(params.postId)
+    async showCompanypost({ params, response }: HttpContext) {
+
+        const result = await this.PostService.getAllCompaniesPost(params.postId)
 
         return response.status(result.statusCode).json(result)
+    }
+
+    async CommentPost({ request, response, auth }: HttpContext) {
+        try {
+            const data = await likeOrCommentPost.validate(request.all())
+
+            const me = auth.user
+
+            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+                return response.json(ApiResponse.badRequest("Invalid Account Id"))
+            }
+
+            const result = await this.PostService.commentPost(data)
+
+            return response.status(result.statusCode).json(result)
+
+        } catch (error) {
+            if (error instanceof errors.E_VALIDATION_ERROR) {
+                return response.status(422).json(
+                    ApiResponse.validation('Invalid input', error.messages)
+                )
+            }
+
+            return response.status(500).json(
+                ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
+        }
+    }
+
+    async LikePost({ request, response, auth }: HttpContext) {
+        try {
+            const data = await likeOrCommentPost.validate(request.all())
+
+            const me = auth.user
+
+            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+                return response.json(ApiResponse.badRequest("Invalid Account Id"))
+            }
+
+            const result = await this.PostService.likePost(data)
+
+            return response.status(result.statusCode).json(result)
+
+        } catch (error) {
+            if (error instanceof errors.E_VALIDATION_ERROR) {
+                return response.status(422).json(
+                    ApiResponse.validation('Invalid input', error.messages)
+                )
+            }
+
+            return response.status(500).json(
+                ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
+        }
+    }
+
+    async unLikePost({ request, response, auth }: HttpContext) {
+        try {
+            const data = await likeOrCommentPost.validate(request.all())
+
+            const me = auth.user
+
+            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+                return response.json(ApiResponse.badRequest("Invalid Account Id"))
+            }
+
+            const result = await this.PostService.unLikePost(data)
+
+            return response.status(result.statusCode).json(result)
+
+        } catch (error) {
+            if (error instanceof errors.E_VALIDATION_ERROR) {
+                return response.status(422).json(
+                    ApiResponse.validation('Invalid input', error.messages)
+                )
+            }
+
+            return response.status(500).json(
+                ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+            )
+        }
     }
 }
 

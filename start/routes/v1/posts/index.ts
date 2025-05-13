@@ -24,3 +24,8 @@ router.group(() => {
 
 }).prefix('v1/api/companies/:companyId/posts/')
 .use([middleware.auth(),middleware.manageCompanies()]).where('companyId',router.matchers.uuid())
+
+
+router.post('/post/comment',[PostsController,'CommentPost']).use(middleware.auth())
+router.post('/post/like',[PostsController,'LikePost']).use(middleware.auth())
+router.post('/post/un_like',[PostsController,'unLikePost']).use(middleware.auth())

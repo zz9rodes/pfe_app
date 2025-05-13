@@ -2,6 +2,9 @@ import Company from "#models/company"
 import Post from "#models/post"
 import ApiResponse from "#models/utils/ApiResponse"
 import File from "#models/file"
+import Account from "#models/account"
+import Like from "#models/like"
+import Comment from "#models/comment"
 
 export class PostService {
   // Your code here
@@ -115,6 +118,64 @@ export class PostService {
 
 
     return ApiResponse.success("Success", {posts,activeDetails})
+  }
+
+  async commentPost(data:any){
+
+    const {accountId,postId}=data
+    const account= await Account.find(accountId)
+
+    const post = await Post.find(postId)
+
+    if(!account || !post){
+      return ApiResponse.badRequest("badRequest")
+    }
+
+    const comment=new Comment()
+
+    await comment.related('account').associate(account)
+
+    await comment.related('post').associate(post)
+
+    return ApiResponse.success("Success")
+
+  }
+
+  async likePost(data:any){
+
+    const {accountId,postId}=data
+    const account= await Account.find(accountId)
+
+    const post = await Post.find(postId)
+
+    if(!account || !post){
+      return ApiResponse.badRequest("badRequest")
+    }
+
+    const like=new Like()
+
+    await like.related('account').associate(account)
+
+    await like.related('post').associate(post)
+
+    return ApiResponse.success("Success")
+
+  }
+
+
+  async unLikePost(data:any){
+
+    const {accountId,postId}=data
+
+    const like = await Like.query().where('account_id',accountId).andWhere('post_id',postId).first()
+
+    if(!like){
+        return ApiResponse.badRequest('badRequest')
+    }
+
+    await like.delete()
+
+    return ApiResponse.success("Success")
   }
 }
 
