@@ -31,7 +31,6 @@ export default class ProjectsController {
             const project = await this.ProjectService.create(params.companyId, data)
             return response.status(project.statusCode).json(project)
         } catch (error) {
-            console.log(error);
 
             if (error instanceof errors.E_VALIDATION_ERROR) {
                 return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))

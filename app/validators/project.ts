@@ -1,6 +1,7 @@
 import { File_Type, Priority, ProjectStatus } from '#models/utils/index'
 import { Database } from '@adonisjs/lucid/database'
 import vine from '@vinejs/vine'
+import { log } from 'console'
 
 export const CreateProjectValidator = vine.compile(
     vine.object({
@@ -12,8 +13,8 @@ export const CreateProjectValidator = vine.compile(
         objectif: vine.string().optional(),
 
         managerId: vine.number().exists(async (db: Database, value: number) => {
-            const result = await db.from('guests').select('id').where('id', value)
-            return result.length === 1
+            const result = await db.from('guests').select('*').where('id', value).first()          
+            return result!==null && result.accept
         }),
 
         jobId: vine.number().exists(async (db: Database, value: number) => {
@@ -39,8 +40,8 @@ export const UpdateProjectValidator = vine.compile(
         start: vine.date().optional(),
         objectif: vine.string().optional(),
         managerId: vine.number().unique(async (db: Database, value: number) => {
-            const result = await db.from('guests').select('id').where('id', value)
-            return result.length == 1 ? false : true
+            const result = await db.from('guests').select('id').where('id', value).first()
+            return result!==null  && result.accept
         }).optional(),
         jobId: vine.number().unique(async (db: Database, value: number) => {
             const result = await db.from('guests').select('id').where('id', value)
