@@ -8,10 +8,10 @@ router.group(() => {
 
     router.post('/create', [PostsController, 'store'])
 
-    router.put("/::postId/update", [PostsController, 'edit'])
-        .where(':postId', router.matchers.number());
+    router.put("/:postId/update", [PostsController, 'edit'])
+        .where(':postId', router.matchers.uuid());
 
-    router.put("/::postId/desactive", [PostsController, 'unPublishPost'])
+    router.put("/:postId/desactive", [PostsController, 'unPublishPost'])
         .where(':postId', router.matchers.number());
 
 
@@ -19,13 +19,13 @@ router.group(() => {
         .where(':postId', router.matchers.uuid());
 
 
-    router.get("/::postId/", [PostsController, 'showPost'])
-        .where(':postId', router.matchers.number());
+    router.get("/:postId/", [PostsController, 'showPost'])
+        .where(':postId', router.matchers.uuid());
 
 }).prefix('v1/api/companies/:companyId/posts/')
 .use([middleware.auth(),middleware.manageCompanies()]).where('companyId',router.matchers.uuid())
 
 
-router.post('/post/comment',[PostsController,'CommentPost']).use(middleware.auth())
-router.post('/post/like',[PostsController,'LikePost']).use(middleware.auth())
-router.post('/post/un_like',[PostsController,'unLikePost']).use(middleware.auth())
+router.post('v1/api/posts/comment',[PostsController,'CommentPost']).use(middleware.auth())
+router.post('v1/api/posts/like',[PostsController,'LikePost']).use(middleware.auth())
+router.post('v1/api/posts/un_like',[PostsController,'unLikePost']).use(middleware.auth())

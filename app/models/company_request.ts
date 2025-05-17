@@ -53,7 +53,7 @@ export default class CompanyRequest extends BaseModel {
   declare certificateOfIncorporation :string
 
   @column()
-  declare accountId:number
+  declare adminId:number
 
   @column()
   declare isActive: boolean

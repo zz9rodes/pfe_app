@@ -1,7 +1,9 @@
 import Account from "#models/account";
 import Company from "#models/company"
 import CompanyVersion from "#models/company_version";
+import Guest from "#models/guest";
 import ApiResponse from "#models/utils/ApiResponse";
+import { CompanyScope } from "#models/utils/index";
 import { Exception } from '@adonisjs/core/exceptions'
 
 
@@ -45,12 +47,27 @@ export class CompanyService {
       })
 
       await company.save()
+      let scopes=[]
+      for (const value of Object.values(CompanyScope)) {
+          scopes.push(value)
+        }
+
+     await Guest.create({
+        role:"ADMIN",
+        scopes:scopes,
+        accountId:company.accountId,
+        companyId:company.id,
+        accept:true
+      })
+
 
       await company.related('admin').associate(admin)
 
       await company.related('details').create(versionData)
 
-      return ApiResponse.success("success",await company.load('details'))
+      await company.load('activeDetails')
+
+      return ApiResponse.success("success",company)
 
     } catch (error) {
       

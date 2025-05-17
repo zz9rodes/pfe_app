@@ -26,11 +26,11 @@ export default class UserService {
         await this.EmailEmiterService.sendEmail(data)
       }
 
-      return ApiResponse.success('User registered successfully', user,200)
+      return ApiResponse.success('User registered successfully', user, 200)
 
     } catch (error) {
       console.error('Register error:', error)
-      return ApiResponse.error('Failed to register user', 'E_USER_REGISTRATION_FAILED', error,500)
+      return ApiResponse.error('Failed to register user', 'E_USER_REGISTRATION_FAILED', error, 500)
     }
 
   }
@@ -65,7 +65,7 @@ export default class UserService {
 
       const token = await User.accessTokens.create(user, ['*'], { expiresIn: '1 days' })
 
-      return ApiResponse.success('User registered successfully', {user,token})
+      return ApiResponse.success('User registered successfully', { user, token })
 
     } catch (error) {
       return ApiResponse.error('Failed to Login user', 'E_USER_LOGIN_FAILED', error)
@@ -78,14 +78,24 @@ export default class UserService {
       const user = await User.find(id)
 
       await user?.load('account')
-  
-      return ApiResponse.success('success', user,200)
+
+      return ApiResponse.success('success', user, 200)
     } catch (error) {
-      ApiResponse.error('Failed Get User Details',"E_USER_DETAILS",error,500)
+      ApiResponse.error('Failed Get User Details', "E_USER_DETAILS", error, 500)
     }
 
 
 
+  }
+
+  async createUserAccount(data: any) {
+    const { user, account } = data
+
+    const newUser = await User.create(user)
+
+    await newUser.related('account').create(account)
+
+    return ApiResponse.success("Success", newUser)
   }
 
 }

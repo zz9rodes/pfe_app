@@ -102,6 +102,23 @@ export function deserializeFields(entity: any | any[], fields: string[]): void {
   }
 }
 
+export function generateRandomPassword(): string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?';
+  const length = Math.floor(Math.random() * (20 - 10 + 1)) + 10; 
+  const passwordArray: string[] = [];
+
+  const currentTime = new Date().getTime();
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = (currentTime + i) % characters.length; 
+    passwordArray.push(characters[randomIndex]);
+  }
+
+  return passwordArray.join('');
+}
+
+
+
 
   
   

@@ -34,7 +34,6 @@ export default class Contract extends BaseModel {
 
   @column({
     prepare: (value: any) => JSON.stringify(value),
-    // consume: (value: string) => JSON.parse(value),
     consume: (value: string) => {
       try {
         return JSON.parse(value)

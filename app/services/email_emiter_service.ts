@@ -11,6 +11,9 @@ import { removeEmptyFields } from '#models/utils/helper'
 export default class EmailEmiterService {
 
   public async sendEmail(data: EmailData): Promise<Email> {
+    console.log("dans le email");
+    console.log(data);
+    
     const email = await Email.create({
       ...data,
       status: 'pending',
@@ -29,6 +32,8 @@ export default class EmailEmiterService {
       html: email.html,
       replyTo: email.sender.email
     };
+
+    console.log(mailOptions)
 
     try {
       try {

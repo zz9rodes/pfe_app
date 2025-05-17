@@ -92,7 +92,7 @@ export class PostService {
 
       await  post.delete()
 
-      return ApiResponse.success("Success", post)
+      return ApiResponse.success("Success")
     } catch (error) {
       return ApiResponse.error(error)
     }
@@ -128,10 +128,14 @@ export class PostService {
     const post = await Post.find(postId)
 
     if(!account || !post){
-      return ApiResponse.badRequest("badRequest")
+      return ApiResponse.badRequest("badRequest , User cannot Comment")
     }
 
     const comment=new Comment()
+
+    comment.text=data.text
+
+    console.log({account,post})
 
     await comment.related('account').associate(account)
 

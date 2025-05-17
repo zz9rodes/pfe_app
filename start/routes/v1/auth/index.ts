@@ -6,6 +6,8 @@ import router from '@adonisjs/core/services/router'
 router.group(()=>{
     router.group(()=>{
         router.post('/create',[UsersController,'create'])
+        router.post('/accounts/create',[UsersController,'createAccount'])
+
         router.post('/login',[UsersController,'login'])
         router.put('/:id',[UsersController,'edit']).where('id',router.matchers.number())
         .use([

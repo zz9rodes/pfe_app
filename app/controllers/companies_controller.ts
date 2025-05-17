@@ -19,6 +19,7 @@ export default class CompaniesController {
 
   async store({ request, response, auth }: HttpContext) {
     try {
+      
       if (!auth.user!.isAdmin) {
         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
@@ -28,7 +29,7 @@ export default class CompaniesController {
       const validData = await createCompanyVersionsValidator.validate(company_request)
       const data = cleanCompanyData(validData)
 
-      const result = await this.CompanyService.createCompany(company_request!.accountId, data)
+      const result = await this.CompanyService.createCompany(company_request!.adminId, data)
 
       return response.status(result.statusCode).json(result)
     } catch (error) {

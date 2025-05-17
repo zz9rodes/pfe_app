@@ -10,8 +10,6 @@ export default class extends BaseSchema {
       table.text('description').nullable()
       table.string('website').nullable()
       table.integer('cv_profile_id').unsigned().references('id').inTable('cv_profiles').onDelete('CASCADE')
-      
-
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })

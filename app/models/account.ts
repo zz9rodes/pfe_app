@@ -1,60 +1,61 @@
 import { DateTime } from 'luxon'
-import type {BelongsTo,HasOne} from '@adonisjs/lucid/types/relations'
-import { BaseModel, column,belongsTo ,hasOne, afterFind} from '@adonisjs/lucid/orm'
-import { AccountType,Address } from './utils/index.js'
+import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, belongsTo, hasOne, afterFind, hasMany } from '@adonisjs/lucid/orm'
+import { AccountType, Address } from './utils/index.js'
 import User from './user.js'
 import Company from './company.js'
 import CvProfile from './cv_profile.js'
+import Guest from './guest.js'
 
 export default class Account extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
   @column()
-  declare slug:string
+  declare slug: string
 
   @column()
-  declare firstName:string 
+  declare firstName: string
 
   @column()
-  declare lastName:string |null
+  declare lastName: string | null
 
   @column()
-  declare phoneNumber:string 
+  declare phoneNumber: string
 
   @column()
-  declare dob: Date  | null
+  declare dob: Date | null
 
   @column()
   declare accountType: AccountType
 
   @column()
-  declare country: string|null
+  declare country: string | null
 
   @column()
-  declare city: string|null
+  declare city: string | null
 
   @column()
-  declare avatarUrl: string|null
+  declare avatarUrl: string | null
 
   @column()
-  declare address: Address|null
+  declare address: Address | null
 
   @column()
   declare firstLangage: string
 
   @column()
-  declare secondLangage: string|null
+  declare secondLangage: string | null
 
   @column()
-  declare frontIdCard: string|null
+  declare frontIdCard: string | null
 
   @column({})
-  declare backIdCard: string|null
+  declare backIdCard: string | null
 
   @column()
   declare userId: number
 
-  @belongsTo(()=>User)
+  @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
   @hasOne(() => Company)
@@ -63,13 +64,16 @@ export default class Account extends BaseModel {
   @hasOne(() => CvProfile)
   declare cvProfiles: HasOne<typeof CvProfile>
 
-  @column()
-  declare roles:string|null
+  @hasMany(() => Guest)
+  declare guests: HasMany<typeof Guest>
 
-    @afterFind()
-      static async loadaDetails(account: Account) {
-        await account.load('cvProfiles')
-    }
+  @column()
+  declare roles: string | null
+
+  @afterFind()
+  static async loadaDetails(account: Account) {
+    await account.load('cvProfiles')
+  }
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

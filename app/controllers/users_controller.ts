@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { createUserValidator, editUserValidator, loginUserValidator } from '#validators/user'
+import { createUserAccountValidator, createUserValidator, editUserValidator, loginUserValidator } from '#validators/user'
 import UserService from '#services/user_service'
 import { inject } from '@adonisjs/core'
 import { errors } from '@vinejs/vine'
@@ -110,6 +110,27 @@ export default class UsersController {
       return response.status(200).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
+        return response.status(422).json(
+          ApiResponse.validation('Invalid input', error.messages)
+        )
+      }
+
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
+    }
+  }
+
+  async createAccount({request,response}:HttpContext){
+    try {
+
+      const data= await createUserAccountValidator.validate(request.all())
+
+      const result= await this.UserService.createUserAccount(data);
+      
+      return response.status(result.statusCode).json(result)
+    } catch (error) {
+       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(
           ApiResponse.validation('Invalid input', error.messages)
         )

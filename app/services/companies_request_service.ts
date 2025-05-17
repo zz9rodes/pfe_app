@@ -5,6 +5,7 @@ import ApiResponse from "#models/utils/ApiResponse"
 
 export class CompaniesRequestService {
   async RequestCompany(user: User, data: any) {
+    
     const account= user.account
 
     if(!account){
@@ -17,11 +18,11 @@ export class CompaniesRequestService {
     const isAlreadyCompany =await Company.findBy('account_id',account.id)
 
     if(isAlreadyRequest || isAlreadyCompany){
-     return ApiResponse.error("Your Already have A compan","E_ERROR")
+     return ApiResponse.error("Your Already have A company","E_ERROR")
 
     }
     companyRequest.fill(data)
-    companyRequest.accountId = account.id
+    companyRequest.adminId = account.id
     companyRequest.slug= crypto.randomUUID()
     await companyRequest.save()
     return ApiResponse.success("success", companyRequest)

@@ -4,7 +4,7 @@ import { PostService } from '#services/post_service'
 import { createPostsValidator, unPublishPostvalidation, editPostsValidator } from '#validators/post'
 import ApiResponse from '#models/utils/ApiResponse'
 import { errors } from '@vinejs/vine'
-import { likeOrCommentPost } from '#validators/like_or_comment_post'
+import { CommentPost, likePost } from '#validators/like_or_comment_post'
 
 
 @inject()
@@ -45,6 +45,7 @@ export default class PostsController {
             const result = await this.PostService.editPost(params?.postId, data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
+            console.log(error)
             if (error instanceof errors.E_VALIDATION_ERROR) {
                 return response.status(422).json(
                     ApiResponse.validation('Invalid input', error.messages)
@@ -103,11 +104,11 @@ export default class PostsController {
 
     async CommentPost({ request, response, auth }: HttpContext) {
         try {
-            const data = await likeOrCommentPost.validate(request.all())
+            const data = await CommentPost.validate(request.all())
 
             const me = auth.user
 
-            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+            if (!me?.isAdmin && me?.account?.id !== data.accountId) {
                 return response.json(ApiResponse.badRequest("Invalid Account Id"))
             }
 
@@ -130,11 +131,11 @@ export default class PostsController {
 
     async LikePost({ request, response, auth }: HttpContext) {
         try {
-            const data = await likeOrCommentPost.validate(request.all())
+            const data = await likePost.validate(request.all())
 
             const me = auth.user
 
-            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+            if (!me?.isAdmin && me?.account?.id !== data.accountId) {
                 return response.json(ApiResponse.badRequest("Invalid Account Id"))
             }
 
@@ -149,6 +150,12 @@ export default class PostsController {
                 )
             }
 
+            if(error.code=='ER_DUP_ENTRY'){
+                  return response.status(500).json(
+                ApiResponse.error('You Already like this post', 'E_INTERNAL_ERROR', error)
+            )
+            }
+
             return response.status(500).json(
                 ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
             )
@@ -157,11 +164,11 @@ export default class PostsController {
 
     async unLikePost({ request, response, auth }: HttpContext) {
         try {
-            const data = await likeOrCommentPost.validate(request.all())
+            const data = await likePost.validate(request.all())
 
             const me = auth.user
 
-            if (!me?.isAdmin && me?.account?.id !== data.accuntId) {
+            if (!me?.isAdmin && me?.account?.id !== data.accountId) {
                 return response.json(ApiResponse.badRequest("Invalid Account Id"))
             }
 

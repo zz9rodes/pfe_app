@@ -10,14 +10,13 @@ export default class extends BaseSchema {
 
 
       
-      table.integer('post_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE')
+      table.integer('post_id').unsigned().references('id').inTable('posts').onDelete('CASCADE')
 
       table.integer('account_id').unsigned().references('id').inTable('accounts').onDelete('CASCADE')
 
 
       table.text('text').notNullable()
 
-      table.unique(['post_id', 'account_id'])
 
     
       table.timestamp('created_at').notNullable()

@@ -97,3 +97,27 @@ export enum File_Type{
     PDF='pdf',
     DOCX='docx'
 }
+
+export enum CompanyScope {
+    // TASK
+    TASK_CREATE = "task:create",
+    TASK_EDIT = "task:edit",
+    TASK_DELETE = "task:delete",
+    TASK_VIEW = "task:view",
+    TASK_ALL = "task:all",
+  
+    // PROJECT
+    PROJECT_CREATE = "project:create",
+    PROJECT_EDIT = "project:edit",
+    PROJECT_DELETE = "project:delete",
+    PROJECT_VIEW = "project:view",
+    PROJECT_ALL = "project:all",
+  
+    // JOB
+    JOB_CREATE = "job:create",
+    JOB_EDIT = "job:edit",
+    JOB_DELETE = "job:delete",
+    JOB_VIEW = "job:view",
+    JOB_ALL = "job:all",
+  }
+  
