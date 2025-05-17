@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
-import type { Price,JobPriority } from './utils/index.js'
+import type { Price,Priority } from './utils/index.js'
 import Job from './job.js'
 import type {BelongsTo} from '@adonisjs/lucid/types/relations'
 
@@ -24,7 +24,7 @@ export default class JobStepsValidation extends BaseModel {
 
 
   @column()
-  declare priority: JobPriority
+  declare priority: Priority
 
   @column()
   declare jobId:number

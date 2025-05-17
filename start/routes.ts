@@ -35,6 +35,9 @@ import './routes/v1/posts/index.js'
 
 import './routes/v1/guest/index.js'
 
+import './routes/v1/projects/index.js'
+
+
 router.get('/', async () => {
   return {
     hello: 'world demo ici ! ',

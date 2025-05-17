@@ -15,11 +15,19 @@ export enum JobType {
     FREELANCE = "FREELANCE"
 }
 
-export enum JobPriority {
+export enum Priority {
     HIGH = 'HIGH',
     MEDIUM = 'MEDIUM',
     LOW = 'LOW',
 }
+
+export enum ProjectStatus {
+  OPEN = 'open',
+  IN_PROGRESS = 'in progress',
+  COMPLETED = 'completed',
+  CLOSED = 'closed'
+}
+
   
 export enum Gender {
     MALE = "MALE",

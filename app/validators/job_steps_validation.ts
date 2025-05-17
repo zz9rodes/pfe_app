@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 import { Database } from '@adonisjs/lucid/database'
-import { CurrencyType, JobPriority } from '#models/utils/index'
+import { CurrencyType, Priority } from '#models/utils/index'
 
 
 
@@ -14,7 +14,7 @@ export const createJobStepValidationSchema = vine.compile(vine.object({
     currency: vine.enum(CurrencyType)
   }).optional(),
 
-  priority: vine.enum(JobPriority),
+  priority: vine.enum(Priority),
 
   jobId: vine.number().exists(async (db: Database, value: number) => {
     const result = await db.from('jobs').select('*').where('id', value)
@@ -34,7 +34,7 @@ export const createManyJobStepValidationSchema = vine.compile(vine.object({
         currency: vine.enum(CurrencyType)
       }).optional(),
 
-      priority: vine.enum(JobPriority),
+      priority: vine.enum(Priority),
 
       jobId: vine.number().exists(async (db: Database, value: number) => {
         const result = await db.from('jobs').select('*').where('id', value)
@@ -55,7 +55,7 @@ export const updateJobStepValidationSchema = vine.compile(vine.object({
     currency: vine.enum(CurrencyType)
   }).optional(),
 
-  priority: vine.enum(JobPriority).optional()
+  priority: vine.enum(Priority).optional()
 
 })
 )
