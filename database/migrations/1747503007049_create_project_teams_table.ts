@@ -17,6 +17,9 @@ export default class extends BaseSchema {
 
       table.integer('project_id').unsigned().references('id').inTable('projects').onDelete('CASCADE')
 
+      table.unique(['project_id','member_id'])
+
+
       table.timestamp('created_at').nullable()
       table.timestamp('updated_at').nullable()
     })

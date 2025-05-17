@@ -37,6 +37,8 @@ import './routes/v1/guest/index.js'
 
 import './routes/v1/projects/index.js'
 
+import './routes/v1/project_members/index.js'
+
 
 router.get('/', async () => {
   return {

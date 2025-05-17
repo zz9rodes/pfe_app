@@ -6,10 +6,12 @@ import ApiResponse from "#models/utils/ApiResponse"
 export class ProjectTeamService {
 
   async create(data: any) {
-    const { memberId, projetId } = data
+    console.log("dans le service");
+    
+    const { memberId, projectId } = data
 
     const member = await Guest.find(memberId)
-    const project = await Project.find(projetId)
+    const project = await Project.find(projectId)
 
     if (member?.companyId !== project?.companyId) {
       return ApiResponse.badRequest("Invalid member or Project")
@@ -17,15 +19,15 @@ export class ProjectTeamService {
 
     const memberTeam = await ProjectTeam.create({
       memberId: memberId,
-      projectId: projetId
+      projectId: projectId
     })
     return ApiResponse.success("Success", memberTeam)
   }
 
   async createMany(data: any) {
-    const { membersId, projetId } = data
+    const { membersId, projectId } = data
 
-    const project = await Project.find(projetId)
+    const project = await Project.find(projectId)
     if (!project) {
       return ApiResponse.notFound("Project not found")
     }
@@ -46,7 +48,7 @@ export class ProjectTeamService {
       validMembers.map((member) =>
         ProjectTeam.create({
           memberId: member.id,
-          projectId: projetId
+          projectId: projectId
         })
       )
     )
@@ -66,12 +68,14 @@ export class ProjectTeamService {
     return ApiResponse.success("Delete Succesfully")
   }
 
-  async deleteMany(memberIds:any) {
-    if (!memberIds || !Array.isArray(memberIds) || memberIds.length === 0) {
+  async deleteMany(data:any) {
+    console.log(data);
+    
+    if (!data || !Array.isArray(data.memberIds) || data.memberIds.length === 0) {
       return ApiResponse.badRequest("No member IDs provided")
     }
 
-    const members = await ProjectTeam.query().whereIn('id', memberIds)
+    const members = await ProjectTeam.query().whereIn('id', data.memberIds)
 
     if (members.length === 0) {
       return ApiResponse.notFound("No matching members found")

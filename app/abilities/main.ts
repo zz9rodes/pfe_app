@@ -52,10 +52,6 @@ export const manageCompany=Bouncer.ability( async (user:User,company:Company)=>{
 
 export const manageCompaniesVersion = Bouncer.ability(async (me: User, slug: string | any) => {
   await me?.account?.load('company')
-  console.log(me?.account?.company?.slug);
-  console.log(slug);
-  
-  
-  
+
   return (me?.account?.company?.slug === slug) || (me.isAdmin == true)
 })

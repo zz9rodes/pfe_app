@@ -10,11 +10,18 @@ export default class ProjectTeamsController {
     constructor(private ProjectTeamService: ProjectTeamService) { }
 
     async store({ request, response }: HttpContext) {
+        console.log("dans le controller");
+        
         try {
+            
             const data = await createProjectTeamsvalidator.validate(request.all())
+                        console.log(data);
+
             const result = await this.ProjectTeamService.create(data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
+            console.log(error);
+            
             return this.handleError(response, error)
         }
     }
@@ -25,13 +32,15 @@ export default class ProjectTeamsController {
             const result = await this.ProjectTeamService.createMany(data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
+            console.log(error);
+            
             return this.handleError(response, error)
         }
     }
 
     async destroy({ params, response }: HttpContext) {
         try {
-            const result = await this.ProjectTeamService.delete(Number(params.id))
+            const result = await this.ProjectTeamService.delete((params.memberId))
             return response.status(result.statusCode).json(result)
         } catch (error) {
             return this.handleError(response, error)
@@ -44,14 +53,19 @@ export default class ProjectTeamsController {
             const result = await this.ProjectTeamService.deleteMany(memberIds)
             return response.status(result.statusCode).json(result)
         } catch (error) {
+            console.log(error);
+            
             return this.handleError(response, error)
         }
     }
 
-    // Gestion centralisée des erreurs
     private handleError(response: HttpContext['response'], error: any) {
         if (error instanceof errors.E_VALIDATION_ERROR) {
             return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
+        }
+
+        if(error.code="ER_DUP_ENTRY"){
+            return response.status(500).json({message:"Already Exist : Duplicate Entry"})
         }
         return response.status(500).json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
