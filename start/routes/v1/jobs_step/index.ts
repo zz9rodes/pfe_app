@@ -1,24 +1,24 @@
 import router from "@adonisjs/core/services/router"
-import JobStepsValidationController from '#controllers/job_steps_validations_controller'
+import JobStepsController from '#controllers/job_steps_controller'
 import { middleware } from "#start/kernel"
 
 
 router.group(()=>{
 
-    router.post('/create',[JobStepsValidationController,'store'])
+    router.post('/create',[JobStepsController,'store'])
 
-    router.put("/:stepId/update",[JobStepsValidationController,'update'])
+    router.put("/:stepId/update",[JobStepsController,'update'])
     .where('stepId', router.matchers.number());
 
 
-    router.delete("/:stepId/destroy",[JobStepsValidationController,'destroy'])
+    router.delete("/:stepId/destroy",[JobStepsController,'destroy'])
     .where('stepId', router.matchers.number());
 
 
-    router.get("/:stepId/",[JobStepsValidationController,'show'])
+    router.get("/:stepId/",[JobStepsController,'show'])
     .where('stepId', router.matchers.number());
 
-    router.get("",[JobStepsValidationController,'index'])
+    router.get("",[JobStepsController,'index'])
 
 }).prefix('v1/api/jobs/:jobId/steps')
 .use([middleware.auth(),middleware.manageJobs()])

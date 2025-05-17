@@ -3,7 +3,7 @@ import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import Company from './company.js'
 import type { Price } from './utils/index.js'
-import JobStepsValidation from './job_steps_validation.js'
+import JobSteps from './job_steps.js'
 
 export default class Job extends BaseModel {
   @column({ isPrimary: true })
@@ -77,8 +77,8 @@ export default class Job extends BaseModel {
   declare company: BelongsTo<typeof Company>
   
 
-  @hasMany(() => JobStepsValidation)
-  declare stepsValidation: HasMany<typeof JobStepsValidation>
+  @hasMany(() => JobSteps)
+  declare stepsValidation: HasMany<typeof JobSteps>
   
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

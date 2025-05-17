@@ -1,8 +1,8 @@
 import Job from '#models/job';
-import JobStepsValidation from '#models/job_steps_validation'
+import JobSteps from '#models/job_steps'
 import ApiResponse from '#models/utils/ApiResponse'
 
-export class JobStepsValidationService {
+export class JobStepsService {
   async create(jobId: string, data: any) {
 
     const job = await Job.findBy('slug', jobId)
@@ -19,7 +19,7 @@ export class JobStepsValidationService {
 
   async update(id: number, data: any) {
     
-    const step = await JobStepsValidation.find(id)
+    const step = await JobSteps.find(id)
     if (!step) {
       return ApiResponse.notFound("Ressource Not Found")
     }
@@ -30,7 +30,7 @@ export class JobStepsValidationService {
   }
 
   async delete(id: number) {
-    const step = await JobStepsValidation.find(id)
+    const step = await JobSteps.find(id)
     if (!step) {
       return ApiResponse.notFound("message: 'Step not found'")
     }
@@ -39,7 +39,7 @@ export class JobStepsValidationService {
     return ApiResponse.success("success", { message: 'Step deleted successfully' })
   }
 
-  async getAllJobStepsValidation(jobId: string) {
+  async getAllJobSteps(jobId: string) {
 
     const job = await Job.findBy('slug', jobId)
 
@@ -47,13 +47,13 @@ export class JobStepsValidationService {
       return ApiResponse.error("Ressource Not Found")
     }
 
-    const steps = await JobStepsValidation.findManyBy('job_id', job?.id)
+    const steps = await JobSteps.findManyBy('job_id', job?.id)
 
     return ApiResponse.success('success', steps)
   }
 
   async getById(id: number) {
-    const step = await JobStepsValidation.find(id)
+    const step = await JobSteps.find(id)
     return ApiResponse.success("success", step ?? { message: 'Step not found' })
   }
 }

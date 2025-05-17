@@ -5,7 +5,7 @@ import Job from './job.js'
 import type {BelongsTo} from '@adonisjs/lucid/types/relations'
 
 
-export default class JobStepsValidation extends BaseModel {
+export default class JobSteps extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
