@@ -24,6 +24,8 @@ export default class ProjectsController {
     }
 
     public async store({ request, response, params }: HttpContext) {
+          console.log("dans le controller");
+
         try {
             const data = await CreateProjectValidator.validate(request.all())
             const project = await this.ProjectService.create(params.companyId, data)

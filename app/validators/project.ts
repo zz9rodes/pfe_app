@@ -1,26 +1,33 @@
-import { Priority, ProjectStatus } from '#models/utils/index'
+import { File_Type, Priority, ProjectStatus } from '#models/utils/index'
 import { Database } from '@adonisjs/lucid/database'
 import vine from '@vinejs/vine'
 
 export const CreateProjectValidator = vine.compile(
-  vine.object({
-    name: vine.string(),
-    description: vine.string().optional(),
-    status: vine.enum(ProjectStatus),
-    priority: vine.enum(Priority),
-    start: vine.date(), 
-    objectif: vine.string().optional(),
+    vine.object({
+        name: vine.string(),
+        description: vine.string().optional(),
+        status: vine.enum(ProjectStatus),
+        priority: vine.enum(Priority),
+        start: vine.date(),
+        objectif: vine.string().optional(),
 
-    managerId: vine.number().exists(async (db: Database, value: number) => {
-      const result = await db.from('guests').select('id').where('id', value)
-      return result.length === 1
-    }),
+        managerId: vine.number().exists(async (db: Database, value: number) => {
+            const result = await db.from('guests').select('id').where('id', value)
+            return result.length === 1
+        }),
 
-    jobId: vine.number().exists(async (db: Database, value: number) => {
-      const result = await db.from('jobs').select('id').where('id', value)
-      return result.length === 1
-    }).optional(),
-  })
+        jobId: vine.number().exists(async (db: Database, value: number) => {
+            const result = await db.from('jobs').select('id').where('id', value)
+            return result.length === 1
+        }).optional(),
+        files: vine.array(
+            vine.object({
+                name: vine.string().minLength(2).optional(),
+                type: vine.enum(File_Type),
+                url: vine.string().url()
+            })
+        ).maxLength(3)
+    })
 )
 
 export const UpdateProjectValidator = vine.compile(
@@ -39,4 +46,11 @@ export const UpdateProjectValidator = vine.compile(
             const result = await db.from('guests').select('id').where('id', value)
             return result.length == 1 ? false : true
         }).optional(),
+        files: vine.array(
+            vine.object({
+                name: vine.string().minLength(2).optional(),
+                type: vine.enum(File_Type),
+                url: vine.string().url()
+            })
+        ).optional()
     }))

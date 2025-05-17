@@ -34,8 +34,9 @@ export class PostService {
         const fileIds = createdFiles.map(f => f.id)
   
         await post.related('files').attach(fileIds)
-        await post.related('company').associate(company)
       }
+      await post.related('company').associate(company)
+
   
       await post.load('files')
   

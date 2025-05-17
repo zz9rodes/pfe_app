@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { afterCreate, afterFind, BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
 import { Priority, ProjectStatus } from './utils/index.js'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 import File from './file.js'
 import Guest from './guest.js'
 import Job from './job.js'
@@ -32,18 +32,31 @@ export default class Project extends BaseModel {
   @column()
   declare objectif: string
 
-  @hasMany(() => File)
-  declare files: HasMany<typeof File>
 
-  @column({ columnName: 'manager_id' }) // correspond à ta colonne SQL
-declare managerId: number
 
-@belongsTo(() => Guest, {
-  foreignKey: 'managerId',     // nom de la propriété dans ce modèle
-  localKey: 'id',              // par défaut, la clé primaire de Guest (optionnel ici)
-})
-declare manager: BelongsTo<typeof Guest>
+  @manyToMany(() => File, {
+    pivotTable: 'file_project',
+  })
+  declare files: ManyToMany<typeof File>
 
+  @afterCreate()
+  static async loadFile(project: Project) {
+    await project.load('files')
+  }
+
+  @afterFind()
+  static async findFile(project: Project) {
+    await project.load('files')
+  }
+
+  @column({ columnName: 'manager_id' }) 
+  declare managerId: number
+
+  @belongsTo(() => Guest, {
+    foreignKey: 'managerId',     // nom de la propriété dans ce modèle
+    localKey: 'id',              // par défaut, la clé primaire de Guest (optionnel ici)
+  })
+  declare manager: BelongsTo<typeof Guest>
 
   @column()
   declare jobId?: number

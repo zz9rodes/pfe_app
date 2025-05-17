@@ -13,7 +13,7 @@ export const createPostsValidator = vine.compile(
                 type: vine.enum(File_Type),
                 url: vine.string().url()
             })
-        ),
+        ).optional(),
     })
 )
 
