@@ -27,6 +27,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare isAdmin : boolean
 
+  @column()
+  declare accountId:number
+
   @hasOne(() => Account)
   declare account: HasOne<typeof Account>
 

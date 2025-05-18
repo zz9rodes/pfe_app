@@ -17,7 +17,6 @@ export default class Comment extends BaseModel {
   @column()
   declare postId: number
 
-
   @belongsTo(() => Account)
   declare account: BelongsTo<typeof Account>
 
