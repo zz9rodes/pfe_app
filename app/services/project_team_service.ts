@@ -6,7 +6,6 @@ import ApiResponse from "#models/utils/ApiResponse"
 export class ProjectTeamService {
 
   async create(data: any) {
-    console.log("dans le service");
     
     const { memberId, projectId } = data
 
@@ -69,7 +68,6 @@ export class ProjectTeamService {
   }
 
   async deleteMany(data:any) {
-    console.log(data);
     
     if (!data || !Array.isArray(data.memberIds) || data.memberIds.length === 0) {
       return ApiResponse.badRequest("No member IDs provided")

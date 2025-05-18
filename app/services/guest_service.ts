@@ -12,7 +12,6 @@ export class GuestService {
   constructor(private EmailEmiterService: EmailEmiterService) { }
 
   async createGuest(data: any) {
-    console.log("dans le service");
 
     const { accountId, companyId } = data;
 
@@ -22,13 +21,11 @@ export class GuestService {
     if (!account || !company) {
       return ApiResponse.badRequest("Invalid Account or Company Id");
     }
-    console.log({accountId,companyId});
     
 
     const existingGuest = await Guest.query()
       .where('account_id', accountId)
       .andWhere('company_id', companyId).first();
-      console.log(existingGuest);
       
     if (existingGuest) {
       return ApiResponse.badRequest("Guest already exists");
@@ -49,7 +46,6 @@ export class GuestService {
 
     const emailInfo = await this.EmailEmiterService.sendEmail(emaildata);
 
-    console.log(emailInfo);
     return ApiResponse.success("Success", guest);
   }
 

@@ -12,7 +12,6 @@ export default class ProjectsController {
 
     public async lisCompanieProjetcts({ response, params }: HttpContext) {
 
-        console.log(params.companyId);
 
         const projects = await this.ProjectService.lisCompanieProjetcts(params.companyId)
         return response.status(projects.statusCode).json(projects)
@@ -24,7 +23,6 @@ export default class ProjectsController {
     }
 
     public async store({ request, response, params }: HttpContext) {
-          console.log("dans le controller");
 
         try {
             const data = await CreateProjectValidator.validate(request.all())

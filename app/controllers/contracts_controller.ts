@@ -53,7 +53,6 @@ export default class ContractsController {
 
       const data= await updateContractValidator.validate(request.all())
 
-      console.log(params.contractId)
 
     
   

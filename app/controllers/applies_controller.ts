@@ -92,7 +92,6 @@ export default class AppliesController {
 
     async destroy({ params, response }: HttpContext) {
         try {
-            console.log(params.applyId)
 
             const result = await this.ApplyService.delete(params.applyId)
             return response.ok(result)

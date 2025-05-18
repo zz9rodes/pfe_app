@@ -14,6 +14,7 @@
 
 import Company from '#models/company'
 import CvProfile from '#models/cv_profile'
+import Project from '#models/project'
 import User from '#models/user'
 import { Bouncer } from '@adonisjs/bouncer'
 
@@ -46,6 +47,31 @@ export const manageCompany=Bouncer.ability( async (user:User,company:Company)=>{
 
 
  return  company.accountId==account?.id
+})
+
+export const manageTasks = Bouncer.ability(async (user: User, project: Project) => {
+  // Charger les invités (guests) liés au compte de l'utilisateur
+  const account = await user.related('account').query().preload('guests').first()
+
+  if (!account) {
+    return false
+  }
+
+  // Extraire les IDs des guests liés à cet utilisateur
+  const guestIds = account.guests.map((guest) => guest.id)
+
+  // Vérifie si un des guests est manager ou membre du projet
+  const isManager = guestIds.includes(project.managerId)
+
+  // Vérifie si un des guests est membre du projet (dans ProjectTeam)
+  const members = await project.related('members').query()
+  const isMember = members.some((member) => guestIds.includes(member.memberId))
+
+  if (isManager || isMember) {
+    return true
+  }
+
+  return false
 })
 
 

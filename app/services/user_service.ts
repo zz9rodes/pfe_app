@@ -93,7 +93,7 @@ export default class UserService {
 
     const newUser = await User.create(user)
 
-    await newUser.related('account').create(account)
+    await newUser.related('account').create({...account,slug:crypto.randomUUID()})
 
     return ApiResponse.success("Success", newUser)
   }

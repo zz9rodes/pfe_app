@@ -6,14 +6,12 @@ import type { NextFn } from '@adonisjs/core/types/http'
 
 export default class ManageContractMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
-console.log("au debut du midleware");
 
     const contractId = ctx.params.contractId
     const contract = await Contract.findBy('slug', contractId)
 
     await contract?.load('company')
 
-    console.log(contract)
     const company = contract?.company
 
 

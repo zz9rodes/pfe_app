@@ -15,7 +15,6 @@ export class ApplyService {
   async create(data: any) {
     const { accountId, jobId } = data;
   
-    console.log({ accountId, jobId });
   
     const jobInfo = await Job.find(jobId);
     const account = await Account.find(accountId);

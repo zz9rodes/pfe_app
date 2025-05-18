@@ -4,7 +4,6 @@ import ApiResponse from '#models/utils/ApiResponse'
 export class ContractService {
   async create(data: any) {
 
-    console.log("dans le service");
 
 
     const contract = await Contract.create({
@@ -17,7 +16,6 @@ export class ContractService {
   }
 
   async update(contractId: string, data: any) {
-    console.log(contractId)
     const contract = await Contract.findBy('slug', contractId)
     if (!contract) {
       return ApiResponse.notFound("Ressource Not Found")

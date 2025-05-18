@@ -136,7 +136,6 @@ export class PostService {
 
     comment.text=data.text
 
-    console.log({account,post})
 
     await comment.related('account').associate(account)
 

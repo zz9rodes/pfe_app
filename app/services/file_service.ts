@@ -7,7 +7,6 @@ export class FileService {
   async create(data: any) {
 
     const file = await File.create(data)
-    console.log(file);
     
     return ApiResponse.success("Success",file)
   }
@@ -15,9 +14,7 @@ export class FileService {
   async delete(fileId: string) {
 
     const file = await File.find(fileId)
-    console.log("dans le service");
     
-    console.log(file)
     if (!file) {
       return ApiResponse.notFound("Ressource Not Found")
     }

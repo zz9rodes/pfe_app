@@ -28,6 +28,14 @@ export enum ProjectStatus {
   CLOSED = 'closed'
 }
 
+export enum TaskStatus{
+    CREATE = 'create',
+    IN_PROGRESS = 'in progress',
+    COMPLETED = 'completed',
+    IN_REVIEW="in review",
+    CLOSED = 'closed'
+}
+
   
 export enum Gender {
     MALE = "MALE",

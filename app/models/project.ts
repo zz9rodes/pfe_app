@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
-import { afterCreate, afterFind, BaseModel, belongsTo, column, manyToMany } from '@adonisjs/lucid/orm'
+import { afterCreate, afterFind, BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import { Priority, ProjectStatus } from './utils/index.js'
-import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import File from './file.js'
 import Guest from './guest.js'
 import Job from './job.js'
 import Company from './company.js'
+import ProjectTeam from './project_team.js'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -70,6 +71,10 @@ export default class Project extends BaseModel {
 
   @belongsTo(() => Company)
   declare company: BelongsTo<typeof Company>
+
+  @hasMany(()=>ProjectTeam)
+  declare members:HasMany<typeof ProjectTeam>
+
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -28,7 +28,7 @@ export default class JobStepsController {
         try {
 
             const jobId=params.jobId
-            const payload = await updateJobStepValidationSchema.validate(request.all())
+            const payload = await createJobStepValidationSchema.validate(request.all())
             const step = await this.JobStepsService.create(jobId,payload)
             return response.status(step.statusCode).created(step)
 
@@ -72,7 +72,6 @@ export default class JobStepsController {
 
     async destroy({ params, response }: HttpContext) {
 
-        console.log(params.stepId)
 
         const result = await this.JobStepsService.delete(params.stepId)
         if (result.message === 'Step not found') return response.notFound(result)

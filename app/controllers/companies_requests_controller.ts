@@ -21,7 +21,6 @@ export default class CompaniesRequestsController {
         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
       const data = await createCompanyVersionsValidator.validate(request.all())
-      console.log(data);
       
       const result = await this.CompaniesRequestService.RequestCompany(auth!.user!, data)
       return response.status(result.statusCode).json(result)

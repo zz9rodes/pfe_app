@@ -8,7 +8,6 @@ export class JobService {
   async createNewJob(companyId: string, data: any) {
     try {
 
-      console.log("create new jon")
 
       const {steps,...jobData}=data
       const company = await Company.findBy('slug', companyId)
@@ -22,7 +21,6 @@ export class JobService {
       
       if(steps){
 
-        console.log(steps)
         await job.related('stepsValidation').createMany(steps)
         await job.load('stepsValidation')
       }

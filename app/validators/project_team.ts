@@ -5,7 +5,6 @@ export const createProjectTeamsvalidator = vine.compile(
     vine.object({
         memberId: vine.number().exists(async (db: Database, value: number) => {
             const result = await db.from('guests').select('*').where('id', value).first()
-            console.log(result);
 
             return result !== null && result.accept
         }),
