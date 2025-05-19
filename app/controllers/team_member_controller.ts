@@ -1,23 +1,23 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { ProjectTeamService } from '#services/project_team_service'
+import { TeamMemberService } from '#services/team_member_service'
 import { inject } from '@adonisjs/core'
-import { createProjectTeamsvalidator, createManyProjectTeamsvalidator, deleteManyProjectTeamsValidator } from '#validators/project_team'
+import { createTeamMembersvalidator, createManyTeamMembersvalidator, deleteManyTeamMembersValidator } from '#validators/project_team'
 import { errors } from '@vinejs/vine'
 import ApiResponse from '#models/utils/ApiResponse'
 
 @inject()
-export default class ProjectTeamsController {
-    constructor(private ProjectTeamService: ProjectTeamService) { }
+export default class TeamMembersController {
+    constructor(private TeamMemberService: TeamMemberService) { }
 
     async store({ request, response }: HttpContext) {
         console.log("dans le controller");
         
         try {
             
-            const data = await createProjectTeamsvalidator.validate(request.all())
+            const data = await createTeamMembersvalidator.validate(request.all())
                         console.log(data);
 
-            const result = await this.ProjectTeamService.create(data)
+            const result = await this.TeamMemberService.create(data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
             console.log(error);
@@ -28,8 +28,8 @@ export default class ProjectTeamsController {
 
     async storeMany({ request, response }: HttpContext) {
         try {
-            const data = await createManyProjectTeamsvalidator.validate(request.all())
-            const result = await this.ProjectTeamService.createMany(data)
+            const data = await createManyTeamMembersvalidator.validate(request.all())
+            const result = await this.TeamMemberService.createMany(data)
             return response.status(result.statusCode).json(result)
         } catch (error) {
             console.log(error);
@@ -40,7 +40,7 @@ export default class ProjectTeamsController {
 
     async destroy({ params, response }: HttpContext) {
         try {
-            const result = await this.ProjectTeamService.delete((params.memberId))
+            const result = await this.TeamMemberService.delete((params.memberId))
             return response.status(result.statusCode).json(result)
         } catch (error) {
             return this.handleError(response, error)
@@ -49,8 +49,8 @@ export default class ProjectTeamsController {
 
     async destroyMany({ request, response }: HttpContext) {
         try {
-            const memberIds = await deleteManyProjectTeamsValidator.validate(request.all())
-            const result = await this.ProjectTeamService.deleteMany(memberIds)
+            const memberIds = await deleteManyTeamMembersValidator.validate(request.all())
+            const result = await this.TeamMemberService.deleteMany(memberIds)
             return response.status(result.statusCode).json(result)
         } catch (error) {
             console.log(error);

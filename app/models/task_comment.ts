@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Task from './task.js'
-import ProjectTeam from './project_team.js'
+import TeamMember from './team_member.js'
 
 export default class TaskComment extends BaseModel {
   @column({ isPrimary: true })
@@ -25,11 +25,11 @@ export default class TaskComment extends BaseModel {
   @column({ columnName: 'author_id' })
   declare authorId: number
 
-  @belongsTo(() => ProjectTeam, {
+  @belongsTo(() => TeamMember, {
     foreignKey: 'authorId',
     localKey: 'id',
   })
-  declare author: BelongsTo<typeof ProjectTeam>
+  declare author: BelongsTo<typeof TeamMember>
 
 
   @column.dateTime({ autoCreate: true })

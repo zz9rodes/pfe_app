@@ -1,9 +1,9 @@
 import Guest from "#models/guest"
 import Project from "#models/project"
-import ProjectTeam from "#models/project_team"
+import TeamMember from "#models/team_member"
 import ApiResponse from "#models/utils/ApiResponse"
 
-export class ProjectTeamService {
+export class TeamMemberService {
 
   async create(data: any) {
     
@@ -16,7 +16,7 @@ export class ProjectTeamService {
       return ApiResponse.badRequest("Invalid member or Project")
     }
 
-    const memberTeam = await ProjectTeam.create({
+    const memberTeam = await TeamMember.create({
       memberId: memberId,
       projectId: projectId
     })
@@ -45,7 +45,7 @@ export class ProjectTeamService {
 
     const teams = await Promise.all(
       validMembers.map((member) =>
-        ProjectTeam.create({
+        TeamMember.create({
           memberId: member.id,
           projectId: projectId
         })
@@ -57,7 +57,7 @@ export class ProjectTeamService {
 
   async delete(memberId: number) {
 
-    const member = await ProjectTeam.find(memberId)
+    const member = await TeamMember.find(memberId)
 
     if (!member) {
       return ApiResponse.notFound("Ressource Not Found")
@@ -73,7 +73,7 @@ export class ProjectTeamService {
       return ApiResponse.badRequest("No member IDs provided")
     }
 
-    const members = await ProjectTeam.query().whereIn('id', data.memberIds)
+    const members = await TeamMember.query().whereIn('id', data.memberIds)
 
     if (members.length === 0) {
       return ApiResponse.notFound("No matching members found")

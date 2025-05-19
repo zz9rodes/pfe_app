@@ -2,7 +2,7 @@ import Company from '#models/company'
 import Project from '#models/project'
 import ApiResponse from '#models/utils/ApiResponse'
 import File from '#models/file';
-import ProjectTeam from '#models/project_team';
+import TeamMember from '#models/team_member';
 
 export default class ProjectService {
   async create(companySlug: string, data: any) {
@@ -53,7 +53,7 @@ export default class ProjectService {
     await project.load('manager')
     await project.load('job')
 
-    await ProjectTeam.create({
+    await TeamMember.create({
       memberId: managerId,
       projectId: project.id,
     })

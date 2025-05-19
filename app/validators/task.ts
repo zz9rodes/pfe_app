@@ -15,7 +15,7 @@ export const createTaskValidator = vine.compile(
 
         assigneeId: vine.number()
             .exists(async (db: Database, value: number) => {
-                const result = await db.from('project_teams').select('*').where('id', value).first();
+                const result = await db.from('team_members').select('*').where('id', value).first();
 
                 return result !== null;
             }).optional(),
@@ -50,7 +50,7 @@ export const updateTaskValidator = vine.compile(
 
         assigneeId: vine.number()
             .exists(async (db: Database, value: number) => {
-                const result = await db.from('project_teams').select('*').where('id', value).first();
+                const result = await db.from('team_members').select('*').where('id', value).first();
                 return result !== null;
             }).optional(),
 

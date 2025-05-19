@@ -6,7 +6,7 @@ import File from './file.js'
 import Guest from './guest.js'
 import Job from './job.js'
 import Company from './company.js'
-import ProjectTeam from './project_team.js'
+import TeamMember from './team_member.js'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -72,8 +72,8 @@ export default class Project extends BaseModel {
   @belongsTo(() => Company)
   declare company: BelongsTo<typeof Company>
 
-  @hasMany(()=>ProjectTeam)
-  declare members:HasMany<typeof ProjectTeam>
+  @hasMany(()=>TeamMember)
+  declare members:HasMany<typeof TeamMember>
 
 
   @column.dateTime({ autoCreate: true })

@@ -35,7 +35,7 @@ export default class extends BaseSchema {
         .integer('assignee_id')
         .unsigned()
         .references('id')
-        .inTable('project_teams')
+        .inTable('team_members')
         .onDelete('SET NULL')
 
       table

@@ -63,7 +63,7 @@ export const manageTasks = Bouncer.ability(async (user: User, project: Project) 
   // Vérifie si un des guests est manager ou membre du projet
   const isManager = guestIds.includes(project.managerId)
 
-  // Vérifie si un des guests est membre du projet (dans ProjectTeam)
+  // Vérifie si un des guests est membre du projet (dans TeamMember)
   const members = await project.related('members').query()
   const isMember = members.some((member) => guestIds.includes(member.memberId))
 

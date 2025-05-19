@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel,hasMany, column, belongsTo, manyToMany, afterCreate, afterFind, afterFetch } from '@adonisjs/lucid/orm'
 import type { BelongsTo, ManyToMany ,HasMany} from '@adonisjs/lucid/types/relations'
 import Project from './project.js'
-import ProjectTeam from './project_team.js'
+import TeamMember from './team_member.js'
 import { Priority, ProjectStatus, TaskStatus } from './utils/index.js'
 import JobSteps from './job_steps.js'
 import File from './file.js'
@@ -45,10 +45,10 @@ export default class Task extends BaseModel {
   @column()
   declare assigneeId: number
 
-  @belongsTo(() => ProjectTeam, {
+  @belongsTo(() => TeamMember, {
     foreignKey: 'assigneeId',
   })
-  declare assignee: BelongsTo<typeof ProjectTeam>
+  declare assignee: BelongsTo<typeof TeamMember>
 
   @column({ columnName: 'step_id' })
   declare stepId?: number

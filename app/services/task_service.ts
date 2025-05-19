@@ -1,5 +1,5 @@
 import Project from '#models/project'
-import ProjectTeam from '#models/project_team'
+import TeamMember from '#models/team_member'
 import Task from '#models/task'
 import ApiResponse from '#models/utils/ApiResponse'
 import crypto from 'node:crypto'
@@ -17,7 +17,7 @@ export default class TaskService {
 
     // Vérification facultative de l'assignee
     if (assigneeId) {
-      const projectMember = await ProjectTeam.find(assigneeId)
+      const projectMember = await TeamMember.find(assigneeId)
       if (!projectMember || projectMember.projectId !== project.id) {
         return ApiResponse.error("The assignee doesn't have access to this project")
       }
@@ -57,7 +57,7 @@ export default class TaskService {
 
     // Si assigneeId est fourni, on vérifie qu’il appartient bien au projet
     if (assigneeId) {
-      const projectMember = await ProjectTeam.find(assigneeId)
+      const projectMember = await TeamMember.find(assigneeId)
       if (!projectMember || projectMember.projectId !== task.projectId) {
         return ApiResponse.error("The assignee doesn't have access to this project")
       }

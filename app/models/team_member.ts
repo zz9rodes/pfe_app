@@ -4,7 +4,7 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Project from './project.js'
 import Guest from './guest.js'
 
-export default class ProjectTeam extends BaseModel {
+export default class TeamMember extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 

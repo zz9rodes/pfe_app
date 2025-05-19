@@ -10,7 +10,7 @@ export default class extends BaseSchema {
        
       table.integer('task_id').unsigned().references('id').inTable('tasks').onDelete('CASCADE')
 
-      table.integer('author_id').unsigned().references('id').inTable('project_teams').onDelete('CASCADE')
+      table.integer('author_id').unsigned().references('id').inTable('team_members').onDelete('CASCADE')
 
 
       table.text('text').notNullable()
