@@ -61,4 +61,10 @@ export default class ProjectsController {
 
         return response.status(result.statusCode).json(result)
     }
+
+    public async getProjectMembers({ params, response }: HttpContext){
+         const result = await this.ProjectService.getMembers(params.projectId)
+
+        return response.status(result.statusCode).json(result)
+    }
 }

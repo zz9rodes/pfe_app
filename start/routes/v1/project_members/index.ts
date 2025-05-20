@@ -7,7 +7,6 @@ router.group(()=>{
 
     router.post('/create',[TeamMembersController,'store'])
     router.post('/create_many',[TeamMembersController,'storeMany'])
-
     router.delete('/:memberId/destroy',[TeamMembersController,'destroy']).where('memberId',router.matchers.number())
     router.delete('/destroy_many',[TeamMembersController,'destroyMany'])
 

@@ -112,4 +112,16 @@ export default class ProjectService {
 
     return ApiResponse.success("Success", projects)
   }
+
+  async getMembers(projectId: string) {
+    const project = await Project.findBy('slug', projectId)
+
+    if (!project) {
+      return ApiResponse.notFound('Project Not Found')
+    }
+
+    await project.load('members')
+
+    return ApiResponse.success('Success',project)
+  }
 }
