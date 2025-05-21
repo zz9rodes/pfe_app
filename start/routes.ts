@@ -41,6 +41,8 @@ import './routes/v1/project_members/index.js'
 
 import './routes/v1/tasks/index.js'
 
+import './routes/v1/chats/index.js'
+
 
 router.get('/', async () => {
   return {

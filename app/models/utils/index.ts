@@ -136,4 +136,10 @@ export enum CompanyScope {
     JOB_VIEW = "job:view",
     JOB_ALL = "job:all",
   }
+
+
+  export enum ChatType{
+    GROUP="group",
+    PRIVATE="private"
+  }
   
