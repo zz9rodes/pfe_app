@@ -3,7 +3,6 @@ import Chat from "#models/chat";
 import ChatMember from "#models/chat_member";
 import ApiResponse from "#models/utils/ApiResponse";
 import { ChatType } from "#models/utils/index";
-import { log } from "console";
 
 export class ChatService {
   async create(data: any) {
@@ -12,7 +11,6 @@ export class ChatService {
   }
 
   async delete(chatId: number) {
-    console.log("dans le service");
     
     const chat = await Chat.find(chatId)
 
@@ -56,7 +54,6 @@ export class ChatService {
       memberId: id,
     }))
 
-    console.log(memberIds);
     
 
     await ChatMember.createMany(membersToInsert)
@@ -91,8 +88,7 @@ export class ChatService {
     // .preload('lastMessage') 
     // .orderBy('updated_at', 'desc') 
 
-    console.log("les chats");
-    console.log(chats);
+
     
     
 

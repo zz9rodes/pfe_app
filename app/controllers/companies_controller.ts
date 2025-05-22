@@ -46,12 +46,13 @@ export default class CompaniesController {
   }
 
   async show({ response, auth }: HttpContext) {
+    
     try {
       const accountId = auth?.user?.account.id
 
       const result = await this.CompanyService.getCompanyDetails(accountId)
 
-      return response.json(result)
+      return response.status(result.statusCode).json(result)
     } catch (error) {
       return response
         .status(500)

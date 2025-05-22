@@ -142,4 +142,10 @@ export enum CompanyScope {
     GROUP="group",
     PRIVATE="private"
   }
+
+  export enum SubscriptionStatus{
+    ACTIVE='ACTIVE',
+    EXPIRED='EXPIRED',
+    CANCELLED='CANCELLED'
+  }
   

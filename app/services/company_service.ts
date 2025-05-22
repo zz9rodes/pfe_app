@@ -24,7 +24,7 @@ export class CompanyService {
   
 
 
-  async createCompany(accountId: number, versionData: Partial<CompanyVersion>) {
+  async createCompany(accountId: number, versionData:any) {
     try {
 
       const existingCompany = await Company.findBy('account_id', accountId)
@@ -135,7 +135,7 @@ export class CompanyService {
     return ApiResponse.success("success")
   }
 
-  async getCompanyDetails(accountId: number | undefined): Promise<Company | {error:string,statusCode:number}> {
+  async getCompanyDetails(accountId: number | undefined){
     try {
 
       if (!accountId) {
@@ -153,7 +153,7 @@ export class CompanyService {
         return ApiResponse.error("No company found for this account")
       }
 
-        return      {error:"",statusCode:200}
+      return    ApiResponse.success("Success",company)  
     } catch (error) {
       throw new Exception(`Failed to retrieve company details: ${error.message}`, {
         status: 500,

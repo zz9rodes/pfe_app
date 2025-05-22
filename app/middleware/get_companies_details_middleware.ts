@@ -6,6 +6,8 @@ import ApiResponse from '#models/utils/ApiResponse'
 export default class GetCompaniesDetailsMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
 
+    
+
     const account=ctx.auth.user?.account
 
 

@@ -29,5 +29,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   DB_PASSWORD: Env.schema.string.optional(),
   DB_DATABASE: Env.schema.string(),
   GMAIL_USERNAME:Env.schema.string(),
-  GMAIL_PASSWORD:Env.schema.string()
+  GMAIL_PASSWORD:Env.schema.string(),
+  LYGOS_API_KEY:Env.schema.string()
 })

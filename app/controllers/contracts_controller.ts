@@ -22,7 +22,6 @@ export default class ContractsController {
   }
 
   async store({ request, response }: HttpContext) {
-    console.log("dns le controller");
     
     try {
       const payload = await createContractValidator.validate(request.all())

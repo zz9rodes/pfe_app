@@ -58,6 +58,7 @@
     "@adonisjs/lucid": "^21.6.0",
     "@types/nodemailer": "^6.4.17",
     "@vinejs/vine": "^3.0.0",
+    "axios": "^1.9.0",
     "luxon": "^3.6.1",
     "mysql2": "^3.14.0",
     "nodemailer": "^6.10.1",

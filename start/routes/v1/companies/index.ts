@@ -11,6 +11,9 @@ router.group(()=>{
 
     router.post('/create',[CompaniesController,'store'])
 
+    router.get('/:companyId',[CompaniesController,'show'])
+
+
     router.get('/',[CompaniesController,'show']).use(middleware.getCompaniesDetails())
 
 

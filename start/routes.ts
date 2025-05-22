@@ -43,6 +43,8 @@ import './routes/v1/tasks/index.js'
 
 import './routes/v1/chats/index.js'
 
+import './routes/v1/subscriptions/index.js'
+
 
 router.get('/', async () => {
   return {

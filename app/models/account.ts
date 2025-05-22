@@ -6,6 +6,7 @@ import User from './user.js'
 import Company from './company.js'
 import CvProfile from './cv_profile.js'
 import Guest from './guest.js'
+import Subscription from './subscription.js'
 
 export default class Account extends BaseModel {
   @column({ isPrimary: true })
@@ -69,6 +70,10 @@ export default class Account extends BaseModel {
 
   @column()
   declare roles: string | null
+
+
+  @hasMany(() => Subscription)
+  declare subscriptions: HasMany<typeof Subscription>
 
   @afterFind()
   static async loadaDetails(account: Account) {
