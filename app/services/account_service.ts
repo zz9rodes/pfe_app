@@ -32,6 +32,12 @@ export class AccountService {
   }
 
   async editAccount(data: any, slug: string) {
+    console.log("dans le controller pour edit le account");
+    console.log(data);
+    console.log(slug);
+    
+    
+    
     try {
       const account = await Account.findBy('slug', slug)
       if (!account) {

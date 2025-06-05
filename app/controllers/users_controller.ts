@@ -123,6 +123,8 @@ export default class UsersController {
 
       const data= await createUserAccountValidator.validate(request.all())
 
+      console.log(data)
+
       const result= await this.UserService.createUserAccount(data);
       
       return response.status(result.statusCode).json(result)

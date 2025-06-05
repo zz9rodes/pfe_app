@@ -1,6 +1,7 @@
 import vine from '@vinejs/vine'
 import { Database } from '@adonisjs/lucid/database'
 import { AccountType } from '#models/utils/index'
+import { title } from 'node:process'
 
 
 export const createUserValidator = vine.compile(
@@ -58,6 +59,11 @@ export const createUserAccountValidator=vine.compile(
         avatarUrl: vine.string().url().optional(),
         frontIdCard: vine.string().url().optional(), 
         backIdCard: vine.string().url().optional(), 
+        address:vine.object({
+            title:vine.string(),
+            lat:vine.number(),
+            long:vine.number()
+        }).optional()
     })
     })
 )

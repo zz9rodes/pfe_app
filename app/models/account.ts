@@ -38,7 +38,10 @@ export default class Account extends BaseModel {
   @column()
   declare avatarUrl: string | null
 
-  @column()
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
   declare address: Address | null
 
   @column()
