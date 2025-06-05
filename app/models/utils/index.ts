@@ -1,7 +1,7 @@
 
 export enum AccountType {
-    COMPANIES = "COMPANIES",
-    PERSONNAL = "PERSONNAL"
+    COMPANIES = "companies",
+    PERSONNAL = "personnal"
 }
 
 export enum AppRoles {

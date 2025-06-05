@@ -36,8 +36,6 @@ export default class UsersController {
     }
   }
 
-
-
   async show({ response, auth }: HttpContext) {
 
    
@@ -47,7 +45,6 @@ export default class UsersController {
       .status(result?.statusCode ?? 200)
       .json(result)
   }
-
 
   async edit({ request, response, params, bouncer }: HttpContext) {
     try {
@@ -107,7 +104,7 @@ export default class UsersController {
 
       const data = await loginUserValidator.validate(request.body())
       const result = await this.UserService.login(data)
-      return response.status(200).json(result)
+      return response.status(result.statusCode).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(
@@ -136,6 +133,22 @@ export default class UsersController {
         )
       }
 
+      return response.status(500).json(
+        ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
+      )
+    }
+  }
+
+  async user_request({request,response}:HttpContext){
+        try {
+
+      const {email,accountType}=  request.all()
+
+      const result= await this.UserService.createUserRequest(email,accountType);
+      
+      return response.status(result.statusCode).json(result)
+    } catch (error) {
+      
       return response.status(500).json(
         ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
       )

@@ -11,6 +11,8 @@ import { removeEmptyFields } from '#models/utils/helper'
 export default class EmailEmiterService {
 
   public async sendEmail(data: EmailData): Promise<Email> {
+
+    console.log("dans la fonction d'wnvoies d'email")
     
     const email = await Email.create({
       ...data,
@@ -35,7 +37,9 @@ export default class EmailEmiterService {
     try {
       try {
 
-        const info = await transporter.sendMail(removeEmptyFields(mailOptions));
+      const info=  await transporter.sendMail(removeEmptyFields(mailOptions));
+
+      console.log(info)
 
         email.status = 'sent';
         email.sent_at = DateTime.now();
