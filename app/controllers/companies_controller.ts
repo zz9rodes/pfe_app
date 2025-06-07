@@ -60,6 +60,21 @@ export default class CompaniesController {
     }
   }
 
+  async getAccountCompanie({ response, auth }: HttpContext) {
+    
+    try {
+      const accountId = auth?.user?.account.id
+
+      const result = await this.CompanyService.getCompanyDetails(accountId)
+
+      return response.status(result.statusCode).json(result)
+    } catch (error) {
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+    }
+  }
+
   async edit({ request, response, params, auth }: HttpContext) {
     try {
       if (!auth.user!.isAdmin) {

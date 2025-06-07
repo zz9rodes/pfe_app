@@ -24,7 +24,10 @@ export default class CompanyRequest extends BaseModel {
   @column()
   declare phoneNumber :string
 
-  @column()
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
   declare address :Address|null
 
   @column()

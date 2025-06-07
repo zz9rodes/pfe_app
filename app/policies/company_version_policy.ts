@@ -9,7 +9,6 @@ export default class CompanyVersionPolicy extends BasePolicy {
 
    create(user: User, account: Account|undefined|null): AuthorizerResponse {
     
-    
     const isOwner = user.account.id === account?.id!
     const isCompanyAccount = user.account.accountType === AccountType.COMPANIES
     const isAdmin = user.isAdmin

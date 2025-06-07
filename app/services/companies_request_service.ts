@@ -2,6 +2,7 @@ import Company from "#models/company"
 import CompanyRequest from "#models/company_request"
 import User from "#models/user"
 import ApiResponse from "#models/utils/ApiResponse"
+import { Exception } from "@adonisjs/core/exceptions"
 
 export class CompaniesRequestService {
   async RequestCompany(user: User, data: any) {
@@ -18,14 +19,14 @@ export class CompaniesRequestService {
     const isAlreadyCompany =await Company.findBy('account_id',account.id)
 
     if(isAlreadyRequest || isAlreadyCompany){
-     return ApiResponse.error("Your Already have A company","E_ERROR")
+     return ApiResponse.error("Your Already Request for  company","E_ERROR")
 
     }
     companyRequest.fill(data)
     companyRequest.adminId = account.id
     companyRequest.slug= crypto.randomUUID()
     await companyRequest.save()
-    return ApiResponse.success("success", companyRequest)
+    return ApiResponse.success("Your Request is Success", companyRequest)
   }
 
   async EditRequestCompany(slug: string, data: any) {
@@ -36,5 +37,35 @@ export class CompaniesRequestService {
       await company_request.save()
     }
     return ApiResponse.success("Sucess",company_request)
+  }
+
+async getRequestDetails(accountId: number | undefined){
+    try {
+
+      if (!accountId) {
+        return ApiResponse.error("Account not found")
+      }
+
+      console.log(accountId)
+      const request = await CompanyRequest.query()
+        .where('admin_id', accountId)
+
+      const companies = await Company.query()
+        .where('account_id', accountId)
+        .preload('activeDetails')
+
+
+      if (!request) {
+        return ApiResponse.error("No company found for this account")
+      }
+
+      return    ApiResponse.success("Success",{request,companies})  
+    } catch (error) {
+      console.log(error)
+      throw new Exception (`Failed to retrieve company Request details: ${error.message}`, {
+        status: 500,
+        code: 'E_COMPANY_RETRIEVAL_FAILED',
+      })
+    }
   }
 }

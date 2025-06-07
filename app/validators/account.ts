@@ -27,11 +27,12 @@ export const updateAccountValidator = vine.compile(
   vine.object({
       firstName: vine.string().minLength(2).optional(),
       lastName: vine.string().optional(),
-      phoneNumber: vine.string().minLength(7).maxLength(15).unique(
+      phoneNumber: vine.string().minLength(7).maxLength(15).optional()
+      /*.unique(
           async (db: Database, value: string) => {
           const result = await db.from('accounts').select('id').where('phone_number', value)
           return result.length ? false : true
-      }).optional(),
+      }).optional()*/,
       dob: vine.date().nullable().optional(), 
       accountType: vine.enum(AccountType).optional(), 
       country: vine.string().optional(),

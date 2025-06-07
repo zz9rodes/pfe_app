@@ -142,11 +142,11 @@ export class CompanyService {
         return ApiResponse.error("Account not found")
       }
 
+      console.log(accountId)
       const company = await Company.query()
         .where('account_id', accountId)
         .preload('activeDetails')
-        .firstOrFail()
-
+        .first()
 
 
       if (!company) {
@@ -155,6 +155,7 @@ export class CompanyService {
 
       return    ApiResponse.success("Success",company)  
     } catch (error) {
+      console.log(error)
       throw new Exception(`Failed to retrieve company details: ${error.message}`, {
         status: 500,
         code: 'E_COMPANY_RETRIEVAL_FAILED',

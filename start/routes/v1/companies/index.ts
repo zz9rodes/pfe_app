@@ -13,9 +13,10 @@ router.group(()=>{
 
     router.get('/:companyId',[CompaniesController,'show'])
 
+    // router.get('/',[CompaniesController,'getAccountCompanie'])
+
 
     router.get('/',[CompaniesController,'show']).use(middleware.getCompaniesDetails())
-
 
     router.put('/:companyId/update',[CompaniesController,'edit']).where('companyId',router.matchers.uuid())
     .use([
@@ -48,5 +49,6 @@ router.get('/v1/api/companies/all',[CompaniesController,'index'])
 
 router.group(()=>{
     router.post('create',[CompaniesRequestsController,'store'])
+    router.get('/',[CompaniesRequestsController,'getAccountRequest'])
     router.put('/:slug_request/update',[CompaniesRequestsController,'edit']).where('slug_request',router.matchers.uuid())
 }).prefix('/v1/api/company_request').use(middleware.auth())

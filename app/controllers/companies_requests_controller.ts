@@ -13,13 +13,14 @@ export default class CompaniesRequestsController {
 
   constructor(private CompaniesRequestService: CompaniesRequestService) { }
   async store({ request, response, bouncer, auth }: HttpContext) {
-
+    console.log(request.all())
     try {
       const account: Account | null | undefined = request.input('slug') ? await Account.findBy('slug', request.input('slug')) : null
       if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
 
         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
+
       const data = await createCompanyVersionsValidator.validate(request.all())
       
       const result = await this.CompaniesRequestService.RequestCompany(auth!.user!, data)
@@ -66,5 +67,19 @@ export default class CompaniesRequestsController {
           ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error)
         )
     }
+  }
+
+    async getAccountRequest({ response, request, auth, bouncer }: HttpContext) {
+          try {
+              const accountId = auth?.user?.account.id
+        
+              const result = await this.CompaniesRequestService.getRequestDetails(accountId)
+        
+              return response.status(result.statusCode).json(result)
+            } catch (error) {
+              return response
+                .status(500)
+                .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+            }
   }
 }
