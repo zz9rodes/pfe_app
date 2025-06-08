@@ -142,7 +142,6 @@ export class CompanyService {
         return ApiResponse.error("Account not found")
       }
 
-      console.log(accountId)
       const company = await Company.query()
         .where('account_id', accountId)
         .preload('activeDetails')
