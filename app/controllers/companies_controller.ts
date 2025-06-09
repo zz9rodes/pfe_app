@@ -31,8 +31,13 @@ export default class CompaniesController {
 
       const result = await this.CompanyService.createCompany(company_request!.adminId, data)
 
+      if(result.success){
+        await company_request?.merge({isActive:true}).save()
+      }
+
       return response.status(result.statusCode).json(result)
     } catch (error) {
+      console.log(error)
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(
           ApiResponse.validation('Invalid input', error.messages)

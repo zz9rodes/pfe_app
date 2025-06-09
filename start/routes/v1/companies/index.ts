@@ -9,11 +9,9 @@ import CompaniesRequestsController from '#controllers/companies_requests_control
 
 router.group(()=>{
 
-    router.post('/create',[CompaniesController,'store'])
+    router.post('/create',[CompaniesController,'store']).use(middleware.onlyAdmin())
 
     router.get('/:companyId',[CompaniesController,'show'])
-
-    // router.get('/',[CompaniesController,'getAccountCompanie'])
 
 
     router.get('/',[CompaniesController,'show']).use(middleware.getCompaniesDetails())
@@ -22,7 +20,6 @@ router.group(()=>{
     .use([
         middleware.manageCompanies()
     ])
-
     router.delete('/:companyId/destroy',[CompaniesController,'destroy']).where('companyId',router.matchers.uuid())
     .use([
         middleware.manageCompanies()
@@ -50,5 +47,8 @@ router.get('/v1/api/companies/all',[CompaniesController,'index'])
 router.group(()=>{
     router.post('create',[CompaniesRequestsController,'store'])
     router.get('/',[CompaniesRequestsController,'getAccountRequest'])
+    router.post('/:slug_request/desapproved',[CompaniesRequestsController,'desApprovedCompanyRequest'])
+    router.get('/all',[CompaniesRequestsController,'getAllRequestAndCompanie']).use(middleware.onlyAdmin())
+    router.get('/:slug_request/',[CompaniesRequestsController,'get']).where('slug_request',router.matchers.uuid())
     router.put('/:slug_request/update',[CompaniesRequestsController,'edit']).where('slug_request',router.matchers.uuid())
 }).prefix('/v1/api/company_request').use(middleware.auth())

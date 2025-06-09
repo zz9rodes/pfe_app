@@ -39,8 +39,6 @@ export default class EmailEmiterService {
 
       const info=  await transporter.sendMail(removeEmptyFields(mailOptions));
 
-      console.log(info)
-
         email.status = 'sent';
         email.sent_at = DateTime.now();
       } catch (error) {
