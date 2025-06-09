@@ -40,12 +40,30 @@ export class CompanyVersionService {
     return  ApiResponse.success("The Company Version has Been delete")
   }
 
-  async getCompanyversion(slug:any) {
-    const companyVersion: CompanyVersion|null=await CompanyVersion.findBy('slug',slug)
+  async getCompanyversion(id:number) {
+    const version: CompanyVersion|null=await CompanyVersion.find(id)
     let responseData=null
    
-    if(companyVersion){
-      responseData=CompanyVersion
+    if(!version){
+      return ApiResponse.error("Ressource Not Found")
+    }
+    
+    const company=await Company.find(version.company_id)
+
+
+    console.log(responseData)
+
+    return ApiResponse.success("success",{version,company})
+  }
+
+  async getAllCompanyversion(companyId:any) {
+    const company: Company|null=await Company.findBy('slug',companyId)
+    let responseData=null
+   
+    if(company){
+      await company.load('details')
+      await company.load('activeDetails')
+      responseData=company
     }
 
     return ApiResponse.success("success",responseData)

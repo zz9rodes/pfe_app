@@ -7,6 +7,7 @@ import { errors } from '@vinejs/vine'
 import CompanyRequest from '#models/company_request'
 import { cleanCompanyData } from '#models/utils/helper'
 import ApiResponse from '#models/utils/ApiResponse'
+import { CompanyStatus } from '#models/utils/index'
 
 @inject()
 export default class CompaniesController {
@@ -32,7 +33,7 @@ export default class CompaniesController {
       const result = await this.CompanyService.createCompany(company_request!.adminId, data)
 
       if(result.success){
-        await company_request?.merge({isActive:true}).save()
+        await company_request?.merge({isActive:true,status:CompanyStatus.APPROVED}).save()
       }
 
       return response.status(result.statusCode).json(result)

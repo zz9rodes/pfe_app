@@ -39,7 +39,6 @@ export default class Company extends BaseModel {
   })
   declare activeDetails: HasOne<typeof CompanyVersion>
 
-
   @hasMany(() => Job)
   declare jobs: HasMany<typeof Job>
 

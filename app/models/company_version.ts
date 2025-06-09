@@ -122,6 +122,8 @@ export default class CompanyVersion extends BaseModel {
   @column()
   declare isActive: boolean
 
+  @column()
+  declare status: string
 
   @column({ columnName: 'company_id' })
   declare company_id: number

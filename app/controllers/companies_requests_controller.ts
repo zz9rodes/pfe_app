@@ -10,7 +10,7 @@ import { CompaniesRequestService } from '#services/companies_request_service'
 import { errors } from '@vinejs/vine'
 import ApiResponse from '#models/utils/ApiResponse'
 import EmailEmiterService from '#services/email_emiter_service'
-import { EmailData } from '#models/utils/index'
+import { CompanyStatus, EmailData } from '#models/utils/index'
 import CompanyRequest from '#models/company_request'
 import { renderDesapprovedCompanie } from '../../html/jsTemplate/desapproved.js'
 import env from '#start/env'
@@ -117,6 +117,7 @@ export default class CompaniesRequestsController {
     console.log("desApprovedCompanyRequest")
     try {
       const request_c = await CompanyRequest.findBy('slug', params?.slug_request)
+      await request_c?.merge({status:CompanyStatus.REJECT,isActive:false}).save()
       const reason = request.input('reason')
       const adminAccount = await Account.find(request_c?.adminId)
       const clientDomain=env.get('APP_CLIENT_DOMAIN')
@@ -132,7 +133,7 @@ export default class CompaniesRequestsController {
       }
 
       const emailSend = await this.EmailEmiterService.sendEmail(emailData)
-      return response.json(emailSend)
+      return response.status(200).json(ApiResponse.success("Yo're Been Reject This Companie Request",emailSend))
     } catch (error) {
       console.log(error)
       return response

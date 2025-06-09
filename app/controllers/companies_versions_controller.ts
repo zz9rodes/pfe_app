@@ -16,7 +16,19 @@ export default class CompaniesVersionController {
   async index({ }: HttpContext) { }
 
 
+  async all({  response ,params}: HttpContext){
+    try {
+      
+      const companyId = params!.companyId
 
+      const result=await this.CompanyVersionService.getAllCompanyversion(companyId)
+
+      return response.status(result.statusCode).json(result)
+    } catch (error) {
+      return response.status(500).json( ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+    }
+
+  }
 
   async store({ request, response, bouncer ,auth,params}: HttpContext) {
     try {
@@ -58,6 +70,7 @@ export default class CompaniesVersionController {
 
       return response.status(result.statusCode).json(result)
     } catch (error) {
+      console.log(error)
       return response.status(500).json( ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
     }
 

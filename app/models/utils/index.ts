@@ -148,4 +148,10 @@ export enum CompanyScope {
     EXPIRED='EXPIRED',
     CANCELLED='CANCELLED'
   }
+
+export enum CompanyStatus{
+    PENDING='pending',
+    APPROVED='approved',
+    REJECT='reject'
+  }
   

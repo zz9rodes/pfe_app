@@ -61,6 +61,9 @@ export default class CompanyRequest extends BaseModel {
   @column()
   declare isActive: boolean
 
+  @column()
+  declare status: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

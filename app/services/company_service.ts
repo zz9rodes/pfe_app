@@ -3,7 +3,7 @@ import Company from '#models/company'
 import CompanyVersion from '#models/company_version'
 import Guest from '#models/guest'
 import ApiResponse from '#models/utils/ApiResponse'
-import { CompanyScope } from '#models/utils/index'
+import { CompanyScope, CompanyStatus } from '#models/utils/index'
 import { Exception } from '@adonisjs/core/exceptions'
 
 
@@ -19,7 +19,7 @@ export class CompanyService {
   async createCompany(accountId: number, payload: any) {
     try {
       const existingCompany = await Company.findBy('account_id', accountId)
-      if (existingCompany) {
+      if (existingCompany || payload.status==CompanyStatus.APPROVED) {
         return ApiResponse.error('An account can only have one company')
       }
 
@@ -51,11 +51,10 @@ export class CompanyService {
 
       await company.related('admin').associate(admin)
 
-      const { isActive, ...versionData } = payload
-      await company.related('details').create({ isActive: true, ...versionData })
+      const { isActive, status,...versionData } = payload
+      await company.related('details').create({ isActive: true, status:CompanyStatus.APPROVED,...versionData })
 
       await company.load('activeDetails')
-
       return ApiResponse.success('Companies Approved Successfully 🤑', company)
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {

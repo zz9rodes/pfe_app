@@ -81,7 +81,7 @@ export class CompaniesRequestService {
     }
   }
 
-    async getRequest(requestSlug: number | undefined) {
+  async getRequest(requestSlug: number | undefined) {
     try {
       console.log(requestSlug)
       if (!requestSlug) {
