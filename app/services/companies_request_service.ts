@@ -3,6 +3,7 @@ import Company from '#models/company'
 import CompanyRequest from '#models/company_request'
 import User from '#models/user'
 import ApiResponse from '#models/utils/ApiResponse'
+import { CompanyStatus } from '#models/utils/index'
 import { Exception } from '@adonisjs/core/exceptions'
 
 export class CompaniesRequestService {
@@ -32,10 +33,14 @@ export class CompaniesRequestService {
     const company_request = await CompanyRequest.findBy('slug', slug)
 
     if (company_request) {
+
+      if(company_request.isActive || company_request.status==CompanyStatus.APPROVED){
+        return ApiResponse.error("Your request seems to be already approved, try to create a new version.")
+      }
       company_request.merge(data)
       await company_request.save()
     }
-    return ApiResponse.success('Sucess', company_request)
+    return ApiResponse.success('Request Update SuccessFully', company_request)
   }
 
   async getRequestDetails(accountId: number | undefined) {
@@ -50,6 +55,7 @@ export class CompaniesRequestService {
       const companies = await Company.query()
         .where('account_id', accountId)
         .preload('activeDetails')
+        .preload('details')
 
       if (!request) {
         return ApiResponse.error('No company found for this account')

@@ -17,7 +17,7 @@ export const createSubscriptionPlanValidator = vine.compile(
 
 export const createSubscriptionValidator = vine.compile(
   vine.object({
-    accountIid: vine.number()
+    accountId: vine.number()
       .exists(async (db: Database, value: number) => {
         const result = await db.from('accounts').select('id').where('id', value).first()
         return !!result

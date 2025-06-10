@@ -48,6 +48,7 @@ router.get('/v1/api/admin/companies/:companyId/companies_versions/all', [
   CompaniesVersionController,
   'all',
 ])
+
 router.get('/v1/api/admin/companies/companies_versions/:versionId', [
   CompaniesVersionController,
   'show',

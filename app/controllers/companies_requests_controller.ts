@@ -14,6 +14,7 @@ import { CompanyStatus, EmailData } from '#models/utils/index'
 import CompanyRequest from '#models/company_request'
 import { renderDesapprovedCompanie } from '../../html/jsTemplate/desapproved.js'
 import env from '#start/env'
+import User from '#models/user'
 
 @inject()
 export default class CompaniesRequestsController {
@@ -48,10 +49,15 @@ export default class CompaniesRequestsController {
     }
   }
 
-  async edit({ response, request, params, bouncer }: HttpContext) {
+  async edit({ response, request, params, bouncer,auth}: HttpContext) {
     try {
-      const account: Account | null = params.slug ? await Account.findBy('slug', params.slug) : null
-      if (await bouncer.with(CompanyVersionPolicy).denies('create', account)) {
+      if(!auth.user){
+        return  response.unauthorized(ApiResponse.error("unauthorized"))
+      }
+
+      const user  = auth.user
+      console.log(user)
+      if (await bouncer.with(CompanyVersionPolicy).denies('create', user.account)) {
         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
       const data = await editCompanyVerionsValidator.validate(request.all())
