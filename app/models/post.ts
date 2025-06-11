@@ -41,17 +41,17 @@ export default class Post extends BaseModel {
 
   @afterCreate()
   static async loadFile(post:Post){
-    await post.load('files')
+   return post.files
   }
 
   @afterFind()
   static async findFile(post:Post){
-    await post.load('files')
+   return post.files
   }
 
   @afterFetch()
   static async fetchFile(post:Post){
-    await post.load('files')
+     return post.files
   }
 
   @column.dateTime({ autoCreate: true })

@@ -5,6 +5,8 @@ export const createJobValidator = vine.compile(
   vine.object({
     title: vine.string().trim().minLength(2),
 
+    coverUrl:vine.string().url().trim().optional(),
+    
     country: vine.string().trim().minLength(2).optional(),
 
     city: vine.string().trim().minLength(2).optional(),

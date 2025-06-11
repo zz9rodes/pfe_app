@@ -8,6 +8,7 @@ export class JobService {
   async createNewJob(companyId: string, data: any) {
     try {
 
+      console.log(data)
 
       const {steps,...jobData}=data
       const company = await Company.findBy('slug', companyId)
@@ -29,7 +30,7 @@ export class JobService {
 
       return ApiResponse.success("success",job)
     } catch (error) {
-
+      console.log(error)
       return ApiResponse.error(error)
     }
   }

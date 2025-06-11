@@ -42,9 +42,7 @@ export default class Company extends BaseModel {
   @hasMany(() => Job)
   declare jobs: HasMany<typeof Job>
 
-  @hasMany(() => Post, {
-    foreignKey: 'company_id',
-  })
+  @hasMany(() => Post)
   declare posts: HasMany<typeof Post>
 
   @hasMany(() => Guest)

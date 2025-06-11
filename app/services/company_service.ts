@@ -2,6 +2,7 @@ import Account from '#models/account'
 import Company from '#models/company'
 import CompanyVersion from '#models/company_version'
 import Guest from '#models/guest'
+import Post from '#models/post'
 import ApiResponse from '#models/utils/ApiResponse'
 import { CompanyScope, CompanyStatus } from '#models/utils/index'
 import { Exception } from '@adonisjs/core/exceptions'
@@ -128,8 +129,23 @@ export class CompanyService {
         return ApiResponse.error('No company found for this account')
       }
 
+    
+      await company.load('jobs')
+      await company.load('posts')
+      await company.load('guests',(guest)=>{
+        guest.where('accept',true)
+      })
+
+      // await company.load('posts',(post:Post)=>{
+      //   post.load('files')
+      // })
+
+      
+      // await company
+
       return ApiResponse.success('Success', company)
     } catch (error) {
+      console.log("erreur ici")
       console.log(error)
       throw new Exception(`Failed to retrieve company details: ${error.message}`, {
         status: 500,

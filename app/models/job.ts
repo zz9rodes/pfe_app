@@ -13,6 +13,9 @@ export default class Job extends BaseModel {
   declare slug: string
 
   @column()
+  declare coverUrl: string
+
+  @column()
   declare title: string
 
   @column()
@@ -52,8 +55,8 @@ export default class Job extends BaseModel {
   @column()
   declare skill_required: string 
 
-  @column.dateTime({ autoCreate: true })
-  declare last_date: DateTime
+  @column()
+  declare last_date: Date | null
 
   @column()
   declare gender: string 

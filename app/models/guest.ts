@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { afterFind, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
+import { afterFetch, afterFind, BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import Company from './company.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Account from './account.js'
@@ -40,7 +40,12 @@ export default class Guest extends BaseModel {
 
   @afterFind()
   static async loadaccount(guest: Guest) {
-    await guest.load('account')
+     guest.account
+  }
+
+  @afterFetch()
+  static async loadFeacthAccount(guest: Guest) {
+     guest.account
   }
 
 
