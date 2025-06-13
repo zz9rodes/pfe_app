@@ -5,6 +5,7 @@ import JobsController from '#controllers/jobs_controller'
 
 
 router.group(()=>{
+    
     router.group(()=>{
 
         router.post('/create',[JobsController,'store'])

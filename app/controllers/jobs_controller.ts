@@ -96,7 +96,7 @@ export default class JobsController {
       const data = await updateJobValidator.validate(request.all())
       const result = await this.jobService.updateJob(jobId, data)
 
-      return response.json(result)
+      return response.status(result.statusCode).json(result)
 
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
