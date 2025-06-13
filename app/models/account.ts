@@ -7,6 +7,7 @@ import Company from './company.js'
 import CvProfile from './cv_profile.js'
 import Guest from './guest.js'
 import Subscription from './subscription.js'
+import Signature from './signature.js'
 
 export default class Account extends BaseModel {
   @column({ isPrimary: true })
@@ -67,6 +68,10 @@ export default class Account extends BaseModel {
 
   @hasOne(() => CvProfile)
   declare cvProfiles: HasOne<typeof CvProfile>
+
+  @hasMany(() => Signature)
+  declare signatures: HasMany<typeof Signature>
+
 
   @hasMany(() => Guest)
   declare guests: HasMany<typeof Guest>

@@ -2,6 +2,7 @@
 import router from '@adonisjs/core/services/router'
 import AccountsController from '#controllers/accounts_controller'
 import { middleware } from '#start/kernel'
+import SignaturesController from '#controllers/signatures_controller'
 
 router
   .group(() => {
@@ -25,5 +26,9 @@ router
     router
       .get('/find', [AccountsController, 'findByname'])
       .use([middleware.auth(), middleware.onlyAdmin()])
-  })
+
+      router.post('/signatures/create',[SignaturesController,'store']).use(middleware.auth())
+      router.get('/signatures/',[SignaturesController,'index']).use(middleware.auth())
+
+    })
   .prefix('/v1/api/accounts')
