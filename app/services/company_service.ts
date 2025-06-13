@@ -132,9 +132,14 @@ export class CompanyService {
     
       await company.load('jobs')
       await company.load('posts')
-      await company.load('guests',(guest)=>{
-        guest.where('accept',true)
+      await company.load('guests', (guestQuery) => {
+        guestQuery
+          .where('accept', true)
+          .preload('account', (accountQuery) => {
+            accountQuery.select(['first_name', 'last_name','avatarUrl','first_langage'])
+          })
       })
+
 
       // await company.load('posts',(post:Post)=>{
       //   post.load('files')
