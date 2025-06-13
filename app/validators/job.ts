@@ -70,6 +70,8 @@ export const createManyJobValidator = vine.compile(
       vine.object({
         title: vine.string().trim().minLength(2).optional(),
 
+        coverUrl:vine.string().url().trim().optional(),
+
         country: vine.string().trim().minLength(2).optional(),
 
         city: vine.string().trim().minLength(2).optional(),
@@ -123,6 +125,8 @@ export const createManyJobValidator = vine.compile(
 export const updateJobValidator = vine.compile(
   vine.object({
     title: vine.string().trim().minLength(2).optional(),
+
+    coverUrl:vine.string().url().trim().optional(),
 
     country: vine.string().trim().minLength(2).optional(),
 

@@ -1,9 +1,10 @@
 import { DateTime } from 'luxon'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasMany, afterFetch, afterFind } from '@adonisjs/lucid/orm'
 import Company from './company.js'
 import type { Price } from './utils/index.js'
 import JobSteps from './job_steps.js'
+import Apply from './apply.js'
 
 export default class Job extends BaseModel {
   @column({ isPrimary: true })
@@ -82,7 +83,22 @@ export default class Job extends BaseModel {
 
   @hasMany(() => JobSteps)
   declare stepsValidation: HasMany<typeof JobSteps>
-  
+
+  @hasMany(() => Apply)
+  declare applies: HasMany<typeof Apply>
+
+  @afterFetch()
+    static async fetchjalon(jobs: Job[]) {
+      for (const job of jobs) {
+        await job.load('stepsValidation')
+      }
+  }
+
+  @afterFind()
+  static async findjalon(job: Job) {
+    await job.load('stepsValidation')
+  }
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

@@ -67,10 +67,18 @@ export class JobService {
       if (!job)  {
         return ApiResponse.notFound("Ressources Not Found")
       }
+ 
+      await job.load('applies')
+
+      const jobApplies=job.applies
+
+      if(jobApplies.length>0){
+        return ApiResponse.badRequest("You cannot modify this job:\n There Are Already  Application For This Job")
+      }
 
       await job.merge(data).save()
 
-      return ApiResponse.success("success",job)
+      return ApiResponse.success("Job Update SuccessFully",job)
     } catch (error) {
       return ApiResponse.error(error)
     }
@@ -81,6 +89,15 @@ export class JobService {
     try {
       const job = await Job.findBy('slug',jobId)
       if (!job) return { message: 'Job not found' }
+
+       await job.load('applies')
+
+      const jobApplies=job.applies
+
+
+      if(jobApplies.length>0){
+        return ApiResponse.badRequest("You cannot Delete this job :\n There Are Already  Application For This Job")
+      }
 
       await job.delete()
       return { message: 'ok' }
@@ -114,6 +131,8 @@ export class JobService {
     if (!job)  {
       return ApiResponse.notFound("Ressources Not Found")
     }
+
+    await job.load('applies')
     return ApiResponse.success("success",job)
   }
 }

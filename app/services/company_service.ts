@@ -141,12 +141,7 @@ export class CompanyService {
       })
 
 
-      // await company.load('posts',(post:Post)=>{
-      //   post.load('files')
-      // })
-
-      
-      // await company
+      console.log(company.jobs)
 
       return ApiResponse.success('Success', company)
     } catch (error) {

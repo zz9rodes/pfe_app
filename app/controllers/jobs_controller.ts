@@ -29,7 +29,6 @@ export default class JobsController {
   }
 
   async store({ request, response, auth, params }: HttpContext) {
-    console.log("on est arrivee Ici")
     try {
       const user = auth.user
       if (!user) {

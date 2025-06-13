@@ -90,7 +90,7 @@ export default class CompaniesController {
       const data = await editCompanyValidator.validate(request.all())
 
       const result = await this.CompanyService.updateCompany(params.companyId, data)
-
+      
       return response.status(result.statusCode).json(result)
     } catch (error) {
       if (error instanceof errors.E_VALIDATION_ERROR) {
