@@ -37,6 +37,7 @@ export default class CvProfilesController {
 
       return response.status(result.statusCode).json(result)
     } catch (error) {
+      console.log(error)
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(
           ApiResponse.validation('Invalid input', error.messages)
@@ -55,6 +56,28 @@ export default class CvProfilesController {
     const result = await this.CvProfileService.getCvprofileDetails(slug)
 
     return response.status(result.statusCode).json(result)
+  }
+
+  async getDetails({response,auth }: HttpContext) {
+
+    try {
+      const user=auth.user
+      if(!user){
+        return response.unauthorized(ApiResponse.badRequest("unauthorized"))
+      }
+      const account=user.account
+      
+      await  account.load('cvProfiles')
+
+      return response.status(200).json(ApiResponse.success('Success',account.cvProfiles))
+    } catch (error) {
+      console.log(error)
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+    }
+
+
   }
 
   async edit({ request, response, auth, bouncer, params }: HttpContext) {

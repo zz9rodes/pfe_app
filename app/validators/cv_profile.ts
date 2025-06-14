@@ -3,8 +3,8 @@ import vine from '@vinejs/vine'
 export const createCvProfileValidator = vine.compile(
   vine.object({
     bio: vine.string().trim(),
-    focus_point: vine.string().trim(),
-    competence: vine.string().trim(),
+    focus_point: vine.array(vine.string().trim()),
+    competence: vine.array(vine.string().trim()),
 
     links: vine.array(
       vine.object({
@@ -48,8 +48,9 @@ export const createCvProfileValidator = vine.compile(
 export const updateCvProfileValidator = vine.compile(
   vine.object({
     bio: vine.string().trim().optional(),
-    focus_point: vine.string().trim().optional(),
-    competence: vine.string().trim().optional(),
+    focus_point: vine.array(vine.string().trim()),
+    competence: vine.array(vine.string().trim()),
+
 
     links: vine.array(
         vine.object({

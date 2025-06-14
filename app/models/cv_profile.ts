@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
-import { afterFind, BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import { afterFetch, afterFind, BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import Link from './link.js'
 import Education from './education.js'
 import WorkExperience from './work_experience.js'
@@ -17,11 +17,17 @@ export default class CvProfile extends BaseModel {
   @column()
   declare bio: string
 
-  @column()
-  declare focus_point: string
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare focus_point: string[]
 
-  @column()
-  declare competence: string
+  @column({
+    prepare: (value: any) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
+  })
+  declare competence: string[]
 
 
   @column()
@@ -43,13 +49,23 @@ export default class CvProfile extends BaseModel {
   declare personalProjects: HasMany<typeof PersonalProject>
 
   @afterFind()
-    static async loadaDetails(cvProfile: CvProfile) {
-
+  static async loadaDetails(cvProfile: CvProfile) {
         await  cvProfile.load('links')
         await cvProfile.load('educations')
         await cvProfile.load('personalProjects')
         await cvProfile.load('workExperiences')
   }
+
+  @afterFetch()
+  static async fetchLoadDetails(cvProfiles: CvProfile[]) {
+    for (const cvProfile of cvProfiles) {
+      await cvProfile.load('links')
+      await cvProfile.load('educations')
+      await cvProfile.load('personalProjects')
+      await cvProfile.load('workExperiences')
+    }
+  }
+
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

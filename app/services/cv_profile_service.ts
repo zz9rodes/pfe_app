@@ -18,9 +18,12 @@ export class CvProfileService {
       return ApiResponse.error("You Already have a CvProfile",)
     }
 
+        console.log({ slug: crypto.randomUUID(), ...cv_info })
+
     const cvProfile: CvProfile = await account.related('cvProfiles').create(
       { slug: crypto.randomUUID(), ...cv_info }
     );
+
 
     if (cvProfile) {
       if (links.length > 0) {
@@ -62,20 +65,25 @@ export class CvProfileService {
     cvProfile.merge(cv_info);
   
     if (links.length > 0) {
+       await cvProfile.related('links').query().delete();
       await cvProfile.related('links').createMany(links);
     }
   
     if (educations.length > 0) {
+      await cvProfile.related('educations').query().delete();
       await cvProfile.related('educations').createMany(educations);
     }
   
     if (work_experiences.length > 0) {
+      await cvProfile.related('workExperiences').query().delete();
       await cvProfile.related('workExperiences').createMany(work_experiences);
     }
   
     if (personal_projects.length > 0) {
+      await cvProfile.related('personalProjects').query().delete();
       await cvProfile.related('personalProjects').createMany(personal_projects);
     }
+    
     await cvProfile.save();
 
     await cvProfile.load('links');
@@ -88,6 +96,10 @@ export class CvProfileService {
 
   async getCvprofileDetails(slug :string|any){
     const cvProfile= await CvProfile.findBy('slug',slug)
+
+    if(!cvProfile){
+      return ApiResponse.notFound("Ressource Not Found")
+    }
 
     return ApiResponse.success("ok",cvProfile)
   }
