@@ -75,3 +75,8 @@ router
   })
   .prefix('/v1/api/cv_profiles')
   .use([middleware.auth()])
+
+  // router.get('')
+
+  router.get('/v1/api/extern/cv_profiles/:cvProfileId/', [CvProfilesController, 'show'])
+

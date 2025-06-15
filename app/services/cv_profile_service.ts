@@ -83,7 +83,7 @@ export class CvProfileService {
       await cvProfile.related('personalProjects').query().delete();
       await cvProfile.related('personalProjects').createMany(personal_projects);
     }
-    
+
     await cvProfile.save();
 
     await cvProfile.load('links');
@@ -100,6 +100,8 @@ export class CvProfileService {
     if(!cvProfile){
       return ApiResponse.notFound("Ressource Not Found")
     }
+    
+    await cvProfile.load('account')
 
     return ApiResponse.success("ok",cvProfile)
   }
