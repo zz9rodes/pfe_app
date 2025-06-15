@@ -1,6 +1,7 @@
 import CvProfilesController from '#controllers/cv_profiles_controller'
 import EducationsController from '#controllers/educations_controller'
 import LinksController from '#controllers/links_controller'
+import PdfGeneratorController from '#controllers/pdf_generators_controller'
 import PersonalProjectsController from '#controllers/personnal_projects_controller'
 import WorkExperiencesController from '#controllers/work_experiences_controller'
 import { middleware } from '#start/kernel'
@@ -76,7 +77,9 @@ router
   .prefix('/v1/api/cv_profiles')
   .use([middleware.auth()])
 
-  // router.get('')
 
   router.get('/v1/api/extern/cv_profiles/:cvProfileId/', [CvProfilesController, 'show'])
+
+
+  router.post('v1/api/cv_profiles/generate-pdf', [PdfGeneratorController,'generatePdf'])
 
