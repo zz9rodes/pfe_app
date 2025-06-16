@@ -15,6 +15,9 @@ export class GuestService {
 
     const { accountId, companyId } = data;
 
+    console.log(accountId)
+    console.log(companyId)
+
     const account = await Account.find(accountId);
     const company = await Company.find(companyId);
 
@@ -97,5 +100,29 @@ export class GuestService {
     await this.EmailEmiterService.sendEmail(emaildata)
 
     return ApiResponse.success("Success", guest)
+  }
+
+  async listGuest(compsnyId:string){
+    try {
+
+      const company= await Company.findBy('slug',compsnyId)
+
+      if(!company){
+        return ApiResponse.notFound("Company NotFound")
+      }
+      
+       await company.load('guests', (guestQuery) => {
+        guestQuery
+          .preload('account', (accountQuery) => {
+            accountQuery.select(['first_name', 'last_name','avatarUrl','first_langage'])
+          })
+      })
+
+      return ApiResponse.success("Success",company.guests)
+    } catch (error) {
+      console.log(error)
+
+      return ApiResponse.error(error.message)
+    }
   }
 }

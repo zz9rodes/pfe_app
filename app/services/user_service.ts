@@ -4,7 +4,6 @@ import { inject } from '@adonisjs/core'
 import { EmailData } from '#models/utils/index'
 import ApiResponse from '#models/utils/ApiResponse'
 import UserRequest from '#models/user_request'
-import { randomUUID } from 'crypto'
 import { RenderHtmlWelComePage } from '#models/utils/ViewsTemplate'
 
 @inject()
@@ -34,26 +33,32 @@ export default class UserService {
     }
   }
 
-  async edit(id: any, data: any) {
-    try {
-      const user = await User.find(id)
+async edit(id: any, data: any) {
+  try {
+    const user = await User.find(id)
 
-      if (!user) {
-        return ApiResponse.error('Failed to Update user', 'E_USER_NOF_FOUND')
-      }
-
-      const userEmail = await User.findBy('email', data.email)
-
-      if (!userEmail) {
-        user.merge(data)
-        await user.save()
-      }
-
-      return ApiResponse.success('User Updated successfully', user)
-    } catch (error) {
-      return ApiResponse.error('Failed to Update user', 'E_USER_UPDATE_FAILED', error)
+    if (!user) {
+      return ApiResponse.error('Failed to Update user', 'E_USER_NOT_FOUND')
     }
+
+    if (data.email) {
+      const existingUser = await User.query().where('email', data.email).whereNot('id', id).first()
+
+      if (existingUser) {
+        return ApiResponse.error('Email already in use by another user', 'E_EMAIL_IN_USE')
+      }
+    }
+
+    user.merge(data)
+    await user.save()
+
+    return ApiResponse.success('User updated successfully', user)
+  } catch (error) {
+    console.error(error)
+    return ApiResponse.error('Failed to update user', 'E_USER_UPDATE_FAILED', error)
   }
+}
+
 
   async login(payload: any) {
     try {

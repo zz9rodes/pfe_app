@@ -10,10 +10,12 @@ router
         router.post('/accounts/create', [UsersController, 'createAccount'])
 
         router.post('/login', [UsersController, 'login'])
+
         router
           .put('/:id', [UsersController, 'edit'])
           .where('id', router.matchers.number())
           .use([middleware.auth(), middleware.editUser()])
+          
         router.get('/', [UsersController, 'show']).use([middleware.auth()])
         router
           .get('/all', [UsersController, 'index'])
