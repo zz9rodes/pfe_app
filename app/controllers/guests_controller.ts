@@ -3,7 +3,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { GuestService } from '#services/guest_service'
 import { errors } from '@vinejs/vine'
 import ApiResponse from '#models/utils/ApiResponse'
-import { createGuestvalidator } from '#validators/guest'
+import { createGuestvalidator,createApiGuestvalidator } from '#validators/guest'
 import User from '#models/user'
 import Company from '#models/company'
 
@@ -18,7 +18,7 @@ export default class GuestsController {
     async storeApi({ request, response }: HttpContext) {
         try {
 
-            const data = await createGuestvalidator.validate(request.all())
+            const data = await createApiGuestvalidator.validate(request.all())
 
             const result = await this.GuestService.createGuest(data)
 
@@ -45,25 +45,20 @@ export default class GuestsController {
 
             const company=await Company.findBy('slug',companyId)
 
-            console.log(company?.id)
-            console.log(user?.id)
             if(!user || !company){
                 return response.badRequest(ApiResponse.badRequest('Invalid Companie or Account '))
             }
-
             const paylod={
-                "companyId": user.accountId,
-                "accountId": company.id,
-                "role": role,
-                "scopes": scopes
-                }
+                accountId: user?.account?.id,
+                companyId: company.id,
+                role: role,
+                scopes: scopes
+            }
 
-            console.log(paylod)
-
-            const data = await createGuestvalidator.validate(paylod)
+            const data = await createApiGuestvalidator.validate(paylod)
 
             const result = await this.GuestService.createGuest(data)
-
+            await user.load('account')
             return response.status(result.statusCode).json(result)
         } catch (error) {
             console.log(error)

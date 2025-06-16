@@ -15,8 +15,6 @@ export class GuestService {
 
     const { accountId, companyId } = data;
 
-    console.log(accountId)
-    console.log(companyId)
 
     const account = await Account.find(accountId);
     const company = await Company.find(companyId);
@@ -48,8 +46,8 @@ export class GuestService {
     };
 
     const emailInfo = await this.EmailEmiterService.sendEmail(emaildata);
-
-    return ApiResponse.success("Success", guest);
+    console.log(emailInfo)
+    return ApiResponse.success("Votre Demande a bien ete Envoyer", guest);
   }
 
   async CancelGuest(guestId: any,accountId:any) {
