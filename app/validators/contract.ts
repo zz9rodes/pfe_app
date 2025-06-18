@@ -3,8 +3,8 @@ import vine from '@vinejs/vine'
 
 export const createContractValidator = vine.compile(vine.object({
     jobId: vine.number(),
-    companyId: vine.number(),
-    textDescription: vine.string(),
+    companyId: vine.string(),
+    textDescription: vine.string().optional(),
     title: vine.string().trim().minLength(3),
     articlesAndClauses: vine
         .array(
@@ -13,7 +13,7 @@ export const createContractValidator = vine.compile(vine.object({
                 text: vine.string(),
                 items: vine.array(
                     vine.string().trim().minLength(1)
-                ).minLength(1).optional(),
+                ).optional(),
             })
         )
         .minLength(1).optional(),
@@ -35,7 +35,7 @@ export const updateContractValidator = vine.compile(vine.object({
                 text: vine.string(),
                 items: vine.array(
                     vine.string().trim().minLength(1)
-                ).minLength(1).optional(),
+                ).optional(),
             })
         )
         .minLength(1).optional(),

@@ -1,8 +1,9 @@
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import Job from './job.js'
 import Company from './company.js'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import Agreement from './agreement.js'
 
 export default class Contract extends BaseModel {
   @column({ isPrimary: true })
@@ -22,6 +23,9 @@ export default class Contract extends BaseModel {
 
   @column()
   declare title: string
+
+  @hasMany(()=>Agreement)
+  declare agreements:HasMany<typeof Agreement>
 
   // @column()
   // declare articlesAndClauses: string

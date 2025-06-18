@@ -16,6 +16,16 @@ export default class ContractsController {
     return response.status(result.statusCode).json(result)
   }
 
+  async getCompanyContract({ response,params }: HttpContext) {
+
+    const companyId=params?.companyId
+    if(!companyId){
+        return response.notFound(ApiResponse.notFound(" Comapny Request Not Found"))
+    }
+    const result = await this.ContractService.getComapanyContract(companyId)
+    return response.status(result.statusCode).json(result)
+  }
+
   async show({ params, response }: HttpContext) {
     const result = await this.ContractService.getById(params.contractId)
     return response.status(result.statusCode).json(result)

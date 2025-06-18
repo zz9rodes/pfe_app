@@ -4,7 +4,8 @@ import router from '@adonisjs/core/services/router'
 
 
 router.group(() => {
-    router.get('/', [ContractsController, 'index'])
+    router.get('/', [ContractsController, 'getCompanyContract'])
+    router.get('/all', [ContractsController, 'index'])
     router.post('/create', [ContractsController, 'store']).use(middleware.manageCompanies())
 
     router.get('/:contractId', [ContractsController, 'show']).where('contractId',router.matchers.uuid())
