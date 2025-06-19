@@ -1,4 +1,4 @@
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasMany, afterFind } from '@adonisjs/lucid/orm'
 import { DateTime } from 'luxon'
 import Job from './job.js'
 import Company from './company.js'
@@ -56,6 +56,14 @@ export default class Contract extends BaseModel {
 
   @belongsTo(() => Company)
   declare company: BelongsTo<typeof Company>
+
+
+
+  @afterFind()
+  static async loadJob(contract: Contract) {
+    await contract.load('job')
+    await contract.load('company')
+  }
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

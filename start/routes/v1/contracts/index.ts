@@ -8,11 +8,13 @@ router.group(() => {
     router.get('/all', [ContractsController, 'index'])
     router.post('/create', [ContractsController, 'store']).use(middleware.manageCompanies())
 
-    router.get('/:contractId', [ContractsController, 'show']).where('contractId',router.matchers.uuid())
     router.put('/:contractId/update', [ContractsController, 'update']).middleware([middleware.manageCompanies(), middleware.manageContract()]).where('contractId',router.matchers.uuid())
     router.delete('/:contractId', [ContractsController, 'destroy']).middleware([middleware.manageCompanies(), middleware.manageContract()]).where('contractId',router.matchers.uuid())
 }).prefix('/v1/api/companies/:companyId/contracts').use([middleware.auth()])
 .where('companyId',router.matchers.uuid())
+
+
+router.get('/v1/api/contracts/:contractId', [ContractsController, 'show']).where('contractId',router.matchers.uuid())
 
 
 

@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
-import { BaseModel, column, belongsTo, hasOne, hasMany, afterFind } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasOne, hasMany, afterFind, afterFetch } from '@adonisjs/lucid/orm'
 import Account from './account.js'
 import CompanyVersion from './company_version.js'
 import Job from './job.js'
@@ -54,7 +54,17 @@ export default class Company extends BaseModel {
 
   @afterFind()
   static async loadactiveDetails(company: Company) {
+    console.log("on est senser enter ici aussi")
     await company.load('activeDetails')
+  }
+
+   @afterFetch()
+  static async FecthloadactiveDetails(companies: Company[]) {
+    console.log("on est senser enter ici aussi")
+    for (const company of companies) {
+      await company.load('activeDetails')
+      await company.load('admin')
+    }
   }
 
   @column.dateTime({ autoCreate: true })
