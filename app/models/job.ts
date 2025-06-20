@@ -91,12 +91,14 @@ export default class Job extends BaseModel {
     static async fetchjalon(jobs: Job[]) {
       for (const job of jobs) {
         await job.load('stepsValidation')
+        await job.load('company')
       }
   }
 
   @afterFind()
   static async findjalon(job: Job) {
     await job.load('stepsValidation')
+    await job.load('company')
   }
 
   @column.dateTime({ autoCreate: true })
