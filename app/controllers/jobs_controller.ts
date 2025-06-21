@@ -113,6 +113,7 @@ export default class JobsController {
 
   async show({ response, params }: HttpContext) {
     try {
+
       const jobId = params.jobId
       const result = await this.jobService.getJobByJobId(jobId)
       return response.status(result.statusCode).json(result)

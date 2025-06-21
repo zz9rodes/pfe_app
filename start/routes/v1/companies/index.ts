@@ -42,6 +42,10 @@ router
   .prefix('/v1/api/companies')
   .use(middleware.auth())
 
+
+router.get('/v1/api/extern/companies/:companyId', [CompaniesController, 'showCompanieDetail'])
+
+
 router.get('/v1/api/companies/all', [CompaniesController, 'index'])
 
 router.get('/v1/api/admin/companies/:companyId/companies_versions/all', [

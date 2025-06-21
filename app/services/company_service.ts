@@ -153,4 +153,48 @@ export class CompanyService {
       })
     }
   }
+
+    async getCompanyDetailsById(companyId: string | undefined) {
+    try {
+      if (!companyId) {
+        return ApiResponse.notFound('Companie Not Found')
+      }
+
+      console.log("companyId")
+            console.log(companyId)
+
+
+      const company = await Company.query()
+        .where('slug', companyId)
+        .preload('activeDetails')
+        .first()
+
+      if (!company) {
+        return ApiResponse.error('No company found for this account')
+      }
+
+    
+      await company.load('jobs')
+      await company.load('posts')
+      await company.load('guests', (guestQuery) => {
+        guestQuery
+          .where('accept', true)
+          .preload('account', (accountQuery) => {
+            accountQuery.select(['first_name', 'last_name','avatarUrl','first_langage'])
+          })
+      })
+
+
+      console.log(company.jobs)
+
+      return ApiResponse.success('Success', company)
+    } catch (error) {
+      console.log("erreur ici")
+      console.log(error)
+      throw new Exception(`Failed to retrieve company details: ${error.message}`, {
+        status: 500,
+        code: 'E_COMPANY_RETRIEVAL_FAILED',
+      })
+    }
+  }
 }

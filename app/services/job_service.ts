@@ -1,6 +1,7 @@
 import Job from '#models/job'
 import Company from '#models/company'
 import ApiResponse from '#models/utils/ApiResponse'
+import { JobStatus } from '#models/utils/index'
 
 
 export class JobService {
@@ -120,13 +121,14 @@ export class JobService {
 
   async getAllJobs(page:number=1) {
 
-    const jobs = await Job.query().select("*").paginate(page,20)
+    const jobs = await Job.query().select("*").where('status',JobStatus.OPEN).paginate(page,20)
     return ApiResponse.success("success",jobs)
   }
 
 
 
   async getJobByJobId(jobId: string) {
+    console.log(jobId)
     const job = await Job.findBy('slug', jobId)
     if (!job)  {
       return ApiResponse.notFound("Ressources Not Found")

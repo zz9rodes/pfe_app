@@ -66,6 +66,22 @@ export default class CompaniesController {
     }
   }
 
+    async showCompanieDetail({ response,params }: HttpContext) {
+    
+    try {
+
+      const  companyId=params.companyId
+
+      const result = await this.CompanyService.getCompanyDetailsById(companyId)
+
+      return response.status(result.statusCode).json(result)
+    } catch (error) {
+      return response
+        .status(500)
+        .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+    }
+  }
+
   async getAccountCompanie({ response, auth }: HttpContext) {
     
     try {

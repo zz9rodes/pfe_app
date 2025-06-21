@@ -1,4 +1,3 @@
-// import { middleware } from '#start/kernel'
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 import JobsController from '#controllers/jobs_controller'
