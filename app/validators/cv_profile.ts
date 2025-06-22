@@ -19,7 +19,7 @@ export const createCvProfileValidator = vine.compile(
         title: vine.string(),
         institution: vine.string().nullable(),
         degree: vine.string().nullable(),
-        year: vine.string(),
+        year: vine.number().min(1900).max(new Date().getFullYear()),
       })
     ).optional(),
 
@@ -29,7 +29,7 @@ export const createCvProfileValidator = vine.compile(
         description: vine.string().nullable(), // ex description example
         company: vine.string().nullable(), // ex : orange cm
         role: vine.string(), // ex : administrator
-        period: vine.string(), // ex : 1month , 3years , 12 week
+        period: vine.number(), // ex : 1month , 3years , 12 week
         year: vine.number().nullable(), //ex : 2years
         website: vine.string().url().nullable(), // ex : https://www.youtube.com/
       })

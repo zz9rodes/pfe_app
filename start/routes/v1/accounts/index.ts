@@ -27,8 +27,9 @@ router
       .get('/find', [AccountsController, 'findByname'])
       .use([middleware.auth(), middleware.onlyAdmin()])
 
-      router.post('/signatures/create',[SignaturesController,'store']).use(middleware.auth())
-      router.get('/signatures/',[SignaturesController,'index']).use(middleware.auth())
-
-    })
+    router.post('/signatures/create', [SignaturesController, 'store']).use(middleware.auth())
+    router.get('/signatures/', [SignaturesController, 'index']).use(middleware.auth())
+  })
   .prefix('/v1/api/accounts')
+
+  router.get('/v1/api/accounts/extern/all', [AccountsController, 'index'])

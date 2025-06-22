@@ -54,13 +54,11 @@ export default class Company extends BaseModel {
 
   @afterFind()
   static async loadactiveDetails(company: Company) {
-    console.log("on est senser enter ici aussi")
     await company.load('activeDetails')
   }
 
    @afterFetch()
   static async FecthloadactiveDetails(companies: Company[]) {
-    console.log("on est senser enter ici aussi")
     for (const company of companies) {
       await company.load('activeDetails')
       await company.load('admin')

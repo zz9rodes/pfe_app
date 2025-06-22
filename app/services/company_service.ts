@@ -2,17 +2,25 @@ import Account from '#models/account'
 import Company from '#models/company'
 import CompanyVersion from '#models/company_version'
 import Guest from '#models/guest'
-import Post from '#models/post'
 import ApiResponse from '#models/utils/ApiResponse'
 import { CompanyScope, CompanyStatus } from '#models/utils/index'
 import { Exception } from '@adonisjs/core/exceptions'
 
 
 export class CompanyService {
-  async getAllCompanies() {
-    const companies = await Company.all()
+  async getAllCompanies(page:number=1) {
+    const companies = await Company.query().select('*').where('is_verify',true).paginate(page,20)
 
-    await Promise.all(companies.map((company) => company.load('activeDetails')))
+    await Promise.all(companies.map(async(company) => {
+      await company.load('jobs',(guestQuery) => {
+        guestQuery.select(['id'])
+      })
+
+      await company.load('guests', (guestQuery) => {
+        guestQuery.select(['id']).where('accept', true)
+      })
+    }))
+
 
     return ApiResponse.success('success', companies)
   }
@@ -141,7 +149,6 @@ export class CompanyService {
       })
 
 
-      console.log(company.jobs)
 
       return ApiResponse.success('Success', company)
     } catch (error) {
@@ -160,8 +167,6 @@ export class CompanyService {
         return ApiResponse.notFound('Companie Not Found')
       }
 
-      console.log("companyId")
-            console.log(companyId)
 
 
       const company = await Company.query()
@@ -185,7 +190,6 @@ export class CompanyService {
       })
 
 
-      console.log(company.jobs)
 
       return ApiResponse.success('Success', company)
     } catch (error) {

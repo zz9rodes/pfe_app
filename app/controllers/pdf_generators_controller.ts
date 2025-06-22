@@ -14,6 +14,10 @@ export default class PdfGeneratorController {
       const browser = await puppeteer.launch()
       const page = await browser.newPage()
 
+      console.log(browser)
+
+      console.log(page)
+
       await page.goto(url, { waitUntil: 'networkidle0' })
 
       await page.waitForSelector('.avatar', { timeout: 10000 })

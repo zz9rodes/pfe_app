@@ -9,14 +9,15 @@ router
   .group(() => {
     router.post('/create', [CompaniesController, 'store']).use(middleware.onlyAdmin())
 
-    router.get('/:companyId', [CompaniesController, 'show'])
+    router.get('/:companyId', [CompaniesController, 'show']).where('companyId',router.matchers.uuid())
 
-    router.get('/', [CompaniesController, 'show']).use(middleware.getCompaniesDetails())
+    // router.get('/', [CompaniesController, 'show']).use(middleware.getCompaniesDetails())
 
     router
       .put('/:companyId/update', [CompaniesController, 'edit'])
       .where('companyId', router.matchers.uuid())
       .use([middleware.manageCompanies()])
+      
     router
       .delete('/:companyId/destroy', [CompaniesController, 'destroy'])
       .where('companyId', router.matchers.uuid())
@@ -43,10 +44,10 @@ router
   .use(middleware.auth())
 
 
-router.get('/v1/api/extern/companies/:companyId', [CompaniesController, 'showCompanieDetail'])
+router.get('/v1/api/extern/companies/:companyId', [CompaniesController, 'showCompanieDetail']).where('companyId',router.matchers.uuid())
 
 
-router.get('/v1/api/companies/all', [CompaniesController, 'index'])
+router.get('/v1/api/extern/companies/all', [CompaniesController, 'index'])
 
 router.get('/v1/api/admin/companies/:companyId/companies_versions/all', [
   CompaniesVersionController,
@@ -61,20 +62,26 @@ router.get('/v1/api/admin/companies/companies_versions/:versionId', [
 router
   .group(() => {
     router.post('create', [CompaniesRequestsController, 'store'])
+
     router.get('/', [CompaniesRequestsController, 'getAccountRequest'])
+
     router.post('/:slug_request/desapproved', [
       CompaniesRequestsController,
       'desApprovedCompanyRequest',
     ])
+
     router
       .get('/all', [CompaniesRequestsController, 'getAllRequestAndCompanie'])
       .use(middleware.onlyAdmin())
+
     router
       .get('/:slug_request/', [CompaniesRequestsController, 'get'])
       .where('slug_request', router.matchers.uuid())
+
     router
       .put('/:slug_request/update', [CompaniesRequestsController, 'edit'])
       .where('slug_request', router.matchers.uuid())
+
   })
   .prefix('/v1/api/company_request')
   .use(middleware.auth())

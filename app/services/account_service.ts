@@ -87,6 +87,8 @@ export class AccountService {
           await company.preload('activeDetails')
         })
       }
+      await account.load('user')
+      await account.load('cvProfiles')
     }
 
     return ApiResponse.success('All accounts retrieved', accounts,200)
