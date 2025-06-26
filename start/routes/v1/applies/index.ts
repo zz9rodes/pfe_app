@@ -15,6 +15,8 @@ router.group(()=>{
 
         router.get('/all',[AppliesController,'index']).use(middleware.onlyAdmin())
 
+        router.get('/jobs/:jobId',[AppliesController,'jobApplications']).where('jobId',router.matchers.uuid())
+
 }).prefix('/v1/api/applies').use([middleware.auth()])
 
 

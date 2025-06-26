@@ -154,4 +154,10 @@ export enum CompanyStatus{
     APPROVED='approved',
     REJECT='reject'
   }
+
+  export enum ApplyStatus{
+    PENDING='pending',
+    APPROVED='approved',
+    REJECT='reject'
+  }
   

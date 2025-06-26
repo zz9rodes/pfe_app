@@ -18,10 +18,14 @@ export default class Apply extends BaseModel {
   declare message:string
 
   @column()
+  declare status:string
+
+  @column()
   declare jobId:number
 
   @belongsTo(()=>Job)
   declare job:BelongsTo<typeof Job>
+  
 
   @column()
   declare accountId:number

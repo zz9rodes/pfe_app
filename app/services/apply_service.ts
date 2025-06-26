@@ -12,6 +12,34 @@ export class ApplyService {
     return ApiResponse.success("success", applies)
   }
 
+  async GetAllJobApplications(jobId :String){
+    console.log("dans le servie")
+    try {
+       const job= await Job.findBy('slug',jobId)
+      console.log(jobId)
+
+      if(!job){
+        return ApiResponse.notFound("Job Not found");
+      }
+
+        await  job.load('applies',(query)=>{
+          query.preload('account',async accountQuery=>{
+           await accountQuery.preload('cvProfiles')
+           await accountQuery.preload('user')
+          })
+        })
+
+        console.log(job.applies[0].account)
+
+    return ApiResponse.success("Success", job);
+    } catch (error) {
+      console.log(error)
+        return ApiResponse.error("Success", error);
+
+    }
+     
+  }
+
   async create(data: any) {
     const { accountId, jobId } = data;
   

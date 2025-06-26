@@ -138,10 +138,14 @@ export class CompanyService {
       }
 
     
-      await company.load('jobs')
+      await company.load('jobs', async(job)=>{
+        await job.preload('applies',query=>{
+          query.select(['id','account_id'])
+        })
+      })
       await company.load('posts')
-      await company.load('guests', (guestQuery) => {
-        guestQuery
+      await company.load('guests',async (guestQuery) => {
+        await guestQuery
           .where('accept', true)
           .preload('account', (accountQuery) => {
             accountQuery.select(['first_name', 'last_name','avatarUrl','first_langage'])

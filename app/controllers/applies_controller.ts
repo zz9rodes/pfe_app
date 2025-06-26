@@ -31,6 +31,25 @@ export default class AppliesController {
         }
     }
 
+
+    // jobApplications
+        async jobApplications({ params, response }: HttpContext) {
+        try {
+            const jobId=params.jobId
+            console.log(params.jobId);
+            
+          
+            const result = await this.ApplyService.GetAllJobApplications(jobId)
+
+            return response.status(result.statusCode).json(result)
+        } catch (error) {
+            return response
+                .status(500)
+                .json(ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+
+        }
+    }
+
     async show({ params, response }: HttpContext) {
 
         try {
