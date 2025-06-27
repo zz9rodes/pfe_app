@@ -29,7 +29,6 @@ export class ApplyService {
           })
         })
 
-        console.log(job.applies[0].account)
 
     return ApiResponse.success("Success", job);
     } catch (error) {
