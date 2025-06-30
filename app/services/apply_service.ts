@@ -39,6 +39,31 @@ export class ApplyService {
      
   }
 
+  
+
+    async GetAllAccountApplications(accountId :number){
+    console.log("dans le servie")
+    try {
+       const account= await Account.find(accountId)
+      console.log(accountId)
+
+      if(!account){
+        return ApiResponse.notFound("Account Not found");
+      }
+
+
+      const applies=await Apply.query().select('*').where('account_id',account.id)
+      .preload('job')
+       
+    return ApiResponse.success("Success", applies);
+    } catch (error) {
+      console.log(error)
+        return ApiResponse.error("Success", error);
+
+    }
+     
+  }
+
   async create(data: any) {
     const { accountId, jobId } = data;
   

@@ -64,7 +64,8 @@ async edit(id: any, data: any) {
     try {
       const user = await User.verifyCredentials(payload.email, payload.password)
       const token = await User.accessTokens.create(user, ['*'], { expiresIn: '1 days' })
-
+            
+      
       return ApiResponse.success('User registered successfully', { user, token })
     } catch (error) {
       console.log(error);

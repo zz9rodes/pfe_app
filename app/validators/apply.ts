@@ -9,4 +9,10 @@ export const createApplyValidation=vine.compile(
     })
 )
 
+export const updateValidation=vine.compile(
+    vine.object({
+        status:vine.string()
+    })
+)
+
 
