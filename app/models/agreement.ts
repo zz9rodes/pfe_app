@@ -3,15 +3,25 @@ import { afterFetch, afterFind, BaseModel, belongsTo, column } from '@adonisjs/l
 import Account from './account.js'
 import Contract from './contract.js'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import Signature from './signature.js'
 export default class Agreement extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
+
+  @column()
+  declare reference:string
+
+  @column()
+  declare signatureId:number
 
   @column()
   declare accountId: number
 
   @belongsTo(() => Account)
   declare account: BelongsTo<typeof Account>
+
+  @belongsTo(() => Signature)
+  declare signature: BelongsTo<typeof Signature>
 
   @column()
   declare contractId: number

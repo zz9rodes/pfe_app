@@ -8,7 +8,7 @@ import { RenderHtmlWelComePage } from '#models/utils/ViewsTemplate'
 
 @inject()
 export default class UserService {
-  constructor(private EmailEmiterService: EmailEmiterService) {}
+  constructor(private EmailEmiterService: EmailEmiterService) { }
 
   async Register(data: any) {
     try {
@@ -33,43 +33,43 @@ export default class UserService {
     }
   }
 
-async edit(id: any, data: any) {
-  try {
-    const user = await User.find(id)
+  async edit(id: any, data: any) {
+    try {
+      const user = await User.find(id)
 
-    if (!user) {
-      return ApiResponse.error('Failed to Update user', 'E_USER_NOT_FOUND')
-    }
-
-    if (data.email) {
-      const existingUser = await User.query().where('email', data.email).whereNot('id', id).first()
-
-      if (existingUser) {
-        return ApiResponse.error('Email already in use by another user', 'E_EMAIL_IN_USE')
+      if (!user) {
+        return ApiResponse.error('Failed to Update user', 'E_USER_NOT_FOUND')
       }
+
+      if (data.email) {
+        const existingUser = await User.query().where('email', data.email).whereNot('id', id).first()
+
+        if (existingUser) {
+          return ApiResponse.error('Email already in use by another user', 'E_EMAIL_IN_USE')
+        }
+      }
+
+      user.merge(data)
+      await user.save()
+
+      return ApiResponse.success('User updated successfully', user)
+    } catch (error) {
+      console.error(error)
+      return ApiResponse.error('Failed to update user', 'E_USER_UPDATE_FAILED', error)
     }
-
-    user.merge(data)
-    await user.save()
-
-    return ApiResponse.success('User updated successfully', user)
-  } catch (error) {
-    console.error(error)
-    return ApiResponse.error('Failed to update user', 'E_USER_UPDATE_FAILED', error)
   }
-}
 
 
   async login(payload: any) {
     try {
       const user = await User.verifyCredentials(payload.email, payload.password)
       const token = await User.accessTokens.create(user, ['*'], { expiresIn: '1 days' })
-            
-      
+
+
       return ApiResponse.success('User registered successfully', { user, token })
     } catch (error) {
       console.log(error);
-      
+
       return ApiResponse.error('Invalid UserName Or Password', 'E_USER_LOGIN_FAILED', error)
     }
   }
@@ -92,16 +92,23 @@ async edit(id: any, data: any) {
     const newUser = await User.create(user)
 
     await newUser.related('account').create({ ...account, slug: crypto.randomUUID() })
-    await  newUser.load('account')
+    await newUser.load('account')
+
+    await newUser.account.related('signatures').create({
+      name:newUser.account.firstName,
+        text:newUser.email,
+        font:"'Pacifico', cursive",
+    })
+
     return ApiResponse.success('Success', newUser)
   }
 
-  async createUserRequest(email: string,type:any) {
+  async createUserRequest(email: string, type: any) {
     console.log("user request Service")
     try {
       const user: UserRequest = await UserRequest.create({
         email: email,
-        type:type,
+        type: type,
         uuid: crypto.randomUUID(),
       })
       if (user) {
@@ -118,7 +125,7 @@ async edit(id: any, data: any) {
 
       return ApiResponse.success('Go and Check Your Email To Corfirm Your Account Request', user, 200)
     } catch (error) {
-      console.error('Register error:\n\n',error)
+      console.error('Register error:\n\n', error)
       return ApiResponse.error('Failed to register user', 'E_USER_REGISTRATION_FAILED', error, 500)
     }
   }

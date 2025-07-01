@@ -20,7 +20,7 @@ export default class PdfGeneratorController {
 
       await page.goto(url, { waitUntil: 'networkidle0' })
 
-      await page.waitForSelector('.avatar', { timeout: 10000 })
+      // await page.waitForSelector('.avatar', { timeout: 10000 })
 
       const pdfBuffer = await page.pdf({
         format: 'A4',
