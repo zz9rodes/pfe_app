@@ -54,8 +54,8 @@ export default class Project extends BaseModel {
   declare managerId: number
 
   @belongsTo(() => Guest, {
-    foreignKey: 'managerId',     // nom de la propriété dans ce modèle
-    localKey: 'id',              // par défaut, la clé primaire de Guest (optionnel ici)
+    foreignKey: 'managerId',     
+    localKey: 'id',              
   })
   declare manager: BelongsTo<typeof Guest>
 
