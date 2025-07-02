@@ -11,7 +11,13 @@ router.group(()=>{
         router.delete('/:agreementId',[AgreementsController,'destroy'])
         .use(middleware.onlyAdmin())
         .where('agreementId',router.matchers.number())
+
+         router.get('/account',[AgreementsController,'showForAccount'])
+
 }).prefix('/v1/api/agreements').use([middleware.auth()])
+
+router.get('/v1/api/agreements/:agreementId/by_reference',[AgreementsController,'showByReference'])
+
 
 
 

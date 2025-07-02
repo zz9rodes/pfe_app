@@ -7,6 +7,7 @@ import { errors as errorAuth } from '@adonisjs/auth'
 
 import ApiResponse from '#models/utils/ApiResponse'
 import User from '#models/user'
+import auth from '@adonisjs/auth/services/main'
 
 
 @inject()
@@ -55,6 +56,26 @@ export default class AgreementsController {
 
     async show({ params, response }: HttpContext) {
         const result = await this.AgreementService.getAgreementDetails(params?.agreementId)
+
+        return response.status(result.statusCode).json(result)
+    }
+
+    async showForAccount({ params, response ,auth}: HttpContext) {
+        const me=auth.user
+        me?.load('account')
+
+        if(!me || !me.account){
+           return response.unauthorized("unauthorized")
+        }
+
+        const result = await this.AgreementService.showForAccount(me.account)
+
+        return response.status(result.statusCode).json(result)
+    }
+
+    async showByReference({ params, response }: HttpContext){
+
+         const result = await this.AgreementService.getAgreementDetailsByReference(params?.agreementId)
 
         return response.status(result.statusCode).json(result)
     }

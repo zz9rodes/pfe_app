@@ -88,10 +88,10 @@ export default class Account extends BaseModel {
     await account.load('cvProfiles')
   }
 
-   @afterFetch()
+  @afterFetch()
   static async fecthloadDetails(accounts: Account[]) {
-    accounts.forEach(async (account)=>{
-     await  account.load('cvProfiles')
+    accounts.forEach(async (account) => {
+      await account.load('cvProfiles')
     })
   }
 
