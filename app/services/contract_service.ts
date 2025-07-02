@@ -1,6 +1,7 @@
 import Company from '#models/company'
 import Contract from '#models/contract'
 import ApiResponse from '#models/utils/ApiResponse'
+import { access } from 'node:fs'
 
 export class ContractService {
   async create(data: any) {
@@ -53,7 +54,12 @@ export class ContractService {
         return ApiResponse.notFound(' Comapny Request Not Found')
       }
 
-      const contracts = await Contract.query().select('*').where('company_id', company?.id).preload('agreements')
+      const contracts = await Contract.query().select('*').where('company_id', company?.id)
+      .preload('agreements',(agreements)=>{
+        agreements.preload('account',account=>{
+          account.preload('cvProfiles')
+        })
+      })
 
       return ApiResponse.success('Success', contracts)
     } catch (error) {
