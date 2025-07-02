@@ -136,31 +136,33 @@ export class AgreementService {
     }
   }
 
-  async getAgreementDetailsByReference(id: number) {
-    try {
-      const agreement = await Agreement.find(id)
-      if (!agreement) {
-        return ApiResponse.notFound('Ressource non trouvée')
-      }
+async getAgreementDetailsByReference(id: number) {
+  try {
 
-      await agreement.load('signature')
-      await agreement.load('account')
-      await agreement.load('contract', (contract) => {
-        contract.preload('company', (company) => {
-          company.preload('admin', (admin) => {
-            // admin.preload('signatureas')
-            admin.preload('signatures')
-          })
+      const agreement = await Agreement.query()
+      .where('id', id)
+      .preload('signature')
+      .preload('account')
+      .preload('contract', (contractQuery) => {
+        contractQuery.preload('company', (companyQuery) => {
+          companyQuery.preload('admin')
         })
       })
+      .first()
 
-      console.log(agreement.contract.company.admin.signatures)
-
-      return ApiResponse.success('Success', agreement)
-    } catch (error) {
-      return ApiResponse.error(error)
+    if (!agreement) {
+      return ApiResponse.notFound('Ressource non trouvée')
     }
+
+    await agreement.contract?.company?.admin.load('signatures')
+
+
+    return ApiResponse.success('Success', agreement)
+  } catch (error) {
+    return ApiResponse.error(error)
   }
+}
+
 
   async showForAccount(account: Account) {
     try {

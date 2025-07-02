@@ -75,6 +75,8 @@ export class AccountService {
       await account.load('company')
     }
 
+    await account.load('signatures')
+
     return ApiResponse.success('Account retrieved successfully', account)
   }
 

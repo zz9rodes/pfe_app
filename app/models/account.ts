@@ -86,7 +86,9 @@ export default class Account extends BaseModel {
   @afterFind()
   static async loadaDetails(account: Account) {
     await account.load('cvProfiles')
+    await account.load('signatures')
   }
+
 
   @afterFetch()
   static async fecthloadDetails(accounts: Account[]) {
