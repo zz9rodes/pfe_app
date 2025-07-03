@@ -154,11 +154,25 @@ export class AgreementService {
           start: new Date(),
           objectif: '',
         })
-        // Ajouter le Guest (lié à l'account) comme TeamMember du projet
-        await (await import('#models/team_member')).default.create({
-          projectId: project.id,
-          memberId: guest.id,
-        })
+        // Ajouter le Guest (lié à l'account) comme TeamMember du projet s'il n'existe pas déjà
+        const TeamMember = (await import('#models/team_member')).default
+        let existingMember = await TeamMember.query().where('project_id', project.id).andWhere('member_id', guest.id).first()
+        if (!existingMember) {
+          await TeamMember.create({
+            projectId: project.id,
+            memberId: guest.id,
+          })
+        }
+        // Ajouter aussi le manager comme TeamMember du projet s'il n'existe pas déjà
+        if (managerGuest.id !== guest.id) {
+          let existingManager = await TeamMember.query().where('project_id', project.id).andWhere('member_id', managerGuest.id).first()
+          if (!existingManager) {
+            await TeamMember.create({
+              projectId: project.id,
+              memberId: managerGuest.id,
+            })
+          }
+        }
       }
 
       return ApiResponse.success('Succès', agreement)

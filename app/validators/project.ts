@@ -40,7 +40,8 @@ export const UpdateProjectValidator = vine.compile(
         start: vine.date().optional(),
         objectif: vine.string().optional(),
         managerId: vine.number().unique(async (db: Database, value: number) => {
-            const result = await db.from('guests').select('id').where('id', value).first()
+            const result = await db.from('guests').select(['id','accept']).where('id', value).first()
+            console.log(result)
             return result!==null  && result.accept
         }).optional(),
         jobId: vine.number().unique(async (db: Database, value: number) => {

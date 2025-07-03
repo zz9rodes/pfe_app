@@ -3,6 +3,7 @@ import Project from '#models/project'
 import ApiResponse from '#models/utils/ApiResponse'
 import File from '#models/file';
 import TeamMember from '#models/team_member';
+import Job from '#models/job';
 
 export default class ProjectService {
   async create(companySlug: string, data: any) {
@@ -73,7 +74,7 @@ export default class ProjectService {
     await project.save()
     await project.load('manager')
     await project.load('job')
-    return ApiResponse.success('Success', project)
+    return ApiResponse.success('Project  have been Update', project)
   }
 
   async get(projectId: string) {
@@ -108,7 +109,16 @@ export default class ProjectService {
     if (!company) {
       return ApiResponse.notFound("Company Not Found")
     }
-    const projects = await Project.query().where('company_id', company.id).preload('manager').preload('job')
+    const projects = await Project.query().where('company_id', company.id)
+    .preload('manager',(manager)=>{
+      manager.preload('account')
+    })
+    .preload('members',(member)=>{
+      member.preload('member')
+    })
+    .preload('job',(job)=>{
+      job.select(['id','title','companyId'])
+    })
 
     return ApiResponse.success("Success", projects)
   }
