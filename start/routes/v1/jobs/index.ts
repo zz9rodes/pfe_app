@@ -18,6 +18,9 @@ router.group(()=>{
 
 router.get('/v1/api/extern/companies/jobs/all',[JobsController,'all'])
 
+router.get('/v1/api/extern/companies/:companyId/jobs/all',[JobsController,'all']).use(middleware.auth())
+
+
 router.get('/v1/api/extern/companies/jobs/:jobId',[JobsController,'show'])
 
 

@@ -124,5 +124,6 @@ export default class GuestsController {
 
         }
     }
+    
 
 }
