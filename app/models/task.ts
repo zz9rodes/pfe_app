@@ -79,8 +79,10 @@ export default class Task extends BaseModel {
   }
 
   @afterFetch()
-  static async fetchFile(post: Task) {
-    await post.load('attachments')
+  static async fetchFile(tasks: Task[]) {
+    // await tasks.load('attachments')
+        await Promise.all(tasks.map((task) => task.load('attachments') ))
+
   }
 
   @column.dateTime({ autoCreate: true })

@@ -16,6 +16,9 @@ router.group(() => {
 
     router.get("/:projectId/", [ProjectsController, 'show'])
         .where(':projectId', router.matchers.uuid());
+    
+    router.get("/:projectId/with_task", [ProjectsController, 'showWhitTaks'])
+        .where(':projectId', router.matchers.uuid());
 
     router.get("/:projectId/members", [ProjectsController, 'getProjectMembers'])
         .where(':projectId', router.matchers.uuid());

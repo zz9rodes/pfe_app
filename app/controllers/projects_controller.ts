@@ -22,6 +22,11 @@ export default class ProjectsController {
         return response.status(project.statusCode).json(project)
     }
 
+    public async showWhitTaks({ params, response }: HttpContext) {
+        const project = await this.ProjectService.get(params.projectId,true)
+        return response.status(project.statusCode).json(project)
+    }
+
     public async store({ request, response, params }: HttpContext) {
 
         try {

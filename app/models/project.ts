@@ -7,6 +7,7 @@ import Guest from './guest.js'
 import Job from './job.js'
 import Company from './company.js'
 import TeamMember from './team_member.js'
+import Task from './task.js'
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -75,6 +76,8 @@ export default class Project extends BaseModel {
   @hasMany(()=>TeamMember)
   declare members:HasMany<typeof TeamMember>
 
+  @hasMany(()=>Task)
+  declare tasks:HasMany<typeof Task>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

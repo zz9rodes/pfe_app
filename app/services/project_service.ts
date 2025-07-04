@@ -77,16 +77,31 @@ export default class ProjectService {
     return ApiResponse.success('Project  have been Update', project)
   }
 
-  async get(projectId: string) {
+  async get(projectId: string,with_task=false) {
     const project = await Project.findBy('slug', projectId)
 
     if (!project) {
       return ApiResponse.notFound('Project Not Found')
     }
 
-    await project.load('manager')
-    await project.load('job')
+    await  project.load('manager',(manager)=>{
+      manager.preload('account')
+    })
+    await project.load('members',(member)=>{
+      member.preload('member')
+    })
+    await  project.load('job',(job)=>{
+      job.
+      select(['id','title','companyId'])
+    })
+
+    // await project.load('manager')
+    // await project.load('job')
     await project.load('files')
+
+    if(with_task){
+      project.load('tasks')
+    }
 
     return ApiResponse.success('Success', project)
   }
