@@ -59,6 +59,20 @@ export default class TeamMembersController {
         }
     }
 
+    async getProjectMembers({  response,params }: HttpContext) {
+        try {
+
+            const projectId=params.projectId
+
+            const result = await this.TeamMemberService.getProjectMembers(projectId)
+            return response.status(result.statusCode).json(result)
+        } catch (error) {
+            console.log(error);
+            
+            return this.handleError(response, error)
+        }
+    }
+
     private handleError(response: HttpContext['response'], error: any) {
         if (error instanceof errors.E_VALIDATION_ERROR) {
             return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))

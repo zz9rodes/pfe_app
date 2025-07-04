@@ -10,4 +10,7 @@ router.group(()=>{
     router.delete('/:memberId/destroy',[TeamMembersController,'destroy']).where('memberId',router.matchers.number())
     router.delete('/destroy_many',[TeamMembersController,'destroyMany'])
 
+    router.get('/:projectId',[TeamMembersController,'getProjectMembers']).where('projectId',router.matchers.uuid())
+
+
 }).prefix('/v1/api/companies/:companyId/project_members').use([middleware.auth(),middleware.manageCompanies()])

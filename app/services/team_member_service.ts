@@ -85,4 +85,31 @@ export class TeamMemberService {
       deletedIds: members.map(m => m.id),
     })
   }
+
+  async getProjectMembers(projectId: string) {
+    const project = await Project.findBy('slug', projectId)
+
+    if (!project) {
+      return ApiResponse.notFound("No Project found")
+    }
+
+    await project.load('members', member => {
+      member.preload('member', guest => {
+        guest.preload('account')
+      })
+    })
+
+    const teamMembers = project.members
+
+    const membersList = teamMembers.map((teamMember: any) => {
+      const account = teamMember.member?.account
+      const fullName = account ? `${account.firstName} ${account.lastName}` : ''
+      return {
+        id: teamMember.id,
+        fullName
+      }
+    })
+
+    return ApiResponse.success("Liste des membres du projet", membersList)
+  }
 }

@@ -10,6 +10,9 @@ router.group(()=>{
     router.delete('/:guestId/destroy',[GuestsController,'destroy'])
     .where('guestId',router.matchers.number())
 
+    // router.get('/',[GuestsController,'getCompanyGuests'])
+    // .where('guestId',router.matchers.number())
+
 }).prefix('/v1/api/companies/:companyId/guests/')
 .use([middleware.auth(),middleware.manageCompanies()])
 .where('companyId',router.matchers.uuid())
