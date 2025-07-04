@@ -9,7 +9,7 @@ export const createTaskValidator = vine.compile(
         priority: vine.enum(Object.values(Priority)),
         start_date: vine.date().optional(),
         due_date: vine.date().optional(),
-        estimation_time: vine.string().optional(),
+        estimationTime: vine.number().optional(),
 
         status: vine.enum(Object.values(TaskStatus)).optional(),
 

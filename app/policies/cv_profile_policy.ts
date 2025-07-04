@@ -22,13 +22,14 @@ export default class CvProfilePolicy extends BasePolicy {
         return (isOwner && isCompanyAccount) || isAdmin
       }
 
-        edit(user: User, accountId: number): AuthorizerResponse {
+      edit(user: User, accountId: number): AuthorizerResponse {
     
         const isOwner = user.account.id === accountId
         const isCompanyAccount = user.account.accountType === AccountType.COMPANIES
         const isAdmin = user.account.roles === AppRoles.ADMIN
     
-        return (isOwner && isCompanyAccount) || isAdmin
+
+        return (isOwner || isCompanyAccount) || isAdmin
       }
 
 }

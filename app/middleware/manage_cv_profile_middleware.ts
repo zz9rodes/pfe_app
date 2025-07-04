@@ -7,7 +7,6 @@ export default class ManageCvProfileMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
     
      if (await ctx.bouncer.allows(editCvprofile, ctx.params.cvProfileId)) {    
-          
         return await next()
      }
 

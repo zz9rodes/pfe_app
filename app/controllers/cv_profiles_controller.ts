@@ -84,9 +84,11 @@ export default class CvProfilesController {
     try {
       const user = auth.user
 
+
       if (!user) {
         return response.status(401).json(ApiResponse.error('unauthorized'))
       }
+
 
       const data = await updateCvProfileValidator.validate(request.all())
 
@@ -105,6 +107,9 @@ export default class CvProfilesController {
 
       return response.badRequest()
     } catch (error) {
+
+      console.log(error)
+
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(
           ApiResponse.validation('Invalid input', error.messages)

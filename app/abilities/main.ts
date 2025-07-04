@@ -32,14 +32,10 @@ export const editAccount = Bouncer.ability(async (me: User, slug: string | any) 
 })
 
 export const editCvprofile = Bouncer.ability(async (me: User, slug: string | any) => {
-console.log(me)
   await me.account?.load('cvProfiles')
 
   const cvProfile = me?.account?.cvProfiles
 
-  console.log(cvProfile)
-  console.log(cvProfile?.slug)
-  console.log(slug)
 
   return ((cvProfile?.slug === slug)) || (me.isAdmin == true)
 })

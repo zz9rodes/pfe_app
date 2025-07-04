@@ -112,15 +112,17 @@ export default class UserService {
         uuid: crypto.randomUUID(),
       })
       if (user) {
-        const data: EmailData = {
-          from: 1,
+        const data = {
+          from: 2,
           to: 1,
           cc: 'Welcom To Kindi Job',
           subject: 'Welcom To Kindi Job',
           text: 'Welcom To Kindi Job',
-          html: RenderHtmlWelComePage('http://localhost:5173/auth/register'),
+          html: RenderHtmlWelComePage(`http://localhost:5173/auth/${type}/register`),
+          s_email:"rodesnzie@gmail.com",
+          r_email:user.email
         }
-        await this.EmailEmiterService.sendEmail(data)
+        await this.EmailEmiterService.sendRegiestrationLinkEmail(data)
       }
 
       return ApiResponse.success('Go and Check Your Email To Corfirm Your Account Request', user, 200)
