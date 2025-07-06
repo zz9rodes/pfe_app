@@ -102,7 +102,8 @@ export default class ProjectService {
     await project.load('files')
 
     if(with_task){
-      project.load('tasks')
+     await  project.load('tasks')
+      console.log("on vien de load les task")
     }
 
     return ApiResponse.success('Success', project)
@@ -178,7 +179,14 @@ export default class ProjectService {
     return project.members.some(member => member.memberId === guest.id)
   })
 
-  return ApiResponse.success("Success", permisProjects)
+  const isCompanyAdmin= company.accountId==account.id
+
+  // const respos
+
+  return ApiResponse.success("Success", {
+     projects: permisProjects,
+    isAdmin:isCompanyAdmin
+  })
 }
 
 
