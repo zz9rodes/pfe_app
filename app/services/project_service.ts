@@ -4,6 +4,8 @@ import ApiResponse from '#models/utils/ApiResponse'
 import File from '#models/file';
 import TeamMember from '#models/team_member';
 import Job from '#models/job';
+import Account from '#models/account';
+import Guest from '#models/guest';
 
 export default class ProjectService {
   async create(companySlug: string, data: any) {
@@ -137,6 +139,48 @@ export default class ProjectService {
 
     return ApiResponse.success("Success", projects)
   }
+
+ async lisGuestCompanieProjetcts(companyId: number, account: Account) {
+
+  console.log("-------------------- RODES ---------------------------")
+
+  const company = await Company.findBy('slug', companyId)
+
+  if (!company) {
+    return ApiResponse.notFound("Company Not Found")
+  }
+
+  // Récupérer le guest lié à cet account dans cette compagnie
+  const guest = await Guest.query()
+    .where('account_id', account.id)
+    .andWhere('company_id', company.id)
+    .first()
+
+  if (!guest) {
+    return ApiResponse.forbidden("User is not a guest of this company")
+  }
+
+  // Récupérer tous les projets de la compagnie
+  const projects = await Project.query()
+    .where('company_id', company.id)
+    .preload('manager', (manager) => {
+      manager.preload('account')
+    })
+    .preload('members', (member) => {
+      member.preload('member')
+    })
+    .preload('job', (job) => {
+      job.select(['id', 'title', 'companyId'])
+    })
+
+  // Filtrer les projets où le guest est membre
+  const permisProjects = projects.filter(project => {
+    return project.members.some(member => member.memberId === guest.id)
+  })
+
+  return ApiResponse.success("Success", permisProjects)
+}
+
 
   async getMembers(projectId: string) {
     const project = await Project.findBy('slug', projectId)

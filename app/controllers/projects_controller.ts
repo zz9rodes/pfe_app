@@ -17,6 +17,22 @@ export default class ProjectsController {
         return response.status(projects.statusCode).json(projects)
     }
 
+    public async lisGuestCompanieProjetcts({ response, params,auth }: HttpContext) {
+
+
+        const user=auth.user
+        console.log(user)
+        console.log(user?.account)
+        if(!user || !user.account){
+
+            return response.unauthorized(ApiResponse.error(" unauthorized "))
+
+        }
+
+        const projects = await this.ProjectService.lisGuestCompanieProjetcts(params.companyId,user.account)
+        return response.status(projects.statusCode).json(projects)
+    }
+
     public async show({ params, response }: HttpContext) {
         const project = await this.ProjectService.get(params.projectId)
         return response.status(project.statusCode).json(project)
