@@ -108,4 +108,25 @@ export class AccountService {
 
     return ApiResponse.success('Search results', results)
   }
+
+  async getAccountshowGuest(user: User | undefined) {
+    if (!user) {
+      return ApiResponse.error('User not provided', 'E_NO_USER')
+    }
+
+    await user.load('account')
+    const account = user.account
+
+    // if (account.accountType === AccountType.COMPANIES) {
+    //   await account.load('company')
+    // }
+
+    await account.load('guests',(guest)=>{
+      guest.preload('company')
+    })
+
+    const guestList=account.guests
+
+    return ApiResponse.success('Account retrieved successfully', guestList)
+  }
 }

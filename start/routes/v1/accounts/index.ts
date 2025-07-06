@@ -7,6 +7,7 @@ import SignaturesController from '#controllers/signatures_controller'
 router
   .group(() => {
     router.post('/create/', [AccountsController, 'store'])
+
     router
       .put('/:slug/update', [AccountsController, 'edit'])
       .where('slug', router.matchers.uuid())
@@ -18,6 +19,9 @@ router
       .use([middleware.auth(), middleware.onlyAdmin()])
 
     router.get('/', [AccountsController, 'show']).use([middleware.auth()])
+
+    router.get('/guest/list', [AccountsController, 'showGuest']).use([middleware.auth()])
+
 
     router
       .get('/all', [AccountsController, 'index'])

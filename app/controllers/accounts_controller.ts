@@ -57,6 +57,19 @@ export default class AccountsController {
     }
   }
 
+  async showGuest({ response, auth }: HttpContext) {
+    try {
+      const user = auth.user
+
+      const result=await this.AccountService.getAccountshowGuest(user!)
+      return response
+            .status(result.statusCode)
+            .json(result)
+    } catch (error) {
+      return response.status(500).json( ApiResponse.error('Internal server error', 'E_INTERNAL_ERROR', error))
+    }
+  }
+
 
   async edit({ request, response, params }: HttpContext) {
 
