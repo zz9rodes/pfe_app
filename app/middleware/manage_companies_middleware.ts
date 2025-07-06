@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import Subscription from '#models/subscription'
 import ApiResponse from '#models/utils/ApiResponse'
 import { manageCompaniesVersion } from '#abilities/main'
+import { AccountType } from '#models/utils/index'
 
 export default class EnsurePermissionAndSubscription {
   public async handle({ auth, response, params, bouncer }: HttpContext, next: () => Promise<void>) {
@@ -27,7 +28,7 @@ export default class EnsurePermissionAndSubscription {
       .orderBy('end_date', 'desc')
       .first()
 
-    if (!activeSubscription) {
+    if (!activeSubscription && user.account.accountType!==AccountType.PERSONNAL) {
       return response.forbidden(
         ApiResponse.forbidden('You must have an active subscription to access this feature.')
       )

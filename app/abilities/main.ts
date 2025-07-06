@@ -14,6 +14,7 @@
 
 import Company from '#models/company'
 import CvProfile from '#models/cv_profile'
+import Guest from '#models/guest'
 import Project from '#models/project'
 import User from '#models/user'
 import { Bouncer } from '@adonisjs/bouncer'
@@ -79,5 +80,25 @@ export const manageTasks = Bouncer.ability(async (user: User, project: Project) 
 export const manageCompaniesVersion = Bouncer.ability(async (me: User, slug: string | any) => {
   await me?.account?.load('company')
 
-  return (me?.account?.company?.slug === slug) || (me.isAdmin == true)
+  const company=await Company.findBy('slug',slug)
+
+  if(!company){
+    return false
+  }
+
+  const guests=await Guest.query().select('*').where('company_id',company.id).andWhere('accept',true)
+
+  let existingValidGuest=false
+
+  for (let index = 0; index < guests.length; index++) {
+    const guest = guests[index];
+
+    if(guest.accountId == me.account.id){
+      existingValidGuest=true
+      break
+    }
+    
+  }
+
+  return (me?.account?.company?.slug === slug) || (me.isAdmin == true) || existingValidGuest
 })

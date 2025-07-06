@@ -25,3 +25,6 @@ router.group(() => {
 
 }).prefix('v1/api/companies/:companyId/projects/')
 .use([middleware.auth(),middleware.manageCompanies()]).where('companyId',router.matchers.uuid())
+
+
+router.get('v1/api/companies/:companyId/guest/projects/all', [ProjectsController, 'lisCompanieProjetcts'])
