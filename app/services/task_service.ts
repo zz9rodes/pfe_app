@@ -95,6 +95,11 @@ export default class TaskService {
       .preload('project')
       .preload('assignee')
       .preload('step')
+      .preload('comments',(comment)=>{
+        comment.preload('author')
+      })
+
+
 
     return ApiResponse.success('List of tasks', tasks)
   }
