@@ -48,7 +48,7 @@ export default class TaskService {
 
 
   public async update(taskSlug: string, data: any) {
-    const { assigneeId, ...taskData } = data
+    const { assigneeId,attachements, ...taskData } = data
 
     const task = await Task.findBy('slug', taskSlug)
     if (!task) {
@@ -67,6 +67,17 @@ export default class TaskService {
 
     task.merge(taskData)
     await task.save()
+
+     if (Array.isArray(attachements) && attachements.length > 0) {
+      const createdFiles = await Promise.all(
+        attachements.map(attachement => File.create(attachement))
+      )
+
+      const fileIds = createdFiles.map(f => f.id)
+
+      await task.related('attachments').attach(fileIds)
+      await task.load('attachments')
+    }
 
     return ApiResponse.success('Task updated successfully', task)
   }

@@ -6,7 +6,7 @@ import TaskCommentsController from "#controllers/taskcomments_controller"
 
 router.group(() => {
     router.post('create',[TasksController,'store'])
-    router.put('/:taskId/update',[TasksController,'update'])
+    router.put('/:taskId/update',[TasksController,'update']).where('commentId',router.matchers.uuid())
     router.delete('/:taskId/destroy',[TasksController,'destroy'])
     router.get('/:taskId',[TasksController,'show'])
     router.get('/',[TasksController,'indexProjectTask'])

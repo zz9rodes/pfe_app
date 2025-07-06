@@ -7,8 +7,8 @@ export const createTaskValidator = vine.compile(
         name: vine.string().minLength(2),
         description: vine.string().minLength(5).optional(),
         priority: vine.enum(Object.values(Priority)),
-        start_date: vine.date().optional(),
-        due_date: vine.date().optional(),
+        startDate: vine.date().optional(),
+        dueDate: vine.date().optional(),
         estimationTime: vine.number().optional(),
 
         status: vine.enum(Object.values(TaskStatus)).optional(),
@@ -59,4 +59,12 @@ export const updateTaskValidator = vine.compile(
                 const result = await db.from('job_steps').select('id').where('id', value).first();
                 return result !== null;
             }).optional(),
+
+        attachements: vine.array(
+            vine.object({
+                name: vine.string().minLength(2).optional(),
+                type: vine.enum(File_Type),
+                url: vine.string().url()
+            })
+        ).optional()
     }))
