@@ -6,6 +6,7 @@ import ApiResponse from '#models/utils/ApiResponse'
 import { createGuestvalidator,createApiGuestvalidator } from '#validators/guest'
 import User from '#models/user'
 import Company from '#models/company'
+import { log } from 'console'
 
 
 
@@ -77,8 +78,16 @@ export default class GuestsController {
     async destroy({ response, params,auth }: HttpContext) {
         try {
 
-             const user=auth.user
-            const result = await this.GuestService.CancelGuest(params.guestId,user?.account.id)
+            const user=auth.user
+
+            if(!user || !user.account){
+
+                return response
+                    .status(500)
+                    .unauthorized(ApiResponse.badRequest('User Not Authentified'))
+            }
+
+            const result = await this.GuestService.CancelGuest(params.guestId)
 
             return response.status(result.statusCode).json(result)
 
@@ -92,6 +101,7 @@ export default class GuestsController {
     async accept({ response, params ,auth}: HttpContext) {
         try {
             const user=auth.user
+
 
             const result = await this.GuestService.AcceptGuest(params.guestId,user?.account.id)
 

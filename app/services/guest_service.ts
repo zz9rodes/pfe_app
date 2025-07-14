@@ -5,6 +5,10 @@ import ApiResponse from "#models/utils/ApiResponse"
 import { inject } from "@adonisjs/core"
 import EmailEmiterService from "./email_emiter_service.js"
 import { EmailData } from "#models/utils/index"
+import User from "#models/user"
+import { renderSendInvitationMessage } from "../../html/jsTemplate/SendInvitation.js"
+import { renderSendApprovedMessage } from "../../html/jsTemplate/SendApproveInvitation.js"
+import env from '#start/env'
 
 @inject()
 
@@ -35,14 +39,18 @@ export class GuestService {
     const guest = await Guest.create(data);
     const companyAccount = await Account.find(company.accountId);
 
+    const clientDomain=env.get('APP_CLIENT_DOMAIN')
+
+    let guestName= account.firstName +" "+ account.lastName
+    
     const emaildata: EmailData = {
       from: companyAccount!.userId,
       to: account.userId,
       cc: "You are invited to join our company",
       bcc: "You are invited to join our company",
       subject: "Invitation",
-      html: "string",
-      text: "string",
+      html: renderSendInvitationMessage(company.activeDetails.name,guestName,company.activeDetails.avatarUrl,`${clientDomain}/account/list_companie_invitations`),
+      text: `Après avoir examiné votre profil et votre parcours professionnel, nous sommes convaincus que vous seriez un atout précieux pour notre entreprise. Chez TalentVision, nous construisons l'avenir avec des talents comme le vôtre.   clicker ici pour confirmer votre interet ${clientDomain}/account/list_companie_invitations   `,
     };
 
     const emailInfo = await this.EmailEmiterService.sendEmail(emaildata);
@@ -50,7 +58,7 @@ export class GuestService {
     return ApiResponse.success("Votre Demande a bien ete Envoyer", guest);
   }
 
-  async CancelGuest(guestId: any,accountId:any) {
+  async CancelGuest(guestId: any) {
 
     const guest = await Guest.find(guestId)
     if (!guest) {
@@ -70,10 +78,11 @@ export class GuestService {
 
     const guest = await Guest.find(guestId)
     if (!guest) {
-      return ApiResponse.notFound("ressource Not found")
+      return ApiResponse.notFound("Your ressource not found")
     }
 
-    if(!(guest.accept)||(accountId!==guest.accountId)){
+
+    if(!(guest.accept) && (accountId!==guest.accountId)){
       return ApiResponse.badRequest("Bad request With Invalid Account Id")
     }
 
@@ -84,18 +93,27 @@ export class GuestService {
       await query.preload('activeDetails')
     })
 
+    let admin=await User.query().select(['id','is_admin','email']).where('is_admin',true).first()
 
-    const emaildata: EmailData = {
-      from: guest?.accountId,
-      to: guest?.company?.accountId,
-      cc: `${guest.account.firstName} ${guest.account.lastName} Accept Your Invitation To ${guest.company.activeDetails.name}`,
-      bcc: "Invitation Accept",
-      subject: "Invitation Accept",
-      html: "string",
-      text: `${guest.account.firstName} ${guest.account.lastName} Accept Your Invitation To ${guest.company.activeDetails.name}`,
+    let companyAdmin= await Account.find(guest?.company?.accountId)
+
+    if(admin && companyAdmin){
+
+      let accounName=guest.account.firstName+" "+guest.account.lastName
+
+      const emaildata: EmailData = {
+        from: admin.id,
+        to: companyAdmin?.userId,
+        cc: `${guest.account.firstName} ${guest.account.lastName} Accept Your Invitation To ${guest.company.activeDetails.name}`,
+        bcc: "Nouveau membre dans l'equipe",
+        subject: "Nouveau membre dans l'equipe",
+        html: renderSendApprovedMessage(accounName),
+        text: `${guest.account.firstName} ${guest.account.lastName} Accept Your Invitation To ${guest.company.activeDetails.name}`,
+      }
+
+      await this.EmailEmiterService.sendEmail(emaildata)
     }
 
-    await this.EmailEmiterService.sendEmail(emaildata)
 
     return ApiResponse.success("Success", guest)
   }
