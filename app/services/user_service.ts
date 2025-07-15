@@ -104,7 +104,6 @@ export default class UserService {
   }
 
   async createUserRequest(email: string, type: any) {
-    console.log("user request Service")
     try {
       const user: UserRequest = await UserRequest.create({
         email: email,

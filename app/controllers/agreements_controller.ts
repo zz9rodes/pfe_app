@@ -7,7 +7,6 @@ import { errors as errorAuth } from '@adonisjs/auth'
 
 import ApiResponse from '#models/utils/ApiResponse'
 import User from '#models/user'
-import auth from '@adonisjs/auth/services/main'
 
 
 @inject()
@@ -24,12 +23,10 @@ export default class AgreementsController {
         try {
             const data = await CreateAgreementValidator.validate(request.all())
 
-            console.log(me.email)
-            console.log(data.password)
 
             await User.verifyCredentials(me.email, data.password)
 
-            const result = await this.AgreementService.create(data, me)
+            const result = await this.AgreementService.create(data)
 
             return response.status(result.statusCode).json(result)
         } catch (error) {
@@ -60,7 +57,7 @@ export default class AgreementsController {
         return response.status(result.statusCode).json(result)
     }
 
-    async showForAccount({ params, response ,auth}: HttpContext) {
+    async showForAccount({  response ,auth}: HttpContext) {
         const me=auth.user
         me?.load('account')
 

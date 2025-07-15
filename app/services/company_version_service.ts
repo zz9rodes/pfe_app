@@ -51,7 +51,6 @@ export class CompanyVersionService {
     const company=await Company.find(version.company_id)
 
 
-    console.log(responseData)
 
     return ApiResponse.success("success",{version,company})
   }

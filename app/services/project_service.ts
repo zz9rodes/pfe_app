@@ -103,7 +103,6 @@ export default class ProjectService {
 
     if(with_task){
      await  project.load('tasks')
-      console.log("on vien de load les task")
     }
 
     return ApiResponse.success('Success', project)

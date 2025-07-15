@@ -13,10 +13,8 @@ export class ApplyService {
   }
 
   async GetAllJobApplications(jobId :String){
-    console.log("dans le servie")
     try {
        const job= await Job.findBy('slug',jobId)
-      console.log(jobId)
 
       if(!job){
         return ApiResponse.notFound("Job Not found");
@@ -42,10 +40,8 @@ export class ApplyService {
   
 
     async GetAllAccountApplications(accountId :number){
-    console.log("dans le servie")
     try {
        const account= await Account.find(accountId)
-      console.log(accountId)
 
       if(!account){
         return ApiResponse.notFound("Account Not found");

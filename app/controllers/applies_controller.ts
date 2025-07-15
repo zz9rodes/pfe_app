@@ -4,7 +4,6 @@ import { ApplyService } from '#services/apply_service'
 import { createApplyValidation, updateValidation } from '#validators/apply'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
-import app from '@adonisjs/core/services/app'
 import { errors } from '@vinejs/vine'
 
 @inject()
@@ -33,7 +32,6 @@ export default class AppliesController {
   async jobApplications({ params, response }: HttpContext) {
     try {
       const jobId = params.jobId
-      console.log(params.jobId)
 
       const result = await this.ApplyService.GetAllJobApplications(jobId)
 
@@ -45,7 +43,7 @@ export default class AppliesController {
     }
   }
 
-    async accountApplications({ params, response,auth }: HttpContext) {
+    async accountApplications({  response,auth }: HttpContext) {
     try {
 
       const user=auth.user
@@ -56,7 +54,6 @@ export default class AppliesController {
       await user.load('account')
 
       const accountId = user.account.id
-      console.log(params.accountId)
 
       const result = await this.ApplyService.GetAllAccountApplications(accountId)
 
@@ -98,13 +95,11 @@ export default class AppliesController {
 
   async store({ request, response }: HttpContext) {
     try {
-      console.log('dans le contoller des applies')
 
       const payload = await createApplyValidation.validate(request.all())
       const result = await this.ApplyService.create(payload)
       return response.status(result.statusCode).json(result)
     } catch (error) {
-      console.log(error)
 
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return response.status(422).json(ApiResponse.validation('Invalid input', error.messages))
@@ -118,14 +113,11 @@ export default class AppliesController {
 
   async setAppliesStatus({ request, params, response }: HttpContext) {
     try {
-      console.log('dans le contoller des applies')
 
       const applyId = params.applyId
 
       const apply = await Apply.findBy('slug', applyId)
 
-      console.log(apply)
-      console.log(applyId)
 
       if (!apply) {
         let result = ApiResponse.notFound('Aplication Not Found')

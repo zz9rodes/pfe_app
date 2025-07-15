@@ -21,8 +21,6 @@ export default class ProjectsController {
 
 
         const user=auth.user
-        console.log(user)
-        console.log(user?.account)
         if(!user || !user.account){
 
             return response.unauthorized(ApiResponse.error(" unauthorized "))

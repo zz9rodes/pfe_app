@@ -49,7 +49,6 @@ export class CompaniesRequestService {
         return ApiResponse.error('Account not found')
       }
 
-      console.log(accountId)
       const request = await CompanyRequest.query().where('admin_id', accountId)
 
       const companies = await Company.query()
@@ -89,12 +88,10 @@ export class CompaniesRequestService {
 
   async getRequest(requestSlug: number | undefined) {
     try {
-      console.log(requestSlug)
       if (!requestSlug) {
         return ApiResponse.error('Companie Request not found')
       }
 
-      console.log(requestSlug)
       const request = await CompanyRequest.findBy('slug',requestSlug)
 
       if (!request) {

@@ -3,7 +3,6 @@ import puppeteer from 'puppeteer'
 
 export default class PdfGeneratorController {
   public async generatePdf({ request, response }: HttpContext) {
-    console.log("c'est arrivee chez Nous ici")
     try {
       const { url } = request.only(['url'])
 
@@ -14,9 +13,7 @@ export default class PdfGeneratorController {
       const browser = await puppeteer.launch()
       const page = await browser.newPage()
 
-      console.log(browser)
 
-      console.log(page)
 
       await page.goto(url, { waitUntil: 'networkidle0' })
 

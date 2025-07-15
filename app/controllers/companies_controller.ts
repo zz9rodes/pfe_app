@@ -14,7 +14,6 @@ export default class CompaniesController {
   constructor(private CompanyService: CompanyService) {}
 
   async index({ response }: HttpContext) {
-    console.log(" dans le index index")
     const result = await this.CompanyService.getAllCompanies()
     return response.status(result.statusCode).json(result)
   }

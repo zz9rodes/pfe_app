@@ -116,8 +116,6 @@ export class AgreementService {
       const agreement = await Agreement.create(agreementData)
       await contract.load('job')
 
-      console.log(contract.job)
-      console.log(contract.job.job_type)
 
       // Création du projet si le job est de type FREELANCE
       if (contract.job && contract.job.job_type === JobType.FREELANCE) {

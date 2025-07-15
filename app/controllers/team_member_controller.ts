@@ -10,12 +10,10 @@ export default class TeamMembersController {
     constructor(private TeamMemberService: TeamMemberService) { }
 
     async store({ request, response }: HttpContext) {
-        console.log("dans le controller");
         
         try {
             
             const data = await createTeamMembersvalidator.validate(request.all())
-                        console.log(data);
 
             const result = await this.TeamMemberService.create(data)
             return response.status(result.statusCode).json(result)

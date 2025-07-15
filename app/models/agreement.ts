@@ -39,11 +39,8 @@ export default class Agreement extends BaseModel {
   static async loadcontract(agreement: Agreement) {
     await agreement.load('contract',(agreement)=>{
       agreement.preload('company',company=>{
-        console.log("ici on essaie de charger les admins")
         company.preload('admin',admin=>{
-          console.log("ici on essaie de charger les signature")
           admin.preload('signatures')
-          console.log(admin)
         })
       })
     })

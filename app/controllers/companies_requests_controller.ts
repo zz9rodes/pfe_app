@@ -14,7 +14,6 @@ import { CompanyStatus, EmailData } from '#models/utils/index'
 import CompanyRequest from '#models/company_request'
 import { renderDesapprovedCompanie } from '../../html/jsTemplate/desapproved.js'
 import env from '#start/env'
-import User from '#models/user'
 
 @inject()
 export default class CompaniesRequestsController {
@@ -23,7 +22,6 @@ export default class CompaniesRequestsController {
     private EmailEmiterService: EmailEmiterService
   ) {}
   async store({ request, response, bouncer, auth }: HttpContext) {
-    console.log(request.all())
     try {
       const account: Account | null | undefined = request.input('slug')
         ? await Account.findBy('slug', request.input('slug'))
@@ -56,7 +54,6 @@ export default class CompaniesRequestsController {
       }
 
       const user  = auth.user
-      console.log(user)
       if (await bouncer.with(CompanyVersionPolicy).denies('create', user.account)) {
         return response.forbidden(ApiResponse.forbidden("You don't have access to this Ressources"))
       }
@@ -104,7 +101,6 @@ export default class CompaniesRequestsController {
 
   async get({ response, params }: HttpContext) {
     try {
-      console.log(params)
       const result = await this.CompaniesRequestService.getRequest(params?.slug_request)
 
       return response.status(result.statusCode).json(result)
@@ -120,7 +116,6 @@ export default class CompaniesRequestsController {
   }
 
   async desApprovedCompanyRequest({ request, response, params, auth }: HttpContext) {
-    console.log("desApprovedCompanyRequest")
     try {
       const request_c = await CompanyRequest.findBy('slug', params?.slug_request)
       await request_c?.merge({status:CompanyStatus.REJECT,isActive:false}).save()
