@@ -5,6 +5,9 @@ ApiResponse
 
 export default class OnlyAdminMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
+    
+    console.log(ctx.auth.user)
+
    if(ctx.auth.user?.isAdmin){
     return await next()
    }

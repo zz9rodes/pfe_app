@@ -44,6 +44,8 @@ import './routes/v1/tasks/index.js'
 import './routes/v1/chats/index.js'
 
 import './routes/v1/subscriptions/index.js'
+import StatsController from '#controllers/stats_controller'
+import { middleware } from './kernel.js'
 
 
 router.get('/', async () => {
@@ -51,3 +53,7 @@ router.get('/', async () => {
     hello: 'world demo ici ! ',
   }
 })
+
+router.get('/v1/api/stats',[StatsController,'show']).use([middleware.auth(),middleware.onlyAdmin()])
+router.get('/v1/api/specifics',[StatsController,'showStats']).use([middleware.auth(),middleware.onlyAdmin()])
+
