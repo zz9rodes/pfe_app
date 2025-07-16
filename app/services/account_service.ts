@@ -80,7 +80,7 @@ export class AccountService {
     return ApiResponse.success('Account retrieved successfully', account)
   }
 
-  async getAllAccount(isAdmin:boolean=false) {
+  async getAllAccount(isAdmin=false) {
     const accounts =  await Account.all() 
     const activeAccounts=[];
 
@@ -96,7 +96,34 @@ export class AccountService {
           await account.load('cvProfiles')
       }
 
-      if(account.cvProfiles){
+      // console.log("isAdmin : ",isAdmin)
+      console.log("account : ",account.id)
+      console.log("account-cvprofiles : ",account.cvProfiles?.id)
+      if(isAdmin || account.cvProfiles){
+        activeAccounts.push(account)
+      }
+    }
+
+    return ApiResponse.success('All accounts retrieved', activeAccounts,200)
+  }
+
+  async getActiveAccounts() {
+    const accounts =  await Account.all() 
+    const activeAccounts=[];
+
+    for (const account of accounts) {
+      if (account.accountType === AccountType.COMPANIES) {
+        await account.load('company', async (company) => {
+          await company.preload('activeDetails')
+        })
+      }
+
+      await account.load('user')
+
+      await account.load('cvProfiles')
+      
+
+      if(account.cvProfiles && !account.user.isAdmin){
         activeAccounts.push(account)
       }
     }

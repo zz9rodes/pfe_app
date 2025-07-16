@@ -10,15 +10,14 @@ export default class AccountsController {
 
 
   async index({ response }: HttpContext) {
-     const result= await this.AccountService.getAllAccount(true)
+     const result= await this.AccountService.getActiveAccounts()
 
-     console.log("c'est ici");
 
      return response.status(result.statusCode).json(result)
   }
 
   async indexAdmin ({ response }: HttpContext) {
-     const result= await this.AccountService.getAllAccount()
+     const result= await this.AccountService.getAllAccount(true)
 
      console.log("c'est pas ici")
 
