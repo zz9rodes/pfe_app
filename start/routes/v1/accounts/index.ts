@@ -24,7 +24,7 @@ router
 
 
     router
-      .get('/all', [AccountsController, 'index'])
+      .get('/all', [AccountsController, 'indexAdmin'])
       .use([middleware.auth(), middleware.onlyAdmin()])
 
     router

@@ -80,8 +80,9 @@ export class AccountService {
     return ApiResponse.success('Account retrieved successfully', account)
   }
 
-  async getAllAccount() {
-    const accounts = await Account.all()
+  async getAllAccount(isAdmin:boolean=false) {
+    const accounts =  await Account.all() 
+    const activeAccounts=[];
 
     for (const account of accounts) {
       if (account.accountType === AccountType.COMPANIES) {
@@ -90,10 +91,17 @@ export class AccountService {
         })
       }
       await account.load('user')
-      await account.load('cvProfiles')
+
+      if (isAdmin) {
+          await account.load('cvProfiles')
+      }
+
+      if(account.cvProfiles){
+        activeAccounts.push(account)
+      }
     }
 
-    return ApiResponse.success('All accounts retrieved', accounts,200)
+    return ApiResponse.success('All accounts retrieved', activeAccounts,200)
   }
 
   async findAccountByName(query: string) {
