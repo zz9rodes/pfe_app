@@ -6,6 +6,8 @@ import CompanyVersion from './company_version.js'
 import Job from './job.js'
 import Post from './post.js'
 import Guest from './guest.js'
+import Project from './project.js'
+import Contract from './contract.js'
 
 export default class Company extends BaseModel {
   @column({ isPrimary: true })
@@ -44,6 +46,12 @@ export default class Company extends BaseModel {
 
   @hasMany(() => Post)
   declare posts: HasMany<typeof Post>
+
+  @hasMany(() => Project)
+  declare projects: HasMany<typeof Project>
+
+  @hasMany(() => Contract)
+  declare contracts: HasMany<typeof Contract>
 
   @hasMany(() => Guest)
   declare guests: HasMany<typeof Guest>

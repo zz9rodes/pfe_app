@@ -1,8 +1,10 @@
 import Apply from '#models/apply'
 import ApiResponse from '#models/utils/ApiResponse'
+import { ApplyStatus } from '#models/utils/index'
 import { ApplyService } from '#services/apply_service'
 import { createApplyValidation, updateValidation } from '#validators/apply'
 import { inject } from '@adonisjs/core'
+import is from '@adonisjs/core/helpers/is'
 import type { HttpContext } from '@adonisjs/core/http'
 import { errors } from '@vinejs/vine'
 
@@ -127,8 +129,12 @@ export default class AppliesController {
       const payload = await updateValidation.validate(request.all())
 
       // const {status}=request.body()
+      let isApproved=false
+      if(payload.status==ApplyStatus.APPROVED){
+        isApproved=false
+      }
 
-      await apply.merge(payload).save()
+      await apply.merge({approved:isApproved, ...payload}).save()
 
       let result = ApiResponse.success('Application status has Been Updated', apply)
 

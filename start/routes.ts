@@ -57,3 +57,6 @@ router.get('/', async () => {
 router.get('/v1/api/stats',[StatsController,'show']).use([middleware.auth(),middleware.onlyAdmin()])
 router.get('/v1/api/specifics',[StatsController,'showStats']).use([middleware.auth(),middleware.onlyAdmin()])
 
+router.get('/v1/api/accounts-stats',[StatsController,'AccountStatistiques']).use([middleware.auth()])
+
+
