@@ -43,7 +43,10 @@ export class AccountService {
       }
 
       await account.merge(data).save()
-      return ApiResponse.success('Account updated successfully', account)
+
+      const {cvProfiles,signatures,...userData}= account
+
+      return ApiResponse.success('Account updated successfully', userData.$original)
     } catch (error) {
       return ApiResponse.error('Error updating account', 'E_UPDATE_ACCOUNT_ERROR', error)
     }

@@ -89,7 +89,7 @@ export default class AccountsController {
       const data = await updateAccountValidator.validate(request.all())
       const result=await this.AccountService.editAccount(data, slug)
       return response
-            .status(200)
+            .status(result.statusCode)
             .json(result)
 
     } catch (error) {

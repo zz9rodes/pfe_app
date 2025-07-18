@@ -1,4 +1,5 @@
 import vine from '@vinejs/vine'
+import { title } from 'process'
 
 export const createCompanyVersionsValidator =vine.compile(
     vine.object({
@@ -16,7 +17,13 @@ export const createCompanyVersionsValidator =vine.compile(
     registrationNumber: vine.string().trim(),
     certificateOfIncorporation: vine.string().url(),
     isActive:vine.boolean(),
-    address:vine.string()
+    address:vine.object(
+        { 
+            title:vine.string(), 
+            long: vine.number() ,
+            lat: vine.number()  
+        }
+    ) 
 }))
 
 export const editCompanyVerionsValidator = vine.compile(

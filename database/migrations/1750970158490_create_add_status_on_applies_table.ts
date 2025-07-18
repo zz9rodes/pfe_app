@@ -6,7 +6,7 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-table.enum('status', Object.values(ApplyStatus)).defaultTo(ApplyStatus.PENDING);    })
+  table.enum('status', Object.values(ApplyStatus)).defaultTo(ApplyStatus.PENDING);    })
   }
 
   async down() {

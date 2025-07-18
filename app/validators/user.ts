@@ -63,7 +63,9 @@ export const createUserAccountValidator=vine.compile(
             title:vine.string(),
             lat:vine.number(),
             long:vine.number()
-        }).optional()
+        }).optional(),
+        roles:vine.string().nullable().optional()
+
     })
     })
 )

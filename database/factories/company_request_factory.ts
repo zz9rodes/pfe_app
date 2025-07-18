@@ -1,10 +1,8 @@
 import factory from '@adonisjs/lucid/factories'
-import Account from '#models/account'
-import { AccountType } from '#models/utils/index';
+import CompanyRequest from '#models/company_request'
 
-export const AccountFactory =  factory
-  .define(Account, async ({ faker }) => {
-
+export const CompanyRequestFactory = factory
+  .define(CompanyRequest, async ({ faker }) => {
 
       const languesProfessionnelles = [
         "Anglais",
@@ -20,12 +18,13 @@ export const AccountFactory =  factory
       ];
 
     return {
-      avatarUrl:faker.image.avatarGitHub(),
+
+      name:faker.company.name(),
       slug:faker.string.uuid(),
-      firstName:faker.person.firstName(),
-      lastName:faker.person.lastName(),
-      phoneNumber:faker.phone.number({ style: 'national' }),
-      dob:faker.date.birthdate({ mode: 'age', min: 18, max: 65 }),
+      industry:faker.lorem.words(2),
+      description:faker.lorem.paragraphs(),
+      email:faker.internet.email(),
+      phoneNumber:faker.phone.number({style:"national"}),
       country:faker.location.country(),
       city:faker.location.city(),
       address:{
@@ -33,15 +32,15 @@ export const AccountFactory =  factory
         long:faker.location.longitude(),
         lat:faker.location.latitude()
       },
-      secondLangage:faker.helpers.arrayElement(languesProfessionnelles),
       firstLangage:faker.helpers.arrayElement(languesProfessionnelles),
-
-      accountType:AccountType.PERSONNAL,
-
-      roles:faker.person.jobTitle(),
-
-      userId:0
-
+      avatarUrl:faker.image.avatar(),
+      coverUrl:faker.image.avatar(),
+      socialStatus:faker.image.avatar(),
+      certificateOfIncorporation:faker.image.avatar(),
+      registrationNumber:faker.image.avatar(),
+      adminId:faker.number.int()    
     }
   })
   .build()
+
+  

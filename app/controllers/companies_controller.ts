@@ -27,10 +27,13 @@ export default class CompaniesController {
 
       const company_request = await CompanyRequest.findBy('slug', request.input('slug_request'))
 
+
+      console.log(company_request)
+
       const validData = await createCompanyVersionsValidator.validate(company_request)
       const data = cleanCompanyData(validData)
 
-      const result = await this.CompanyService.createCompany(company_request!.adminId, data)
+      const result = await this.CompanyService.createCompany(company_request!.adminId, data,true)
 
       if(result.success){
         await company_request?.merge({isActive:true,status:CompanyStatus.APPROVED}).save()

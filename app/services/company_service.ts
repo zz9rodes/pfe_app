@@ -25,7 +25,7 @@ export class CompanyService {
     return ApiResponse.success('success', companies)
   }
 
-  async createCompany(accountId: number, payload: any) {
+  async createCompany(accountId: number, payload: any,isVerify =false) {
     try {
       const existingCompany = await Company.findBy('account_id', accountId)
       if (existingCompany || payload.status==CompanyStatus.APPROVED) {
@@ -40,11 +40,12 @@ export class CompanyService {
       const company = new Company()
       company.fill({
         slug: crypto.randomUUID(),
-        isVerify: false,
+        isVerify: isVerify,
         accountId: admin.id,
       })
 
       await company.save()
+      
       let scopes = []
       for (const value of Object.values(CompanyScope)) {
         scopes.push(value)

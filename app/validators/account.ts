@@ -20,6 +20,7 @@ export const createAccountValidator = vine.compile(
         avatarUrl: vine.string().url().optional(),
         frontIdCard: vine.string().url().optional(), 
         backIdCard: vine.string().url().optional(), 
+        roles:vine.string().nullable().optional()
     })
 )
 
@@ -42,6 +43,8 @@ export const updateAccountValidator = vine.compile(
       avatarUrl: vine.string().url().optional(),
       frontIdCard: vine.string().url().optional(), 
       backIdCard: vine.string().url().optional(), 
+      roles:vine.string().nullable().optional()
+
   })
 )
 
