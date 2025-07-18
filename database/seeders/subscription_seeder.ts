@@ -3,11 +3,11 @@ import Account from '#models/account'
 import SubscriptionPlan from '#models/subscription_plan'
 import Subscription from '#models/subscription'
 import { DateTime } from 'luxon'
-import { SubscriptionStatus } from '#models/utils/index'
+import { AccountType, SubscriptionStatus } from '#models/utils/index'
 
 export default class SubscriptionSeeder extends BaseSeeder {
   public async run() {
-    const accounts = await Account.query().limit(3) // ⚠️ Ajuste selon tes besoins
+    const accounts = await Account.query().where('account_type',AccountType.COMPANIES) // ⚠️ Ajuste selon tes besoins
     const plans = await SubscriptionPlan.all()
 
     if (accounts.length === 0 || plans.length === 0) {
