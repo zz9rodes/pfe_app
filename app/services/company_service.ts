@@ -2,9 +2,11 @@ import Account from '#models/account'
 import Company from '#models/company'
 import CompanyVersion from '#models/company_version'
 import Guest from '#models/guest'
+import SubscriptionPlan from '#models/subscription_plan'
 import ApiResponse from '#models/utils/ApiResponse'
-import { CompanyScope, CompanyStatus } from '#models/utils/index'
+import { CompanyScope, CompanyStatus, SubscriptionStatus } from '#models/utils/index'
 import { Exception } from '@adonisjs/core/exceptions'
+import { DateTime } from 'luxon'
 
 
 export class CompanyService {
@@ -58,6 +60,23 @@ export class CompanyService {
         companyId: company.id,
         accept: true,
       })
+
+      const now = DateTime.now()
+
+      const plan= await SubscriptionPlan.query().select('*').whereNot('price',0).first()
+
+      const end = now.plus({ days: plan?.duration || 50 })
+
+
+      admin.related('subscriptions').create({
+              accountId: admin.id,
+              subscriptionPlanId: plan?.id || 1,
+              status: SubscriptionStatus.ACTIVE,
+              startDate: now,
+              endDate: end,
+              paymentReference: `SEED-${admin.id}-${plan?.id || end}`,
+              isVerified: true,
+            })
 
       await company.related('admin').associate(admin)
 
