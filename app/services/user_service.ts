@@ -13,15 +13,18 @@ export default class UserService {
   async Register(data: any) {
     try {
       const user: User = await User.create(data)
+
+      let firstAdmin= await User.findBy('is_admin',true)
+
       if (user) {
         const data: EmailData = {
-          from: 1,
+          from: firstAdmin?.id || 1,
           to: user.id,
           cc: 'demo',
           bcc: 'account',
           subject: 'New User , Complete Your Account Profile',
           text: 'email.text',
-          html: RenderHtmlWelComePage('http://localhost:5173/auth/register'),
+          html: RenderHtmlWelComePage('http://localhost:5173/auth/login'),
         }
         await this.EmailEmiterService.sendEmail(data)
       }
@@ -110,10 +113,14 @@ export default class UserService {
         type: type,
         uuid: crypto.randomUUID(),
       })
+
+      let firstAdmin= await User.findBy('is_admin',true)
+
+
       if (user) {
         const data = {
-          from: 2,
-          to: 1,
+          from: firstAdmin?.id || 2,
+          to:firstAdmin?.id || 1,
           cc: 'Welcom To Kindi Job',
           subject: 'Welcom To Kindi Job',
           text: 'Welcom To Kindi Job',

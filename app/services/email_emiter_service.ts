@@ -5,7 +5,6 @@ import { DateTime } from 'luxon'
 import Email from '#models/email'
 import { EmailData } from '#models/utils/index'
 import { removeEmptyFields } from '#models/utils/helper'
-import { info } from 'node:console'
 
 
 
@@ -60,7 +59,7 @@ export default class EmailEmiterService {
     return email
   }
 
-    public async sendRegiestrationLinkEmail(data: any) {
+  public async sendRegiestrationLinkEmail(data: any) {
 
       // const {r_email,s_email,...all}=data
     
