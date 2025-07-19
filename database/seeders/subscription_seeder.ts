@@ -21,6 +21,8 @@ export default class SubscriptionSeeder extends BaseSeeder {
       const now = DateTime.now()
       const end = now.plus({ days: plan.duration })
 
+
+
       await Subscription.create({
         accountId: account.id,
         subscriptionPlanId: plan.id,

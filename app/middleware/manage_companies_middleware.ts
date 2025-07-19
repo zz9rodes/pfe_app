@@ -19,7 +19,12 @@ export default class EnsurePermissionAndSubscription {
       return response.forbidden(ApiResponse.forbidden('Level Permission required'))
     }
 
+    console.log("dans cette verification")
+
     const accountId = user.account.id
+
+    console.log(accountId)
+
 
     const activeSubscription = await Subscription.query()
       .where('account_id', accountId)
@@ -28,11 +33,21 @@ export default class EnsurePermissionAndSubscription {
       .orderBy('end_date', 'desc')
       .first()
 
+
+    console.log(activeSubscription?.id)
+        console.log(activeSubscription?.startDate)
+
+            console.log(activeSubscription?.endDate)
+
+
     if (!activeSubscription && user.account.accountType!==AccountType.PERSONNAL) {
       return response.forbidden(
         ApiResponse.forbidden('You must have an active subscription to access this feature.')
       )
     }
+
+    console.log("on a traverser ici");
+    
 
     await next()
   }

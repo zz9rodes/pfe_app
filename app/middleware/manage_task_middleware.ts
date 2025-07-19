@@ -3,6 +3,7 @@ import Project from '#models/project'
 import ApiResponse from '#models/utils/ApiResponse'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
+import { copyFileSync } from 'node:fs'
 
 export default class ManageTaskMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
@@ -12,16 +13,24 @@ export default class ManageTaskMiddleware {
 
     const project=await Project.findBy('slug',ctx.params.projectId)
 
+    console.log("on est bien ici")
+
     if(!project){
       return ctx.response.status(403).json(ApiResponse.forbidden('Level Permission required'))
     }
 
+    console.log("demo en bas")
+
 
     project.related('members')
 
-    if (project && (await ctx.bouncer.allows(manageTasks, project))) {
+    console.log(project.id)
+
+    if (project && await ctx.bouncer.allows(manageTasks, project)) {
       return await next()
     }
+
+    console.log(" on est bien en bas")
 
     return ctx.response.status(403).json(ApiResponse.forbidden('Level Permission required'))
 
